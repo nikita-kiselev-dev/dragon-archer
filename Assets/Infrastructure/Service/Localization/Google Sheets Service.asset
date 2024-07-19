@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Google Sheets Service
   m_EditorClassIdentifier: 
   m_ApiKey: AIzaSyA-PA_KqFE_tO3-aKBNTWJRGi4Ez7gDezs
-  m_ClientId: 
-  m_ClientSecret: 
+  m_ClientId: 359491260688-icu971uoj9pki9r0l077puq238lpi9o0.apps.googleusercontent.com
+  m_ClientSecret: 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
   m_AuthenticationType: 1
   m_ApplicationName: dragon-archer
   m_NewSheetProperties:

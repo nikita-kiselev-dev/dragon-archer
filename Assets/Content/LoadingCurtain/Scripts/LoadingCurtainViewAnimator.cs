@@ -34,17 +34,16 @@ namespace Content.LoadingCurtain.Scripts
 
         private Sequence FadeAnimation(float fadeValue, float duration)
         {
-            var sequence = DOTween.Sequence();
-            sequence
+            return DOTween
+                .Sequence()
                 .Append(_canvasGroup.DOFade(fadeValue, duration))
                 .Pause();
-            return sequence;
         }
 
         private Sequence ShowAnimation()
         {
-            var sequence = DOTween.Sequence();
-            sequence
+            return DOTween
+                .Sequence()
                 .AppendCallback(() =>
                 {
                     _canvasGroup.alpha = 0f;
@@ -52,13 +51,12 @@ namespace Content.LoadingCurtain.Scripts
                 })
                 .Append(FadeAnimation(1f, LoadingCurtainInfo.ShowAnimationDuration))
                 .Pause();
-            return sequence;
         }
 
         private Sequence HideAnimation()
         {
-            var sequence = DOTween.Sequence();
-            sequence
+            return DOTween
+                .Sequence()
                 .AppendCallback(() =>
                 {
                     _canvasGroup.alpha = 1f;
@@ -68,7 +66,6 @@ namespace Content.LoadingCurtain.Scripts
                 {
                     _gameObject.SetActive(false);
                 });
-            return sequence;
         }
         
         private void PlayNowOrNext(Sequence sequence)
@@ -88,9 +85,9 @@ namespace Content.LoadingCurtain.Scripts
 
         private void SetCurrentAndPlay(Sequence sequence)
         {
-            _currentSequence.Kill();
+            _currentSequence?.Kill();
             _currentSequence = sequence;
-            _currentSequence.Play();
+            _currentSequence?.Play();
         }
     }
 }
