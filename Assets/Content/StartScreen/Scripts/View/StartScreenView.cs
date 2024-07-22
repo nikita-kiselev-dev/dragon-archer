@@ -4,9 +4,9 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace Content.StartWindow.Scripts.View
+namespace Content.StartScreen.Scripts.View
 {
-    public class StartWindowView : MonoBehaviour, IView
+    public class StartScreenView : MonoBehaviour, IView
     {
         [SerializeField] private Button m_StartButton;
         [SerializeField] private Button m_SettingsButton;
@@ -18,9 +18,9 @@ namespace Content.StartWindow.Scripts.View
 
         public void Init(IViewSignalManager viewSignalManager)
         {
-            _onStartButtonClicked = viewSignalManager.GetSignal(StartWindowInfo.StartGameSignal);
-            _onSettingsButtonClicked = viewSignalManager.GetSignal(StartWindowInfo.OpenSettingsSignal);
-            _onWebSiteButtonClicked = viewSignalManager.GetSignal(StartWindowInfo.OpenWebSiteSignal);
+            _onStartButtonClicked = viewSignalManager.GetSignal(StartScreenInfo.StartGameSignal);
+            _onSettingsButtonClicked = viewSignalManager.GetSignal(StartScreenInfo.OpenSettingsSignal);
+            _onWebSiteButtonClicked = viewSignalManager.GetSignal(StartScreenInfo.OpenWebSiteSignal);
             
             SetupButtons();
             

@@ -26,7 +26,9 @@ namespace Infrastructure.Service.Scene
                 yield break;
             }
 
-            if (sceneName != SceneInfo.StartScene)
+            var isStartScene = sceneName == SceneInfo.StartScene;
+
+            if (!isStartScene)
             {
                 _loadingCurtainController.Show();
                 yield return new WaitForSeconds(LoadingCurtainInfo.ShowAnimationDuration);
@@ -39,7 +41,11 @@ namespace Infrastructure.Service.Scene
                 loadSceneAsync.completed += (_) =>
                 {
                     onLoaded?.Invoke();
-                    _loadingCurtainController.Hide();
+
+                    if (!isStartScene)
+                    {
+                        _loadingCurtainController.Hide();
+                    }
                 };
             }
         }

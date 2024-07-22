@@ -5,9 +5,9 @@ using Infrastructure.Service.View.ViewFactory;
 using Infrastructure.Service.View.ViewManager;
 using Infrastructure.Service.View.ViewSignalManager;
 
-namespace Content.StartWindow.Scripts.Controller
+namespace Content.StartScreen.Scripts.Controller
 {
-    public class StartWindowController : IStartWindowController
+    public class StartScreenController : IStartScreenController
     {
         private readonly IViewFactory _viewFactory;
         private readonly IViewManager _viewManager;
@@ -15,7 +15,7 @@ namespace Content.StartWindow.Scripts.Controller
         private readonly Action _openMetaScene;
         private readonly Action _openCoreScene;
         
-        public StartWindowController(
+        public StartScreenController(
             IViewFactory viewFactory,
             IViewManager viewManager,
             Action openMetaScene,
@@ -30,7 +30,7 @@ namespace Content.StartWindow.Scripts.Controller
         public void Init()
         {
             RegisterAndInitView();
-            AudioService.Instance.PlayMusic(MusicInfo.StartWindowMusic);
+            AudioService.Instance.PlayMusic(MusicList.StartSceneMusic);
         }
 
         private void StartGame()
@@ -63,9 +63,9 @@ namespace Content.StartWindow.Scripts.Controller
             var view = _viewFactory.CreateView<IView>(ViewInfo.StartWindowKey, ViewType.Window);
             
             var viewSignalManager = new ViewSignalManager()
-                .AddSignal(StartWindowInfo.StartGameSignal, StartGame)
-                .AddSignal(StartWindowInfo.OpenSettingsSignal, OpenSettings)
-                .AddSignal(StartWindowInfo.OpenWebSiteSignal, OpenWebSite);
+                .AddSignal(StartScreenInfo.StartGameSignal, StartGame)
+                .AddSignal(StartScreenInfo.OpenSettingsSignal, OpenSettings)
+                .AddSignal(StartScreenInfo.OpenWebSiteSignal, OpenWebSite);
             
             new ViewRegistrar(_viewManager)
                 .SetViewKey(ViewInfo.StartWindowKey)

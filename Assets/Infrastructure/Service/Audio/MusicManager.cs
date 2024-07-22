@@ -6,12 +6,9 @@ namespace Infrastructure.Service.Audio
     public class MusicManager : AudioManager
     {
         private const string AudioType = "Music";
-        
-        private const float FadeInAudioVolume = 0.7f;
-        private const float FadeOutAudioVolume = 1.0f;
 
-        private const float FadeInDuration = 1.5f;
-        private const float FadeOutDuration = 1.5f;
+        private const float FadeInDuration = 1.0f;
+        private const float FadeOutDuration = 1.0f;
         
         public void Play(string audioClipName, bool isLooped = true)
         {
@@ -45,9 +42,9 @@ namespace Infrastructure.Service.Audio
         {
             var sequence = DOTween.Sequence();
             sequence
-                .Append(m_AudioSource.DOFade(FadeInAudioVolume, FadeInDuration))
+                .Append(m_AudioSource.DOFade(0, FadeInDuration))
                 .AppendCallback(() => PlayMusic(audioClip, isLooped))
-                .Append(m_AudioSource.DOFade(FadeOutAudioVolume, FadeOutDuration))
+                .Append(m_AudioSource.DOFade(1, FadeOutDuration))
                 .Play();
         }
     }

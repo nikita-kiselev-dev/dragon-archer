@@ -1,5 +1,6 @@
 ﻿using Content.LoadingCurtain.Scripts.View;
 using DG.Tweening;
+using Infrastructure.Service.View.UIEffects;
 using Infrastructure.Service.View.ViewManager.ViewAnimation;
 using UnityEngine;
 
@@ -9,11 +10,23 @@ namespace Content.LoadingCurtain.Scripts
     {
         private readonly GameObject _gameObject;
         private readonly CanvasGroup _canvasGroup;
+        private readonly GradientColor _gradientColor;
+
+        private readonly Color _topColor;
+        private readonly Color _bottomColor;
         
-        public LoadingCurtainViewAnimator(LoadingCurtainView view)
+        public LoadingCurtainViewAnimator(ILoadingCurtainView view)
         {
-            _gameObject = view.gameObject;
-            _canvasGroup = view.CanvasGroup;
+            if (view is not LoadingCurtainView gradientColorCurtainView)
+            {
+                return;
+            }
+            
+            _gameObject = gradientColorCurtainView.gameObject;
+            _canvasGroup = gradientColorCurtainView.CanvasGroup;
+            _gradientColor = gradientColorCurtainView.GradientColor;
+            _topColor = _gradientColor.colorTop;
+            _bottomColor = _gradientColor.colorBottom;
         }
         
         private Sequence _currentSequence;
@@ -40,6 +53,19 @@ namespace Content.LoadingCurtain.Scripts
                 .Pause();
         }
 
+        private Sequence GradientColorChange(float duration, bool isReversed = false)
+        {
+            var topColor = isReversed ? _topColor : _bottomColor;
+            var bottomColor = isReversed ? _bottomColor : _topColor;
+
+            return DOTween
+                .Sequence()
+                .Join(DOTween.To(() => _gradientColor.colorTop, x => 
+                    _gradientColor.colorTop = x, topColor, duration))
+                .Join(DOTween.To(() => _gradientColor.colorBottom, x => 
+                    _gradientColor.colorBottom = x, bottomColor, duration));
+        }
+
         private Sequence ShowAnimation()
         {
             return DOTween
@@ -49,7 +75,8 @@ namespace Content.LoadingCurtain.Scripts
                     _canvasGroup.alpha = 0f;
                     _gameObject.SetActive(true);
                 })
-                .Append(FadeAnimation(1f, LoadingCurtainInfo.ShowAnimationDuration))
+                .Append(FadeAnimation(1f, LoadingCurtainInfo.FadeInAnimationDuration))
+                .Append(GradientColorChange(LoadingCurtainInfo.ColorChangeShowAnimationDuration))
                 .Pause();
         }
 
@@ -61,7 +88,8 @@ namespace Content.LoadingCurtain.Scripts
                 {
                     _canvasGroup.alpha = 1f;
                 })
-                .Append(FadeAnimation(0f, LoadingCurtainInfo.HideAnimationDuration))
+                .Append(GradientColorChange(LoadingCurtainInfo.ColorChangeHideAnimationDuration, true))
+                .Append(FadeAnimation(0f, LoadingCurtainInfo.FadeOutAnimationDuration))
                 .AppendCallback(() =>
                 {
                     _gameObject.SetActive(false);

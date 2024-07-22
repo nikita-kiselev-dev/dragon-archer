@@ -1,5 +1,5 @@
 ﻿using Content.SettingsPopup.Scripts.Presenter;
-using Content.StartWindow.Scripts.Controller;
+using Content.StartScreen.Scripts.Controller;
 using Infrastructure.Service;
 using Infrastructure.Service.StateMachine;
 using Infrastructure.Service.StateMachine.SceneStates;
@@ -32,7 +32,7 @@ namespace Infrastructure.Game.GameManager
         
         private void SetupStartWindow()
         {
-            _startWindowController = new StartWindowController(
+            _startWindowController = new StartScreenController(
                 _viewFactory,
                 _viewManager,
                 () => _sceneStateMachine.EnterState<MetaSceneState>(),

@@ -1,7 +1,7 @@
 ﻿using Content.LoadingCurtain.Scripts.Controller;
 using Content.SettingsPopup.Scripts.Data;
 using Content.SettingsPopup.Scripts.Presenter;
-using Content.StartWindow.Scripts.Controller;
+using Content.StartScreen.Scripts.Controller;
 using Infrastructure.Game.GameManager;
 using Infrastructure.Game.Tutorials.Data;
 using Infrastructure.Service;
@@ -47,7 +47,7 @@ namespace Infrastructure.Game
             builder.Register<ISceneService, SceneService>(Lifetime.Singleton);
             builder.Register<IStateMachine, SceneStateMachine>(Lifetime.Singleton);
             builder.Register<ILoadingCurtainController, LoadingCurtainController>(Lifetime.Singleton);
-            builder.Register<IStartWindowController, StartWindowController>(Lifetime.Singleton);
+            builder.Register<IStartScreenController, StartScreenController>(Lifetime.Singleton);
             builder.Register<ISettingsPopupPresenter, SettingsPopupPresenter>(Lifetime.Singleton);
             builder.Register<IViewManager, ViewManager>(Lifetime.Singleton);
             builder.Register<ISignalBus, EventSignalBus>(Lifetime.Singleton);

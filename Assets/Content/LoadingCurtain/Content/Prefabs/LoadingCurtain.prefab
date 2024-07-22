@@ -145,6 +145,7 @@ GameObject:
   - component: {fileID: 1784144706105213055}
   - component: {fileID: 6162251516117336844}
   - component: {fileID: 6230208588483727226}
+  - component: {fileID: 5586639602547594609}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -192,7 +193,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.8679245, g: 0, b: 0.27060977, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -209,6 +210,25 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &5586639602547594609
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7597282178848189594}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 276eed55e99c51b4f94c5c2e88c29e6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_colorTop: {r: 0.86666673, g: 0, b: 0.27058825, a: 1}
+  m_colorBottom: {r: 0.69803923, g: 0, b: 0.37904412, a: 1}
+  m_colorLeft: {r: 1, g: 1, b: 1, a: 1}
+  m_colorRight: {r: 1, g: 1, b: 1, a: 1}
+  m_gradientOffsetVertical: 0
+  m_gradientOffsetHorizontal: 0
+  m_splitTextGradient: 0
 --- !u!1 &7989221390039999705
 GameObject:
   m_ObjectHideFlags: 0
@@ -341,6 +361,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_CanvasGroup: {fileID: 8788335077980463959}
   m_LoadingText: {fileID: 6120693155581400235}
+  m_GradientColor: {fileID: 5586639602547594609}
 --- !u!222 &6272192030029509335
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -33,7 +33,7 @@ namespace Content.LoadingCurtain.Scripts.Controller
             var view = _viewFactory
                 .CreateView<IMonoBehaviour>(ViewInfo.LoadingCurtainKey, ViewType.Service);
             
-            var animator = new LoadingCurtainViewAnimator(view as LoadingCurtainView);
+            var animator = new LoadingCurtainViewAnimator(view as ILoadingCurtainView);
             
             _viewInteractor = new ViewRegistrar(_viewManager)
                 .SetViewKey(ViewInfo.LoadingCurtainKey)
