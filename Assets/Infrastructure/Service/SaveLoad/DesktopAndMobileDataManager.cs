@@ -57,15 +57,22 @@ namespace Infrastructure.Service.SaveLoad
         
         private void TryLoadData()
         {
-            var saveFile = _fileService.Load<string>(DataManagerInfo.SaveFilePath).ToString();
+            var saveFile = _fileService.Load<string>(DataManagerInfo.SaveFilePath);
             
-            if (string.IsNullOrEmpty(saveFile))
+            if (saveFile == null)
+            {
+                return;
+            }
+
+            var stringSaveFile = saveFile.ToString();
+            
+            if (string.IsNullOrEmpty(stringSaveFile))
             {
                 return;
             }
             
             var dataNameToType = CreateTypeMapping();
-            var loadedData = _dataSerializer.Deserialize(saveFile, dataNameToType);
+            var loadedData = _dataSerializer.Deserialize(stringSaveFile, dataNameToType);
             Debug.Log($"{GetType().Name}: save data loaded, path: {DataManagerInfo.SaveFilePath}");
 
             foreach (var kvp in loadedData)

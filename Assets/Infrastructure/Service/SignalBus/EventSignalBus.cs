@@ -60,7 +60,7 @@ namespace Infrastructure.Service.SignalBus
                 return true;
             }
             
-            Debug.LogError($"EventSignalBus: you try to subscribe on {type} twice with object: " +
+            Debug.LogError($"{GetType().Name}: you try to subscribe on {type} twice with object: " +
                            $"{listener} type: {listener.GetType()}");
             
             return false;
