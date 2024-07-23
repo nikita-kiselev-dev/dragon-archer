@@ -3,6 +3,7 @@ using Content.SettingsPopup.Scripts.Data;
 using Content.SettingsPopup.Scripts.Presenter;
 using Content.StartScreen.Scripts.Controller;
 using Infrastructure.Game.GameManager;
+using Infrastructure.Game.Tutorials;
 using Infrastructure.Game.Tutorials.Data;
 using Infrastructure.Service;
 using Infrastructure.Service.Asset;
@@ -35,12 +36,13 @@ namespace Infrastructure.Game
         {
             builder.RegisterComponent<ICoroutineRunner>(m_CoroutineRunner);
             builder.RegisterComponent(m_ServiceCanvas);
-
-            builder.Register<IFileService, FileService>(Lifetime.Singleton);
-            builder.Register<IDataSerializer, JsonDataSerializer>(Lifetime.Singleton);
             
+            RegisterDataServices(builder);
             RegisterData(builder);
+            RegisterTutorialData(builder);
+            RegisterDataManager(builder);
             
+            builder.Register<ITutorialService, TutorialService>(Lifetime.Singleton);
             builder.Register<IAssetLoader, AddressableAssetLoader>(Lifetime.Singleton);
             builder.Register<IViewFactory, ViewFactory>(Lifetime.Singleton);
             builder.Register<IMainCanvasController, MainCanvasController>(Lifetime.Singleton);
@@ -52,15 +54,38 @@ namespace Infrastructure.Game
             builder.Register<IViewManager, ViewManager>(Lifetime.Singleton);
             builder.Register<ISignalBus, EventSignalBus>(Lifetime.Singleton);
             builder.Register<IGame, Game>(Lifetime.Singleton);
+            
             RegisterGameManagers(builder);
+            
             builder.RegisterEntryPoint<GameBootstrapper>();
+        }
+
+        private void RegisterDataServices(IContainerBuilder builder)
+        {
+            builder.Register<IFileService, FileService>(Lifetime.Singleton);
+            builder.Register<IDataSerializer, JsonDataSerializer>(Lifetime.Singleton);
         }
 
         private void RegisterData(IContainerBuilder builder)
         {
-            builder.Register<Data, OnboardingTutorialData>(Lifetime.Singleton).AsSelf();
             builder.Register<Data, SettingsPopupData>(Lifetime.Singleton).AsSelf();
-            builder.Register<IDataManager, DesktopAndMobileDataManager>(Lifetime.Singleton);
+        }
+
+        private void RegisterTutorialData(IContainerBuilder builder)
+        {
+            builder.Register<Data, OnboardingTutorialData>(Lifetime.Singleton).AsSelf().As<TutorialData>();
+
+        }
+
+        private void RegisterDataManager(IContainerBuilder builder)
+        {
+            #if UNITY_STANDALONE || UNITY_IOS || UNITY_ANDROID
+                builder.Register<IDataManager, DesktopAndMobileDataManager>(Lifetime.Singleton);
+            #endif
+                        
+            #if UNITY_WEBGL
+                builder.Register<IDataManager, WebDataManager>(Lifetime.Singleton);
+            #endif
         }
         
         private void RegisterGameManagers(IContainerBuilder builder)

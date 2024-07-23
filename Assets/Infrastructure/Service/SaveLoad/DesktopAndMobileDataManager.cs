@@ -14,7 +14,7 @@ namespace Infrastructure.Service.SaveLoad
 {
     public class DesktopAndMobileDataManager : IDataManager
     {
-        [Inject] private IEnumerable<Data> _datas;
+        [Inject] private IEnumerable<Data> _injectedDatas;
         [Inject] private readonly IFileService _fileService;
         [Inject] private readonly ISignalBus _signalBus;
         [Inject] private readonly IDataSerializer _dataSerializer;
@@ -41,7 +41,7 @@ namespace Infrastructure.Service.SaveLoad
                 return;
             }
 
-            var fullSave = _datas.ToDictionary(data => data.Name());
+            var fullSave = _injectedDatas.ToDictionary(data => data.Name());
             var stringFullSave = JsonConvert.SerializeObject(fullSave);
             _fileService.Save<string>(DataManagerInfo.SaveFilePath, stringFullSave);
             Debug.Log($"{GetType().Name}: save data saved, path: {DataManagerInfo.SaveFilePath}");
@@ -80,7 +80,7 @@ namespace Infrastructure.Service.SaveLoad
         {
             var dataNameToType = new Dictionary<string, Type>();
             
-            foreach (var data in _datas)
+            foreach (var data in _injectedDatas)
             {
                 dataNameToType[data.Name()] = data.GetType();
             }
@@ -90,7 +90,7 @@ namespace Infrastructure.Service.SaveLoad
         
         private void SetDataOnLoaded()
         {
-            foreach (var data in _datas)
+            foreach (var data in _injectedDatas)
             {
                 if (_dataRepository.TryGetValue(data.Name(), out var loadedData))
                 {
@@ -114,7 +114,7 @@ namespace Infrastructure.Service.SaveLoad
         
         private void PrepareNewData()
         {
-            foreach (var data in _datas)
+            foreach (var data in _injectedDatas)
             {
                 if (_dataRepository.ContainsKey(data.Name()) && _dataRepository[data.Name()] != null)
                 {

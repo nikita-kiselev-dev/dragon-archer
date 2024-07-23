@@ -16,5 +16,10 @@ namespace Infrastructure.Service.SaveLoad
         {
             m_IsTutorialCompleted = false;
         }
+
+        public void SetTutorialCompleted()
+        {
+            m_IsTutorialCompleted = true;
+        }
     }
 }

@@ -1,5 +1,8 @@
-﻿using Content.SettingsPopup.Scripts.Presenter;
+﻿using System;
+using Content.SettingsPopup.Scripts.Presenter;
 using Content.StartScreen.Scripts.Controller;
+using Infrastructure.Game.Tutorials;
+using Infrastructure.Game.Tutorials.Data;
 using Infrastructure.Service;
 using Infrastructure.Service.StateMachine;
 using Infrastructure.Service.StateMachine.SceneStates;
@@ -15,14 +18,15 @@ namespace Infrastructure.Game.GameManager
         [Inject] private readonly IStateMachine _sceneStateMachine;
         [Inject] private readonly IViewFactory _viewFactory;
         [Inject] private readonly IViewManager _viewManager;
+        [Inject] private readonly ITutorialService _tutorialService;
         [Inject] private readonly ISettingsPopupPresenter _settingsPopupPresenter;
         
-        private IController _startWindowController;
+        private IController _startScreenController;
         
         public void OnSceneStart()
         {
             _settingsPopupPresenter.Init();
-            SetupStartWindow();
+            SetupStartScreen();
         }
 
         public void OnSceneExit()
@@ -30,15 +34,21 @@ namespace Infrastructure.Game.GameManager
             Debug.Log("Start Scene Exit");
         }
         
-        private void SetupStartWindow()
+        private void SetupStartScreen()
         {
-            _startWindowController = new StartScreenController(
+            var onboardingCompleted = _tutorialService
+                .IsTutorialCompleted<OnboardingTutorialData>();
+            
+            Action startAction = onboardingCompleted
+                ? () => _sceneStateMachine.EnterState<MetaSceneState>()
+                : () => _sceneStateMachine.EnterState<CoreSceneState>();
+            
+            _startScreenController = new StartScreenController(
                 _viewFactory,
                 _viewManager,
-                () => _sceneStateMachine.EnterState<MetaSceneState>(),
-                () => _sceneStateMachine.EnterState<CoreSceneState>());
+                startAction);
             
-            _startWindowController.Init();
+            _startScreenController.Init();
         }
     }
 }

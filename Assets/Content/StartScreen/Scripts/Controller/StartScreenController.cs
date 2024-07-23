@@ -12,19 +12,16 @@ namespace Content.StartScreen.Scripts.Controller
         private readonly IViewFactory _viewFactory;
         private readonly IViewManager _viewManager;
 
-        private readonly Action _openMetaScene;
-        private readonly Action _openCoreScene;
+        private readonly Action _onStartButtonClicked;
         
         public StartScreenController(
             IViewFactory viewFactory,
             IViewManager viewManager,
-            Action openMetaScene,
-            Action openCoreScene)
+            Action onStartButtonClicked)
         {
             _viewFactory = viewFactory;
             _viewManager = viewManager;
-            _openMetaScene = openMetaScene;
-            _openCoreScene = openCoreScene;
+            _onStartButtonClicked = onStartButtonClicked;
         }
         
         public void Init()
@@ -35,17 +32,7 @@ namespace Content.StartScreen.Scripts.Controller
 
         private void StartGame()
         {
-            //TODO: load from save
-            var tutorialCompleted = false;
-
-            if (tutorialCompleted)
-            {
-                _openMetaScene?.Invoke();
-            }
-            else
-            {
-                _openCoreScene?.Invoke();
-            }
+            _onStartButtonClicked?.Invoke();
         }
 
         private void OpenSettings()
@@ -60,7 +47,7 @@ namespace Content.StartScreen.Scripts.Controller
 
         private void RegisterAndInitView()
         {
-            var view = _viewFactory.CreateView<IView>(ViewInfo.StartWindowKey, ViewType.Window);
+            var view = _viewFactory.CreateView<IView>(ViewInfo.StartScreenKey, ViewType.Window);
             
             var viewSignalManager = new ViewSignalManager()
                 .AddSignal(StartScreenInfo.StartGameSignal, StartGame)
@@ -68,7 +55,7 @@ namespace Content.StartScreen.Scripts.Controller
                 .AddSignal(StartScreenInfo.OpenWebSiteSignal, OpenWebSite);
             
             new ViewRegistrar(_viewManager)
-                .SetViewKey(ViewInfo.StartWindowKey)
+                .SetViewKey(ViewInfo.StartScreenKey)
                 .SetViewType(ViewType.Window)
                 .SetView(view)
                 .SetViewSignalManager(viewSignalManager)

@@ -8,7 +8,7 @@
         public const float HideViewBackgroundDuration = 0.2f;
 
         public const string LoadingCurtainKey = "LoadingCurtain";
-        public const string StartWindowKey = "StartScreen";
+        public const string StartScreenKey = "StartScreen";
         public const string SettingsPopupKey = "SettingsPopup";
 
         public const string OpenSignal = "OpenSignal";
