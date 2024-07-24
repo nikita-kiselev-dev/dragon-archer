@@ -1,4 +1,5 @@
 ﻿using Content.LoadingCurtain.Scripts.Controller;
+using Content.Meta.DailyBonus;
 using Content.SettingsPopup.Scripts.Data;
 using Content.SettingsPopup.Scripts.Presenter;
 using Content.StartScreen.Scripts.Controller;
@@ -8,6 +9,7 @@ using Infrastructure.Game.Tutorials.Data;
 using Infrastructure.Service;
 using Infrastructure.Service.Asset;
 using Infrastructure.Service.Data;
+using Infrastructure.Service.LiveOps;
 using Infrastructure.Service.SaveLoad;
 using Infrastructure.Service.Scene;
 using Infrastructure.Service.SignalBus;
@@ -42,17 +44,21 @@ namespace Infrastructure.Game
             RegisterTutorialData(builder);
             RegisterDataManager(builder);
             
+            
             builder.Register<ITutorialService, TutorialService>(Lifetime.Singleton);
             builder.Register<IAssetLoader, AddressableAssetLoader>(Lifetime.Singleton);
             builder.Register<IViewFactory, ViewFactory>(Lifetime.Singleton);
             builder.Register<IMainCanvasController, MainCanvasController>(Lifetime.Singleton);
             builder.Register<ISceneService, SceneService>(Lifetime.Singleton);
             builder.Register<IStateMachine, SceneStateMachine>(Lifetime.Singleton);
+            builder.Register<PlayFabService>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<ILoadingCurtainController, LoadingCurtainController>(Lifetime.Singleton);
             builder.Register<IStartScreenController, StartScreenController>(Lifetime.Singleton);
             builder.Register<ISettingsPopupPresenter, SettingsPopupPresenter>(Lifetime.Singleton);
             builder.Register<IViewManager, ViewManager>(Lifetime.Singleton);
             builder.Register<ISignalBus, EventSignalBus>(Lifetime.Singleton);
+            
+            builder.Register<IDailyBonusController, DailyBonusController>(Lifetime.Singleton);
             builder.Register<IGame, Game>(Lifetime.Singleton);
             
             RegisterGameManagers(builder);
@@ -79,13 +85,15 @@ namespace Infrastructure.Game
 
         private void RegisterDataManager(IContainerBuilder builder)
         {
-            #if UNITY_STANDALONE || UNITY_IOS || UNITY_ANDROID
+            /*#if UNITY_STANDALONE || UNITY_IOS || UNITY_ANDROID
                 builder.Register<IDataManager, DesktopAndMobileDataManager>(Lifetime.Singleton);
             #endif
                         
             #if UNITY_WEBGL
                 builder.Register<IDataManager, WebDataManager>(Lifetime.Singleton);
-            #endif
+            #endif*/
+            
+            builder.Register<IDataManager, DesktopAndMobileDataManager>(Lifetime.Singleton);
         }
         
         private void RegisterGameManagers(IContainerBuilder builder)

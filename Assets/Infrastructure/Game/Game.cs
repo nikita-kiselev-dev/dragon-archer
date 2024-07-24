@@ -30,8 +30,8 @@ namespace Infrastructure.Game
             _gameManagers = new Dictionary<Type, IGameManager>
             {
                 { typeof(StartGameManager), _startGameManager },
-                { typeof(MetaGameManager), new MetaGameManager() },
-                { typeof(CoreGameManager), new CoreGameManager() }
+                { typeof(MetaGameManager), _metaGameManager },
+                { typeof(CoreGameManager), _coreGameManager }
             };
         }
 

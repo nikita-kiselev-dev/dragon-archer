@@ -3,6 +3,7 @@
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.addressables": "1.21.21",
     "com.unity.collab-proxy": "2.3.1",
+    "com.unity.connect.share": "4.2.3",
     "com.unity.feature.development": "1.0.1",
     "com.unity.localization": "1.4.5",
     "com.unity.textmeshpro": "3.0.6",

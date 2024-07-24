@@ -1,4 +1,4 @@
-namespace Infrastructure.Game.Meta.DailyBonus
+namespace Content.Meta.DailyBonus
 {
     public class WebDailyBonusModel : IDailyBonusModel
     {

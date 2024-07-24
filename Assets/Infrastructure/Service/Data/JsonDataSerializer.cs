@@ -23,7 +23,7 @@ namespace Infrastructure.Service.Data
                 }
                 else
                 {
-                    Debug.LogError($"{GetType().Name}: Unknown type for key: {key} can't deserialize save file!");
+                    Debug.LogError($"{GetType().Name}: unknown type for key: {key} can't deserialize save file!");
                 }
             }
 

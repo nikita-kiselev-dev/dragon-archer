@@ -1,17 +1,22 @@
+using Content.Meta.DailyBonus;
 using UnityEngine;
+using VContainer;
 
 namespace Infrastructure.Game.GameManager
 {
     public class MetaGameManager : IMetaGameManager
     {
+        [Inject] private readonly IDailyBonusController _dailyBonusController;
+        
         public void OnSceneStart()
         {
-            Debug.Log("Meta Game Start");
+            _dailyBonusController.Init();
+            Debug.Log($"{GetType().Name}: start");
         }
 
         public void OnSceneExit()
         {
-            Debug.Log("Meta Game Exit");
+            Debug.Log($"{GetType().Name}: exit");
         }
     }
 }

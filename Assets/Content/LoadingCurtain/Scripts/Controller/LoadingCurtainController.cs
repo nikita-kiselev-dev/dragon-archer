@@ -41,6 +41,7 @@ namespace Content.LoadingCurtain.Scripts.Controller
                 .SetView(view)
                 .SetCustomOpenAnimation(animator)
                 .SetCustomCloseAnimation(animator)
+                .EnableFromStart()
                 .RegisterAndInit();
         }
     }

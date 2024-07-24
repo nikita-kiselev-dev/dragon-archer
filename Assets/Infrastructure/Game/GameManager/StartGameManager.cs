@@ -2,7 +2,6 @@
 using Content.SettingsPopup.Scripts.Presenter;
 using Content.StartScreen.Scripts.Controller;
 using Infrastructure.Game.Tutorials;
-using Infrastructure.Game.Tutorials.Data;
 using Infrastructure.Service;
 using Infrastructure.Service.StateMachine;
 using Infrastructure.Service.StateMachine.SceneStates;
@@ -27,17 +26,21 @@ namespace Infrastructure.Game.GameManager
         {
             _settingsPopupPresenter.Init();
             SetupStartScreen();
+            
+            Debug.Log($"{GetType().Name}: start");
         }
 
         public void OnSceneExit()
         {
-            Debug.Log("Start Scene Exit");
+            Debug.Log($"{GetType().Name}: exit");
         }
         
         private void SetupStartScreen()
         {
-            var onboardingCompleted = _tutorialService
-                .IsTutorialCompleted<OnboardingTutorialData>();
+            /*var onboardingCompleted = _tutorialService
+                .IsTutorialCompleted<OnboardingTutorialData>();*/
+
+            var onboardingCompleted = true;
             
             Action startAction = onboardingCompleted
                 ? () => _sceneStateMachine.EnterState<MetaSceneState>()

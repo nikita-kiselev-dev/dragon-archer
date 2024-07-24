@@ -1,6 +1,5 @@
 ﻿using System;
 using Infrastructure.Service.Scene;
-using UnityEngine;
 
 namespace Infrastructure.Service.StateMachine.SceneStates
 {
@@ -22,12 +21,10 @@ namespace Infrastructure.Service.StateMachine.SceneStates
 
         public void Exit()
         {
-            Debug.Log("Exit Bootstrap Scene State");
         }
 
         private void OnLoaded()
         {
-            Debug.Log("Entered Bootstrap Scene State");
             _onSceneLoaded?.Invoke();
         }
     }

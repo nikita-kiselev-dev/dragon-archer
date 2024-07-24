@@ -1,7 +1,7 @@
-namespace Infrastructure.Game.Meta.DailyBonus
+namespace Content.Meta.DailyBonus
 {
     public interface IDailyBonusController
     {
-        
+        public void Init();
     }
 }

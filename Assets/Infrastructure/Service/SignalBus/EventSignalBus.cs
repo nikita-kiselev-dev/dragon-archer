@@ -7,8 +7,7 @@ namespace Infrastructure.Service.SignalBus
 {
     public class EventSignalBus : ISignalBus
     {
-        private Dictionary<Type, Dictionary<object, IActionWrapper>> _events =
-            new Dictionary<Type, Dictionary<object, IActionWrapper>>();
+        private Dictionary<Type, Dictionary<object, IActionWrapper>> _events = new();
 
         public void Subscribe<T>(object listener, Action action)
         {

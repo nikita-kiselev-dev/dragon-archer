@@ -1,6 +1,5 @@
 ﻿using Infrastructure.Game.GameManager;
 using Infrastructure.Service.Scene;
-using UnityEngine;
 
 namespace Infrastructure.Service.StateMachine.SceneStates
 {
@@ -23,7 +22,6 @@ namespace Infrastructure.Service.StateMachine.SceneStates
         public void Exit()
         {
             _gameManager.OnSceneExit();
-            Debug.Log("Exit Start Scene State");
         }
 
         private void OnLoaded()

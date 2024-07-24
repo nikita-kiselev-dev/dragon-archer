@@ -85,7 +85,6 @@ namespace Infrastructure.Service.SaveLoad
         {
             yield return new WaitForSeconds(AutoSaveDelay);
             _isReadyForSave = true;
-            Debug.Log("Save is ready!");
         }
     }
 }

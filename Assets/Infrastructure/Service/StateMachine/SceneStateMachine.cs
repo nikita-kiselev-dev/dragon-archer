@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Content.LoadingCurtain.Scripts.Controller;
 using Infrastructure.Game.GameManager;
 using Infrastructure.Service.Scene;
 using Infrastructure.Service.StateMachine.SceneStates;
@@ -10,7 +9,6 @@ namespace Infrastructure.Service.StateMachine
 {
     public class SceneStateMachine : IStateMachine
     {
-        [Inject] private readonly ILoadingCurtainController _loadingCurtainController;
         [Inject] private readonly ISceneService _sceneService;
         
         private Dictionary<Type, ISceneState> _states;
@@ -18,8 +16,6 @@ namespace Infrastructure.Service.StateMachine
         
         public void Init(Dictionary<Type, IGameManager> gameManagers)
         {
-            _loadingCurtainController.Init();
-            
             _states = new Dictionary<Type, ISceneState>
             {
                 { typeof(BootstrapSceneState), new BootstrapSceneState(_sceneService, EnterState<StartSceneState>) },

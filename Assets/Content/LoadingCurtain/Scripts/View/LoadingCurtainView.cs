@@ -12,14 +12,20 @@ namespace Content.LoadingCurtain.Scripts.View
         [SerializeField] private TextMeshProUGUI m_LoadingText;
         [SerializeField] private GradientColor m_GradientColor;
 
+        private string _loadingLocalizedString;
         private Coroutine _textAnimationCoroutine;
         
         public CanvasGroup CanvasGroup => m_CanvasGroup;
         public GradientColor GradientColor => m_GradientColor;
-
+        
         public void SetActive(bool isActive)
         {
             gameObject.SetActive(isActive);
+        }
+        
+        private async void Awake()
+        {
+            _loadingLocalizedString = await "loading".LocalizeAsync();
         }
 
         private void OnEnable()
@@ -29,14 +35,17 @@ namespace Content.LoadingCurtain.Scripts.View
 
         private void OnDisable()
         {
-            StopCoroutine(_textAnimationCoroutine);
+            if (_textAnimationCoroutine != null)
+            {
+                StopCoroutine(_textAnimationCoroutine);
+            }
         }
 
         private IEnumerator TextAnimation()
         {
             while (true)
             {
-                m_LoadingText.text = "loading".Localize();
+                m_LoadingText.text = _loadingLocalizedString;
                 var dotsToAdd = LoadingCurtainInfo.DotsToAddInAnimation;
 
                 while (dotsToAdd >= 0)
