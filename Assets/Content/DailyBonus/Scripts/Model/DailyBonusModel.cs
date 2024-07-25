@@ -25,12 +25,6 @@ namespace Content.DailyBonus.Scripts.Model
             _data.AddStreakDayData();
         }
 
-        public void SetStartStreakData(DateTime startDate)
-        {
-            var convertedDate = _dateConverter.DateTimeToUnixTimeStamp(startDate);
-            _data.SetStartStreakDateData(convertedDate);
-        }
-
         public DateTime GetStartStreakData()
         {
             var convertedDate = _dateConverter.UnixTimeStampToDateTime(_data.StartStreakDate);
@@ -41,6 +35,12 @@ namespace Content.DailyBonus.Scripts.Model
         {
             _data.ResetStreak();
             SetStartStreakData(startDate);
+        }
+        
+        private void SetStartStreakData(DateTime startDate)
+        {
+            var convertedDate = _dateConverter.DateTimeToUnixTimeStamp(startDate);
+            _data.SetStartStreakDateData(convertedDate);
         }
     }
 }
