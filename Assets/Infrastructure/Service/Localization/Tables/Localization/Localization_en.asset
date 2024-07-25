@@ -54,6 +54,50 @@ MonoBehaviour:
     m_Localized: Loading
     m_Metadata:
       m_Items: []
+  - m_Id: 5412253723959296
+    m_Localized: Daily Bonus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5412253749125120
+    m_Localized: Second
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5412253749125121
+    m_Localized: Seconds
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5412253749125122
+    m_Localized: Minute
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5412253749125123
+    m_Localized: Minutes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5412253749125124
+    m_Localized: Day
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5412253749125125
+    m_Localized: Days
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5412253749125126
+    m_Localized: Month
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5412253749125127
+    m_Localized: Months
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5412253749125128
+    m_Localized: Year
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5412253749125129
+    m_Localized: Years
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

@@ -1,6 +1,8 @@
-﻿using Infrastructure.Service.View.ViewSignalManager;
+﻿using Infrastructure.Service.View;
+using Infrastructure.Service.View.ViewSignalManager;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Content.DailyBonus.Scripts.View
@@ -8,8 +10,11 @@ namespace Content.DailyBonus.Scripts.View
     public class DailyBonusView : MonoBehaviour, IDailyBonusView
     {
         [SerializeField] private Button m_CloseButton;
+        [FormerlySerializedAs("m_RewardRowManager")] [SerializeField] private RewardRowsManager m_RewardRowsManager;
         
         private UnityAction _onCloseButtonClicked;
+
+        public RewardRowsManager RewardRowsManager => m_RewardRowsManager;
         
         public void Init(IViewSignalManager viewSignalManager)
         {
@@ -17,6 +22,7 @@ namespace Content.DailyBonus.Scripts.View
             
             m_CloseButton.onClick.RemoveAllListeners();
             m_CloseButton.onClick.AddListener(OnCloseButtonClicked);
+            
         }
         
         public void SetActive(bool isActive)

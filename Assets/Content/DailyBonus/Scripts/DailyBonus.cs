@@ -1,6 +1,7 @@
 ﻿using Content.DailyBonus.Scripts.Data;
 using Content.DailyBonus.Scripts.Model;
 using Content.DailyBonus.Scripts.Presenter;
+using Infrastructure.Service.Asset;
 using Infrastructure.Service.Date;
 using Infrastructure.Service.LiveOps;
 using Infrastructure.Service.View.ViewFactory;
@@ -13,6 +14,7 @@ namespace Content.DailyBonus.Scripts
     {
         [Inject] private readonly IViewFactory _viewFactory;
         [Inject] private readonly IViewManager _viewManager;
+        [Inject] private readonly IAssetLoader _assetLoader;
         [Inject] private readonly IServerTimeService _serverTimeService;
         
         [Inject] private readonly DailyBonusData _data;
@@ -35,7 +37,7 @@ namespace Content.DailyBonus.Scripts
         
         private void CreatePresenter()
         {
-            _presenter = new DailyBonusPresenter(_model, _viewFactory, _viewManager, _serverTimeService);
+            _presenter = new DailyBonusPresenter(_model, _viewFactory, _viewManager, _assetLoader, _serverTimeService);
         }
     }
 }
