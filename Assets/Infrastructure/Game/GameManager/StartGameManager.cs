@@ -1,5 +1,5 @@
 ﻿using System;
-using Content.SettingsPopup.Scripts.Presenter;
+using Content.Settings.Scripts;
 using Content.StartScreen.Scripts.Controller;
 using Infrastructure.Game.Tutorials;
 using Infrastructure.Service;
@@ -18,13 +18,13 @@ namespace Infrastructure.Game.GameManager
         [Inject] private readonly IViewFactory _viewFactory;
         [Inject] private readonly IViewManager _viewManager;
         [Inject] private readonly ITutorialService _tutorialService;
-        [Inject] private readonly ISettingsPopupPresenter _settingsPopupPresenter;
+        [Inject] private readonly ISettingsPopup _settingsPopup;
         
         private IController _startScreenController;
         
         public void OnSceneStart()
         {
-            _settingsPopupPresenter.Init();
+            _settingsPopup.Init();
             SetupStartScreen();
             
             Debug.Log($"{GetType().Name}: start");

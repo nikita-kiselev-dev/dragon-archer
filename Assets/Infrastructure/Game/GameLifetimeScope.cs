@@ -1,7 +1,8 @@
-﻿using Content.LoadingCurtain.Scripts.Controller;
-using Content.Meta.DailyBonus;
-using Content.SettingsPopup.Scripts.Data;
-using Content.SettingsPopup.Scripts.Presenter;
+﻿using Content.DailyBonus.Scripts;
+using Content.DailyBonus.Scripts.Data;
+using Content.LoadingCurtain.Scripts.Controller;
+using Content.Settings.Scripts;
+using Content.Settings.Scripts.Data;
 using Content.StartScreen.Scripts.Controller;
 using Infrastructure.Game.GameManager;
 using Infrastructure.Game.Tutorials;
@@ -9,6 +10,7 @@ using Infrastructure.Game.Tutorials.Data;
 using Infrastructure.Service;
 using Infrastructure.Service.Asset;
 using Infrastructure.Service.Data;
+using Infrastructure.Service.Date;
 using Infrastructure.Service.LiveOps;
 using Infrastructure.Service.SaveLoad;
 using Infrastructure.Service.Scene;
@@ -38,6 +40,8 @@ namespace Infrastructure.Game
         {
             builder.RegisterComponent<ICoroutineRunner>(m_CoroutineRunner);
             builder.RegisterComponent(m_ServiceCanvas);
+
+            builder.Register<IDateConverter, DateConverter>(Lifetime.Singleton);
             
             RegisterDataServices(builder);
             RegisterData(builder);
@@ -54,11 +58,11 @@ namespace Infrastructure.Game
             builder.Register<PlayFabService>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<ILoadingCurtainController, LoadingCurtainController>(Lifetime.Singleton);
             builder.Register<IStartScreenController, StartScreenController>(Lifetime.Singleton);
-            builder.Register<ISettingsPopupPresenter, SettingsPopupPresenter>(Lifetime.Singleton);
+            builder.Register<ISettingsPopup, SettingsPopup>(Lifetime.Singleton);
             builder.Register<IViewManager, ViewManager>(Lifetime.Singleton);
             builder.Register<ISignalBus, EventSignalBus>(Lifetime.Singleton);
             
-            builder.Register<IDailyBonusController, DailyBonusController>(Lifetime.Singleton);
+            builder.Register<IDailyBonus, DailyBonus>(Lifetime.Singleton);
             builder.Register<IGame, Game>(Lifetime.Singleton);
             
             RegisterGameManagers(builder);
@@ -74,12 +78,13 @@ namespace Infrastructure.Game
 
         private void RegisterData(IContainerBuilder builder)
         {
-            builder.Register<Data, SettingsPopupData>(Lifetime.Singleton).AsSelf();
+            builder.Register<Service.SaveLoad.Data, SettingsPopupData>(Lifetime.Singleton).AsSelf();
+            builder.Register<Service.SaveLoad.Data, DailyBonusData>(Lifetime.Singleton).AsSelf();
         }
 
         private void RegisterTutorialData(IContainerBuilder builder)
         {
-            builder.Register<Data, OnboardingTutorialData>(Lifetime.Singleton).AsSelf().As<TutorialData>();
+            builder.Register<Service.SaveLoad.Data, OnboardingTutorialData>(Lifetime.Singleton).AsSelf().As<TutorialData>();
 
         }
 

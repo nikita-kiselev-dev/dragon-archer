@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Infrastructure.Service.SignalBus;
 using VContainer;
 
@@ -16,13 +17,13 @@ namespace Infrastructure.Service.LiveOps
         {
             _timeService = new PlayFabServerTimeService(_coroutineRunner);
             
-            _loginService = new PlayFabLoginService(_signalBus, () => GetServerTime());
+            _loginService = new PlayFabLoginService(_signalBus);
             _loginService.Login();
         }
 
-        public void GetServerTime(Action<DateTime> callback = null)
+        public async Task<DateTime> GetServerTime()
         {
-            _timeService.GetServerTime(callback);
+            return await _timeService.GetServerTimeAsync();
         }
     }
 }

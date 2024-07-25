@@ -1,5 +1,4 @@
-﻿using System;
-using Infrastructure.Service.SignalBus;
+﻿using Infrastructure.Service.SignalBus;
 using PlayFab;
 using PlayFab.ClientModels;
 using UnityEngine;
@@ -9,14 +8,12 @@ namespace Infrastructure.Service.LiveOps
     public class PlayFabLoginService
     {
         private readonly ISignalBus _signalBus;
-        private readonly Action _getServerTime;
         
         private bool _isLoggedIn;
 
-        public PlayFabLoginService(ISignalBus signalBus, Action getServerTime)
+        public PlayFabLoginService(ISignalBus signalBus)
         {
             _signalBus = signalBus;
-            _getServerTime = getServerTime;
         }
         
         public void Login()
@@ -35,7 +32,6 @@ namespace Infrastructure.Service.LiveOps
             Debug.Log($"{GetType().Name} - login successful!\nWelcome, " + result.PlayFabId + "!");
             _isLoggedIn = true;
             GetPlayerProfile();
-            _getServerTime?.Invoke();
         }
 
         private void OnLoginFailure(PlayFabError error)

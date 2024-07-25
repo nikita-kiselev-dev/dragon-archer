@@ -47,28 +47,25 @@ namespace Infrastructure.Service.View.ViewSignalManager
         {
             var signal = _signals[signalName];
             
-            if (withSound && signal.HaveAudio)
+            switch (withSound)
             {
-                return arg =>
-                {
-                    (signal.SignalDelegate as UnityAction<T>)?.Invoke(arg); 
-                    PlayCustomSound(signal.AudioClipName);
-                };
-            }
-            else if (withSound)
-            {
-                return arg =>
-                {
-                    (signal.SignalDelegate as UnityAction<T>)?.Invoke(arg); 
-                    PlayDefaultSound();
-                };
-            }
-            else
-            {
-                return arg =>
-                {
-                    (signal.SignalDelegate as UnityAction<T>)?.Invoke(arg);
-                };
+                case true when signal.HaveAudio:
+                    return arg =>
+                    {
+                        (signal.SignalDelegate as UnityAction<T>)?.Invoke(arg); 
+                        PlayCustomSound(signal.AudioClipName);
+                    };
+                case true:
+                    return arg =>
+                    {
+                        (signal.SignalDelegate as UnityAction<T>)?.Invoke(arg); 
+                        PlayDefaultSound();
+                    };
+                default:
+                    return arg =>
+                    {
+                        (signal.SignalDelegate as UnityAction<T>)?.Invoke(arg);
+                    };
             }
         }
         
@@ -86,25 +83,22 @@ namespace Infrastructure.Service.View.ViewSignalManager
         
         private UnityAction PlayWithSound(SignalAction signalAction, bool withSound)
         {
-            if (withSound && signalAction.HaveAudio)
+            switch (withSound)
             {
-                return () =>
-                {
-                    (signalAction.SignalDelegate as UnityAction)?.Invoke();
-                    PlayCustomSound(signalAction.AudioClipName);
-                };
-            }
-            else if (withSound)
-            {
-                return () =>
-                {
-                    (signalAction.SignalDelegate as UnityAction)?.Invoke();
-                    PlayDefaultSound();
-                };
-            }
-            else
-            {
-                return signalAction.SignalDelegate as UnityAction;
+                case true when signalAction.HaveAudio:
+                    return () =>
+                    {
+                        (signalAction.SignalDelegate as UnityAction)?.Invoke();
+                        PlayCustomSound(signalAction.AudioClipName);
+                    };
+                case true:
+                    return () =>
+                    {
+                        (signalAction.SignalDelegate as UnityAction)?.Invoke();
+                        PlayDefaultSound();
+                    };
+                default:
+                    return signalAction.SignalDelegate as UnityAction;
             }
         }
 

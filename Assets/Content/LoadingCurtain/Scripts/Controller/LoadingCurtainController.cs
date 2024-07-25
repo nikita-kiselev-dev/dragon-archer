@@ -31,12 +31,12 @@ namespace Content.LoadingCurtain.Scripts.Controller
         private void RegisterAndInitView()
         {
             var view = _viewFactory
-                .CreateView<IMonoBehaviour>(ViewInfo.LoadingCurtainKey, ViewType.Service);
+                .CreateView<IMonoBehaviour>(ViewInfo.LoadingCurtain, ViewType.Service);
             
             var animator = new LoadingCurtainViewAnimator(view as ILoadingCurtainView);
             
             _viewInteractor = new ViewRegistrar(_viewManager)
-                .SetViewKey(ViewInfo.LoadingCurtainKey)
+                .SetViewKey(ViewInfo.LoadingCurtain)
                 .SetViewType(ViewType.Service)
                 .SetView(view)
                 .SetCustomOpenAnimation(animator)

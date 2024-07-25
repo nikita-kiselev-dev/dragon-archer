@@ -1,4 +1,4 @@
-using Content.Meta.DailyBonus;
+using Content.DailyBonus.Scripts;
 using UnityEngine;
 using VContainer;
 
@@ -6,11 +6,11 @@ namespace Infrastructure.Game.GameManager
 {
     public class MetaGameManager : IMetaGameManager
     {
-        [Inject] private readonly IDailyBonusController _dailyBonusController;
+        [Inject] private readonly IDailyBonus _dailyBonus;
         
         public void OnSceneStart()
         {
-            _dailyBonusController.Init();
+            _dailyBonus.Init();
             Debug.Log($"{GetType().Name}: start");
         }
 

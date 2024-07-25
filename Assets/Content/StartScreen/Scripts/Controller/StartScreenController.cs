@@ -37,7 +37,7 @@ namespace Content.StartScreen.Scripts.Controller
 
         private void OpenSettings()
         {
-            _viewManager.Open(ViewInfo.SettingsPopupKey);
+            _viewManager.Open(ViewInfo.SettingsPopup);
         }
 
         private void OpenWebSite()
@@ -47,7 +47,7 @@ namespace Content.StartScreen.Scripts.Controller
 
         private void RegisterAndInitView()
         {
-            var view = _viewFactory.CreateView<IView>(ViewInfo.StartScreenKey, ViewType.Window);
+            var view = _viewFactory.CreateView<IView>(ViewInfo.StartScreen, ViewType.Window);
             
             var viewSignalManager = new ViewSignalManager()
                 .AddSignal(StartScreenInfo.StartGameSignal, StartGame)
@@ -55,7 +55,7 @@ namespace Content.StartScreen.Scripts.Controller
                 .AddSignal(StartScreenInfo.OpenWebSiteSignal, OpenWebSite);
             
             new ViewRegistrar(_viewManager)
-                .SetViewKey(ViewInfo.StartScreenKey)
+                .SetViewKey(ViewInfo.StartScreen)
                 .SetViewType(ViewType.Window)
                 .SetView(view)
                 .SetViewSignalManager(viewSignalManager)

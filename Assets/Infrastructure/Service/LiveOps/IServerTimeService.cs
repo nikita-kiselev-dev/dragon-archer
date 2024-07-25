@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Infrastructure.Service.LiveOps
 {
     public interface IServerTimeService
     {
-        public void GetServerTime(Action<DateTime> callback);
+        public Task<DateTime> GetServerTime();
     }
 }
