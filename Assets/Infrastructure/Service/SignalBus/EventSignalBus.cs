@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Infrastructure.Service.SignalBus
 {
@@ -9,13 +10,23 @@ namespace Infrastructure.Service.SignalBus
     {
         private Dictionary<Type, Dictionary<object, IActionWrapper>> _events = new();
 
-        public void Subscribe<T>(object listener, Action action)
+        public void Subscribe<T>(object listener, UnityAction action)
         {
             var type = typeof(T);
             
             if (AddSubscriber<T>(listener))
             {
-                _events[type].Add(listener, new ActionWrapper(listener, action));
+                _events[type].Add(listener, new ActionWrapperWithZeroArgument(listener, action));
+            }
+        }
+        
+        public void Subscribe<T, U>(object listener, UnityAction<U> action)
+        {
+            var type = typeof(T);
+            
+            if (AddSubscriber<T>(listener))
+            {
+                _events[type].Add(listener, new ActionWrapperWithOneArgument<U>(listener, action));
             }
         }
 
@@ -41,7 +52,25 @@ namespace Infrastructure.Service.SignalBus
             foreach (var wrapper in 
                      events.Select(actionWrapper => actionWrapper.Value))
             {
-                wrapper?.Invoke();
+                var convertedWrapper = wrapper as ActionWrapperWithZeroArgument;
+                convertedWrapper?.Invoke();
+            }
+        }
+
+        public void Trigger<T, U>(U arg)
+        {
+            var type = typeof(T);
+
+            if (!_events.TryGetValue(type, out var events))
+            {
+                return;
+            }
+
+            foreach (var wrapper in 
+                     events.Select(actionWrapper => actionWrapper.Value))
+            {
+                var convertedWrapper = wrapper as ActionWrapperWithOneArgument<U>;
+                convertedWrapper?.Invoke(arg);
             }
         }
 

@@ -1,8 +1,7 @@
 namespace Infrastructure.Service.SaveLoad
 {
-    public interface IDataManager
+    public interface IDataManager : IInitiable
     {
-        public void Init();
-        public void Save();
+        
     }
 }

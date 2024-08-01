@@ -22,18 +22,6 @@ MonoBehaviour:
     m_Localized: Dragon Archer
     m_Metadata:
       m_Items: []
-  - m_Id: 56821501304832
-    m_Localized: Start
-    m_Metadata:
-      m_Items: []
-  - m_Id: 56821505499136
-    m_Localized: Settings
-    m_Metadata:
-      m_Items: []
-  - m_Id: 56821505499137
-    m_Localized: WebSite
-    m_Metadata:
-      m_Items: []
   - m_Id: 99775746056192
     m_Localized: Settings
     m_Metadata:
@@ -96,6 +84,22 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 5412253749125129
     m_Localized: Years
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5773882961600512
+    m_Localized: Play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5773882978377728
+    m_Localized: WebSite
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5781877313413120
+    m_Localized: Get your daily reward!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5862862763761664
+    m_Localized: Today
     m_Metadata:
       m_Items: []
   references:

@@ -1,8 +1,10 @@
 ﻿using Content.DailyBonus.Scripts.Data;
+using Content.DailyBonus.Scripts.Dto;
 using Content.DailyBonus.Scripts.Model;
 using Content.DailyBonus.Scripts.Presenter;
 using Infrastructure.Service.Asset;
 using Infrastructure.Service.Date;
+using Infrastructure.Service.Dto;
 using Infrastructure.Service.LiveOps;
 using Infrastructure.Service.View.ViewFactory;
 using Infrastructure.Service.View.ViewManager;
@@ -12,6 +14,7 @@ namespace Content.DailyBonus.Scripts
 {
     public class DailyBonus : IDailyBonus
     {
+        [Inject] private readonly IDtoReader _dtoReader;
         [Inject] private readonly IViewFactory _viewFactory;
         [Inject] private readonly IViewManager _viewManager;
         [Inject] private readonly IAssetLoader _assetLoader;
@@ -19,7 +22,7 @@ namespace Content.DailyBonus.Scripts
         
         [Inject] private readonly DailyBonusData _data;
         [Inject] private readonly IDateConverter _dateConverter;
-
+        
         private IDailyBonusModel _model;
         private IDailyBonusPresenter _presenter;
         
@@ -37,7 +40,10 @@ namespace Content.DailyBonus.Scripts
         
         private void CreatePresenter()
         {
-            _presenter = new DailyBonusPresenter(_model, _viewFactory, _viewManager, _assetLoader, _serverTimeService);
+            var dto = _dtoReader.Read<DailyBonusDto>(DailyBonusInfo.DailyBonusConfig);
+            
+            _presenter = 
+                new DailyBonusPresenter(dto, _model, _viewFactory, _viewManager, _assetLoader, _serverTimeService);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Content.LoadingCurtain.Scripts.Controller;
+using Infrastructure.Service.Dto;
 using Infrastructure.Service.LiveOps;
 using Infrastructure.Service.SaveLoad;
 using Infrastructure.Service.SaveLoad.Signals;
@@ -13,6 +14,7 @@ namespace Infrastructure.Game
     {
         [Inject] private readonly ISignalBus _signalBus;
         [Inject] private readonly IDataManager _dataManager;
+        [Inject] private readonly IDtoManager _dtoManager;
         [Inject] private readonly ILoadingCurtainController _loadingCurtainController;
         [Inject] private readonly ILiveOpsController _liveOpsController;
         [Inject] private readonly IGame _game;
@@ -20,9 +22,10 @@ namespace Infrastructure.Game
         void IStartable.Start()
         {
             _signalBus.Subscribe<SaveFileLoadCompletedSignal>(this, InitServer);
-            _signalBus.Subscribe<ServerLoginCompletedSignal>(this, InitGame);
+            _signalBus.Subscribe<ServerLoginCompletedSignal, bool>(this, InitGame);
             _loadingCurtainController.Init();
             _dataManager.Init();
+            _dtoManager.Init();
         }
 
         void IDisposable.Dispose()
@@ -36,7 +39,7 @@ namespace Infrastructure.Game
             _liveOpsController.Init();
         }
 
-        private void InitGame()
+        private void InitGame(bool isLoginCompleted)
         {
             _loadingCurtainController.Hide();
             _game.Init();

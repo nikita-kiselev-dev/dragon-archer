@@ -3,9 +3,6 @@
     public static class ViewInfo
     {
         public const string MainCanvasKey = "MainCanvas";
-        
-        public const float ShowViewBackgroundDuration = 0.4f;
-        public const float HideViewBackgroundDuration = 0.2f;
 
         public const string LoadingCurtain = "LoadingCurtain";
         public const string StartScreen = "StartScreen";

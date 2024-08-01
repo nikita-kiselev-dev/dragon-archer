@@ -2,7 +2,7 @@
 
 namespace Content.StartScreen.Scripts.Controller
 {
-    public interface IStartScreenController : IController
+    public interface IStartScreenController : IInitiable
     {
         
     }

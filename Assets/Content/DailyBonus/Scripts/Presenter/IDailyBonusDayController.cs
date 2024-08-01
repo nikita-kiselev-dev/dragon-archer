@@ -2,7 +2,7 @@
 
 namespace Content.DailyBonus.Scripts.Presenter
 {
-    public interface IDailyBonusDayController : IController
+    public interface IDailyBonusDayController : IInitiable
     {
         
     }

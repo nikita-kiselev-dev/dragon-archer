@@ -9,7 +9,7 @@ namespace Infrastructure.Service.SaveLoad
     public class ProgressSaver : MonoBehaviour
     {
         [Inject] private readonly ISignalBus _signalBus;
-        [Inject] private readonly IDataManager _dataManager;
+        [Inject] private readonly IDataSaver _dataSaver;
         
         private const bool IsAutoSaveEnabled = true;
         private const int AutoSaveInterval = 60;
@@ -78,7 +78,7 @@ namespace Infrastructure.Service.SaveLoad
 
         private void Save()
         {
-            _dataManager.Save();
+            _dataSaver.Save();
         }
 
         private IEnumerator SaveDelay()

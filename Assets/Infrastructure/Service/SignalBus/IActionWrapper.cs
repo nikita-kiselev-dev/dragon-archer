@@ -2,6 +2,5 @@
 {
     public interface IActionWrapper
     {
-        public bool Invoke();
     }
 }

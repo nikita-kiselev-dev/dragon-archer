@@ -9,6 +9,7 @@ namespace Infrastructure.Service.View.ViewFactory
     {
         [Inject] private readonly IAssetLoader _assetLoader;
         [Inject] private readonly IMainCanvasController _mainCanvasController;
+        [Inject] private readonly IViewManager _viewManager;
         [Inject] private readonly ServiceCanvas _serviceCanvas;
         
         public T CreateView<T>(string viewKey, string viewType = null)
@@ -17,7 +18,7 @@ namespace Infrastructure.Service.View.ViewFactory
             
             if (!isServiceView)
             {
-                _mainCanvasController.PrepareCanvas(ViewInfo.MainCanvasKey);
+                _mainCanvasController.TryCreateCanvas(_viewManager.CloseLast);
             }
 
             var parent = isServiceView ? _serviceCanvas.transform : _mainCanvasController.GetParent(viewType);

@@ -2,6 +2,5 @@
 {
     public interface ICanvasController
     {
-        public void PrepareCanvas(string canvasKey);
     }
 }

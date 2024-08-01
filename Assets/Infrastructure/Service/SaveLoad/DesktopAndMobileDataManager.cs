@@ -12,7 +12,7 @@ using VContainer;
 
 namespace Infrastructure.Service.SaveLoad
 {
-    public class DesktopAndMobileDataManager : IDataManager
+    public class DesktopAndMobileDataManager : IDataManager, IDataSaver
     {
         [Inject] private IEnumerable<Data> _injectedDatas;
         [Inject] private readonly IFileService _fileService;

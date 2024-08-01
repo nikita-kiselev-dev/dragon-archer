@@ -2,7 +2,7 @@
 
 namespace Content.LoadingCurtain.Scripts.Controller
 {
-    public interface ILoadingCurtainController : IController
+    public interface ILoadingCurtainController : IInitiable
     {
         public void Show();
         public void Hide();

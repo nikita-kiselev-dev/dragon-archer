@@ -1,6 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Content.DailyBonus.Scripts.Config;
+using Content.DailyBonus.Scripts.Dto;
 using Content.DailyBonus.Scripts.Model;
 using Content.DailyBonus.Scripts.View;
 using Infrastructure.Service.Asset;
@@ -13,6 +15,7 @@ namespace Content.DailyBonus.Scripts.Presenter
 {
     public class DailyBonusPresenter : IDailyBonusPresenter
     {
+        private readonly IDailyBonusDto _dto;
         private readonly IDailyBonusModel _model;
         private readonly IViewFactory _viewFactory;
         private readonly IViewManager _viewManager;
@@ -22,15 +25,15 @@ namespace Content.DailyBonus.Scripts.Presenter
         private IDailyBonusView _view;
         private IViewInteractor _viewInteractor;
 
-        private List<IDailyBonusDayController> _days;
-
         public DailyBonusPresenter(
+            IDailyBonusDto dto,
             IDailyBonusModel model,
             IViewFactory viewFactory,
             IViewManager viewManager,
             IAssetLoader assetLoader,
             IServerTimeService serverTimeService)
         {
+            _dto = dto;
             _model = model;
             _viewFactory = viewFactory;
             _viewManager = viewManager;
@@ -48,8 +51,7 @@ namespace Content.DailyBonus.Scripts.Presenter
             }
             
             RegisterAndInitView();
-            ConfigureView();
-
+            CreateDays();
             Open(); 
         }
         
@@ -68,10 +70,12 @@ namespace Content.DailyBonus.Scripts.Presenter
             var serverTime = await _serverTimeService.GetServerTime();
             var startStreakData = _model.GetStartStreakData();
             var timeSinceStartStreak = serverTime - startStreakData;
-            var streakIsLoosed = timeSinceStartStreak.Hours > DailyBonusInfo.HoursToResetStreak;
-            var isFirstLaunch = startStreakData == DateTime.UnixEpoch;
+
+            var streakIsLoosed = StreakIsLoosed(timeSinceStartStreak);
+            var isFirstLaunch = IsFirstLaunch(startStreakData);
+            var areAllRewardsReceived = AreAllRewardsReceived();
             
-            if (streakIsLoosed || isFirstLaunch)
+            if (streakIsLoosed || isFirstLaunch || areAllRewardsReceived)
             {
                 _model.ResetData(serverTime);
                 return true;
@@ -80,18 +84,49 @@ namespace Content.DailyBonus.Scripts.Presenter
             var addStreakDay = timeSinceStartStreak.Hours 
                 is > DailyBonusInfo.MinHoursToGetReward and < DailyBonusInfo.HoursToResetStreak;
 
-            if (!addStreakDay)
+            if (addStreakDay)
             {
-                return false;
+                _model.AddStreakDay();
+                return true;
             }
-            
-            _model.AddStreakDay();
-            return true;
+
+            return false;
+        }
+
+        private bool StreakIsLoosed(TimeSpan timeSinceStartStreak)
+        {
+            var streakIsLoosed = timeSinceStartStreak.Hours > DailyBonusInfo.HoursToResetStreak;
+            return streakIsLoosed;
+        }
+
+        private bool IsFirstLaunch(DateTime startStreakData)
+        {
+            var isFirstLaunch = startStreakData == DateTime.UnixEpoch;
+            return isFirstLaunch;
+        }
+
+        private bool AreAllRewardsReceived()
+        {
+            var currentStreakDay = _model.GetStreakDay();
+            var lastStreakDayInDto = _dto.Days.Last().StreakDay;
+            var isAllRewardsReceived = currentStreakDay > lastStreakDayInDto;
+            return isAllRewardsReceived;
+        }
+        
+        private void CreateDays()
+        {
+            var dayConfigurator = new DailyBonusDayConfigurator(_dto, _model, _view.RewardRowsManager, _assetLoader);
+            var dayControllers = dayConfigurator.GetConfiguredDayControllers();
+
+            foreach (var dayController in dayControllers)
+            {
+                dayController.Init();
+            }
         }
         
         private void RegisterAndInitView()
         {
-            _view = _viewFactory.CreateView<IDailyBonusView>(ViewInfo.DailyBonus, ViewType.Popup);
+            _view = _viewFactory.CreateView<IDailyBonusView>(DailyBonusInfo.DailyBonusPopup, ViewType.Popup);
             
             var viewSignalManager = new ViewSignalManager()
                 .AddCloseSignal(Close);
@@ -102,29 +137,6 @@ namespace Content.DailyBonus.Scripts.Presenter
                 .SetView(_view)
                 .SetViewSignalManager(viewSignalManager)
                 .RegisterAndInit();
-        }
-
-        private void ConfigureView()
-        {
-            //TODO: get info from server
-            //TODO: read rewards config
-            //TODO: recode method
-            
-            var dailyBonusDays = 7;
-            
-            _days = new List<IDailyBonusDayController>();
-            
-            for (var index = 0; index < dailyBonusDays; index++)
-            {
-                var rewardParent = _view.RewardRowsManager.GetRewardParent(index, dailyBonusDays);
-                _days.Add(new DailyBonusDayController(_assetLoader, rewardParent));
-            }
-            
-            for (var index = 0; index < _days.Count; index++)
-            {
-                var day = _days[index];
-                day.Init();
-            }
         }
     }
 }

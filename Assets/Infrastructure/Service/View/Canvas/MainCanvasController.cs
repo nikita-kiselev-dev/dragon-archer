@@ -1,4 +1,6 @@
-﻿using Infrastructure.Service.Asset;
+﻿using System;
+using Infrastructure.Service.Asset;
+using Infrastructure.Service.View.ViewManager;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
@@ -11,15 +13,15 @@ namespace Infrastructure.Service.View.Canvas
 
         private MainCanvas _canvas;
         
-        public void PrepareCanvas(string canvasKey)
+        public void TryCreateCanvas(Action onBackgroundClicked)
         {
             if (_canvas)
             {
                 return;
             }
             
-            _canvas = _assetLoader.Instantiate<MainCanvas>(canvasKey).Result;
-            _canvas.Init();
+            _canvas = _assetLoader.Instantiate<MainCanvas>(ViewInfo.MainCanvasKey).Result;
+            _canvas.Init(onBackgroundClicked);
         }
 
         public Image GetPopupBackground()

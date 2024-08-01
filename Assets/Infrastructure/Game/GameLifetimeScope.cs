@@ -11,7 +11,8 @@ using Infrastructure.Service;
 using Infrastructure.Service.Asset;
 using Infrastructure.Service.Data;
 using Infrastructure.Service.Date;
-using Infrastructure.Service.LiveOps;
+using Infrastructure.Service.Dto;
+using Infrastructure.Service.LiveOps.PlayFab;
 using Infrastructure.Service.SaveLoad;
 using Infrastructure.Service.Scene;
 using Infrastructure.Service.SignalBus;
@@ -19,6 +20,7 @@ using Infrastructure.Service.StateMachine;
 using Infrastructure.Service.View.Canvas;
 using Infrastructure.Service.View.ViewFactory;
 using Infrastructure.Service.View.ViewManager;
+using Infrastructure.Service.View.ViewManager.ViewAnimation;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -29,7 +31,7 @@ namespace Infrastructure.Game
     {
         [SerializeField] private MonoCoroutineRunner m_CoroutineRunner;
         [SerializeField] private ServiceCanvas m_ServiceCanvas;
-
+        
         protected override void Awake()
         {
             base.Awake();
@@ -40,7 +42,7 @@ namespace Infrastructure.Game
         {
             builder.RegisterComponent<ICoroutineRunner>(m_CoroutineRunner);
             builder.RegisterComponent(m_ServiceCanvas);
-
+            
             builder.Register<IDateConverter, DateConverter>(Lifetime.Singleton);
             
             RegisterDataServices(builder);
@@ -48,11 +50,11 @@ namespace Infrastructure.Game
             RegisterTutorialData(builder);
             RegisterDataManager(builder);
             
-            
             builder.Register<ITutorialService, TutorialService>(Lifetime.Singleton);
             builder.Register<IAssetLoader, AddressableAssetLoader>(Lifetime.Singleton);
             builder.Register<IViewFactory, ViewFactory>(Lifetime.Singleton);
             builder.Register<IMainCanvasController, MainCanvasController>(Lifetime.Singleton);
+            builder.Register<IViewAnimator, BackgroundAnimator>(Lifetime.Singleton);
             builder.Register<ISceneService, SceneService>(Lifetime.Singleton);
             builder.Register<IStateMachine, SceneStateMachine>(Lifetime.Singleton);
             builder.Register<PlayFabService>(Lifetime.Singleton).AsImplementedInterfaces();
@@ -85,7 +87,6 @@ namespace Infrastructure.Game
         private void RegisterTutorialData(IContainerBuilder builder)
         {
             builder.Register<Service.SaveLoad.Data, OnboardingTutorialData>(Lifetime.Singleton).AsSelf().As<TutorialData>();
-
         }
 
         private void RegisterDataManager(IContainerBuilder builder)
@@ -98,7 +99,8 @@ namespace Infrastructure.Game
                 builder.Register<IDataManager, WebDataManager>(Lifetime.Singleton);
             #endif*/
             
-            builder.Register<IDataManager, DesktopAndMobileDataManager>(Lifetime.Singleton);
+            builder.Register<IDataManager, DesktopAndMobileDataManager>(Lifetime.Singleton).As<IDataSaver>();
+            builder.Register<IDtoManager, DtoManager>(Lifetime.Singleton).As<IDtoReader>();
         }
         
         private void RegisterGameManagers(IContainerBuilder builder)

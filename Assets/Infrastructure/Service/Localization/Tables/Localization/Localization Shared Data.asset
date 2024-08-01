@@ -23,12 +23,16 @@ MonoBehaviour:
     m_Key: dailybonus/title
     m_Metadata:
       m_Items: []
+  - m_Id: 5781877313413120
+    m_Key: dailybonus/subtitle
+    m_Metadata:
+      m_Items: []
   - m_Id: 3302611834269696
     m_Key: loading
     m_Metadata:
       m_Items: []
-  - m_Id: 56821505499136
-    m_Key: settings_button
+  - m_Id: 5773882961600512
+    m_Key: play
     m_Metadata:
       m_Items: []
   - m_Id: 99775762833410
@@ -45,10 +49,6 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 99775746056192
     m_Key: settings/title
-    m_Metadata:
-      m_Items: []
-  - m_Id: 56821501304832
-    m_Key: start_button
     m_Metadata:
       m_Items: []
   - m_Id: 5412253749125124
@@ -91,8 +91,12 @@ MonoBehaviour:
     m_Key: time/years
     m_Metadata:
       m_Items: []
-  - m_Id: 56821505499137
-    m_Key: website_button
+  - m_Id: 5773882978377728
+    m_Key: website
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5862862763761664
+    m_Key: time/today
     m_Metadata:
       m_Items: []
   m_Metadata:

@@ -1,6 +1,6 @@
 ﻿namespace Infrastructure.Service
 {
-    public interface IController
+    public interface IInitiable
     {
         public void Init();
     }

@@ -20,7 +20,7 @@ namespace Infrastructure.Game.GameManager
         [Inject] private readonly ITutorialService _tutorialService;
         [Inject] private readonly ISettingsPopup _settingsPopup;
         
-        private IController _startScreenController;
+        private IStartScreenController _startScreenController;
         
         public void OnSceneStart()
         {

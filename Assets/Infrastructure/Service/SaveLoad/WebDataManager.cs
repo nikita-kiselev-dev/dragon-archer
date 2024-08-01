@@ -7,6 +7,11 @@ namespace Infrastructure.Service.SaveLoad
             throw new System.NotImplementedException();
         }
 
+        public bool IsDataExists(string dataName)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public void Save()
         {
             throw new System.NotImplementedException();

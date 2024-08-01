@@ -22,7 +22,7 @@ namespace Content.DailyBonus.Scripts.Data
 
         public void ResetStreak()
         {
-            m_StreakDay = 0;
+            m_StreakDay = 1;
             m_StartStreakDate = 0;
         }
 

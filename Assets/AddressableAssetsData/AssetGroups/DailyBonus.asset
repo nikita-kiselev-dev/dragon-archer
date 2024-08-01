@@ -22,8 +22,28 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5e915db5d22d03c4e96d1da622f36ee9
-    m_Address: DailyBonusDay
+  - m_GUID: 0c1d0e9f20c1bec4f86e4abed40ad5d2
+    m_Address: DailyBonusLastDay
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c6ac792daa86e674184b7e4fe6925304
+    m_Address: DailyBonusNextDay
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 64835155e7cc5854eb93ecd4ab78a81f
+    m_Address: DailyBonusPreviousDay
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b64f7a339fed08847bcb5b4f7a82bfbe
+    m_Address: DailyBonusToday
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d8e197931a7e48f68249c422079a2db5
+    m_Address: DailyBonusConfig
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

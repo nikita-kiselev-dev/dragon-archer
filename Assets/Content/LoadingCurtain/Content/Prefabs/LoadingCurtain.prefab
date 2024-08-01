@@ -67,8 +67,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Loading
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 095b79b3e9d96b44da1a6720cbb580c1, type: 2}
-  m_sharedMaterial: {fileID: -8187096153996907495, guid: 095b79b3e9d96b44da1a6720cbb580c1, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 71156e1acddccb34f9eafd31a16081bd, type: 2}
+  m_sharedMaterial: {fileID: 8031750482027165929, guid: 71156e1acddccb34f9eafd31a16081bd, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -92,13 +92,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 72
+  m_fontSize: 110
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontSizeMax: 110
+  m_fontStyle: 16
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -225,7 +225,7 @@ MonoBehaviour:
   m_colorTop: {r: 0.9019608, g: 0, b: 0.142244, a: 1}
   m_colorBottom: {r: 0.40376854, g: 0.007226743, b: 0.5471698, a: 1}
   m_colorLeft: {r: 1, g: 1, b: 1, a: 1}
-  m_colorRight: {r: 1, g: 1, b: 1, a: 1}
+  m_colorRight: {r: 0.57169807, g: 0.96828866, b: 1, a: 1}
   m_gradientOffsetVertical: 0
   m_gradientOffsetHorizontal: 0
   m_splitTextGradient: 0
@@ -310,7 +310,7 @@ MonoBehaviour:
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 1080, y: 1920}
+  m_ReferenceResolution: {x: 1080, y: 2400}
   m_ScreenMatchMode: 2
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3

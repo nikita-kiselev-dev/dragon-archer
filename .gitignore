@@ -12,6 +12,7 @@
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 /[Aa]sset[Bb]undles/**/*.zip
+/Assets/Layer Lab/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data

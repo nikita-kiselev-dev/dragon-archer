@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using DG.Tweening;
-using Infrastructure.Service.View.Canvas;
 using Infrastructure.Service.View.ViewManager.ViewAnimation;
 using UnityEngine;
 using VContainer;
@@ -9,14 +7,16 @@ namespace Infrastructure.Service.View.ViewManager
 {
     public class ViewManager : IViewManager
     {
-        [Inject] private readonly IMainCanvasController _mainCanvasController;
-        
-        private Dictionary<string, IViewWrapper> _viewWrappers = new Dictionary<string, IViewWrapper>();
+        [Inject] private readonly IViewAnimator _backgroundAnimator;
+         
+        private readonly Dictionary<string, IViewWrapper> _viewWrappers = new();
+
+        private IViewWrapper _lastViewWrapper;
 
         public void Open(string viewKey)
         {
-            var viewWrapper = GetViewWrapper(viewKey);
-            var customAnimation = viewWrapper.CustomOpenAnimation;
+            _lastViewWrapper = GetViewWrapper(viewKey);
+            var customAnimation = _lastViewWrapper.CustomOpenAnimation;
 
             if (customAnimation != null)
             {
@@ -24,17 +24,17 @@ namespace Infrastructure.Service.View.ViewManager
             }
             else
             {
-                if (viewWrapper is not { View: MonoBehaviour viewMonoBehaviour })
+                if (_lastViewWrapper is not { View: MonoBehaviour viewMonoBehaviour })
                 {
                     return;
                 }
 
-                var viewType = viewWrapper.ViewType;
+                var viewType = _lastViewWrapper.ViewType;
                 var animator = GetAnimator(viewType, viewMonoBehaviour.transform);
 
                 if (viewType == ViewType.Popup)
                 {
-                    ShowBackground();
+                    _backgroundAnimator.Show();
                 }
                 
                 animator.Show();
@@ -62,7 +62,7 @@ namespace Infrastructure.Service.View.ViewManager
                 
                 if (viewType == ViewType.Popup)
                 {
-                    HideBackground();
+                    _backgroundAnimator.Hide();
                 }
                 
                 animator.Hide();
@@ -74,6 +74,14 @@ namespace Infrastructure.Service.View.ViewManager
             foreach (var view in _viewWrappers)
             {
                 Close(view.Value.ViewKey);
+            }
+        }
+
+        public void CloseLast()
+        {
+            if (_lastViewWrapper != null)
+            {
+                Close(_lastViewWrapper.ViewKey);
             }
         }
 
@@ -105,40 +113,6 @@ namespace Infrastructure.Service.View.ViewManager
             {
                 return new PopupAnimator(transform);
             }
-        }
-
-        private void ShowBackground()
-        {
-            var popupBackground = _mainCanvasController.GetPopupBackground();
-
-            if (popupBackground.gameObject.activeSelf)
-            {
-                return;
-            }
-            
-            var sequence = DOTween.Sequence();
-            sequence
-                .PrependCallback(() =>
-                {
-                    var backgroundColor = popupBackground.color;
-                    popupBackground.color = new Color(backgroundColor.r, backgroundColor.g, backgroundColor.b, 0);
-                    popupBackground.gameObject.SetActive(true);
-                })
-                .Append(popupBackground.DOFade(0.5f, ViewInfo.ShowViewBackgroundDuration));
-        }
-
-        private void HideBackground()
-        {
-            var popupBackground = _mainCanvasController.GetPopupBackground();
-            
-            if (!popupBackground.gameObject.activeSelf)
-            {
-                return;
-            }
-            
-            popupBackground
-                .DOFade(0f, ViewInfo.HideViewBackgroundDuration)
-                .OnComplete(() => popupBackground.gameObject.SetActive(false));
         }
     }
 }
