@@ -17,8 +17,8 @@ namespace Content.DailyBonus.Scripts.Config
 
         public DailyBonusDayConfigurator(IDailyBonusDto dto, IDailyBonusModel model, RewardRowsManager rewardRowsManager, IAssetLoader assetLoader)
         {
-            _model = model;
             _dto = dto;
+            _model = model;
             _rewardRowsManager = rewardRowsManager;
             _assetLoader = assetLoader;
         }
@@ -43,11 +43,12 @@ namespace Content.DailyBonus.Scripts.Config
         {
             var dayConfigs = new List<IDailyBonusDayConfig>();
             var currentStreakDay = _model.GetStreakDay();
+            var config = _dto.GetDays();
             
-            for (var index = 0; index < _dto.Days.Count; index++)
+            for (var index = 0; index < config.Count; index++)
             {
-                var dayParent = _rewardRowsManager.GetRewardParent(index, _dto.Days.Count);
-                var dayDto = _dto.Days[index];
+                var dayParent = _rewardRowsManager.GetRewardParent(index, config.Count);
+                var dayDto = config[index];
                 var dayType = GetDayType(dayDto.StreakDay, currentStreakDay);
                 
                 var dayConfig = new DailyBonusDayConfig(

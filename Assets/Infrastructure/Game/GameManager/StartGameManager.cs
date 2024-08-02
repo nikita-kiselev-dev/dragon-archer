@@ -2,7 +2,6 @@
 using Content.Settings.Scripts;
 using Content.StartScreen.Scripts.Controller;
 using Infrastructure.Game.Tutorials;
-using Infrastructure.Service;
 using Infrastructure.Service.StateMachine;
 using Infrastructure.Service.StateMachine.SceneStates;
 using Infrastructure.Service.View.ViewFactory;

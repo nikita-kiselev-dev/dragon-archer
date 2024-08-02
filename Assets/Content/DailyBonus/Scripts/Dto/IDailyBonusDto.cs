@@ -5,6 +5,6 @@ namespace Content.DailyBonus.Scripts.Dto
 {
     public interface IDailyBonusDto : IDto
     {
-        public IReadOnlyList<DailyBonusDayDto> Days { get; }
+        public IReadOnlyList<DailyBonusDayDto> GetDays();
     }
 }

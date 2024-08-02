@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Content.DailyBonus.Scripts.Config;
@@ -108,7 +109,8 @@ namespace Content.DailyBonus.Scripts.Presenter
         private bool AreAllRewardsReceived()
         {
             var currentStreakDay = _model.GetStreakDay();
-            var lastStreakDayInDto = _dto.Days.Last().StreakDay;
+            var config = _dto.GetDays();
+            var lastStreakDayInDto = config.Last().StreakDay;
             var isAllRewardsReceived = currentStreakDay > lastStreakDayInDto;
             return isAllRewardsReceived;
         }
