@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Content.DailyBonus.Scripts.Core;
 using Content.DailyBonus.Scripts.Dto;
 using Content.DailyBonus.Scripts.Model;
 using Content.DailyBonus.Scripts.View;
@@ -23,6 +21,7 @@ namespace Content.DailyBonus.Scripts.Presenter
         private readonly IServerTimeService _serverTimeService;
         private readonly IInventoryManager _inventoryManager;
 
+        private IDailyBonusCore _core;
         private IDailyBonusView _view;
         private IViewInteractor _viewInteractor;
 
@@ -46,7 +45,8 @@ namespace Content.DailyBonus.Scripts.Presenter
         
         public async void Init()
         {
-            var needToShowPopup = await NeedToShowPopup();
+            _core = new DailyBonusCore(_dto, _model, _serverTimeService, _inventoryManager);
+            var needToShowPopup = await _core.NeedToShowPopup();
 
             if (!needToShowPopup)
             {
@@ -55,8 +55,8 @@ namespace Content.DailyBonus.Scripts.Presenter
             
             RegisterAndInitView();
             CreateDays();
-            GetItems();
-            Open(); 
+            Open();
+            _core.GetStreakReward();
         }
         
         public void Open()
@@ -68,55 +68,6 @@ namespace Content.DailyBonus.Scripts.Presenter
         {
             _viewInteractor.Close();
         }
-
-        private async Task<bool> NeedToShowPopup()
-        {
-            var serverTime = await _serverTimeService.GetServerTime();
-            var startStreakData = _model.GetStartStreakData();
-            var timeSinceStartStreak = serverTime - startStreakData;
-
-            var streakIsLoosed = StreakIsLoosed(timeSinceStartStreak);
-            var isFirstLaunch = IsFirstLaunch(startStreakData);
-            var areAllRewardsReceived = AreAllRewardsReceived();
-            
-            if (streakIsLoosed || isFirstLaunch || areAllRewardsReceived)
-            {
-                _model.ResetData(serverTime);
-                return true;
-            }
-
-            var addStreakDay = timeSinceStartStreak.TotalSeconds 
-                is > DailyBonusInfo.MinSecondsToGetReward and < DailyBonusInfo.SecondsToResetStreak;
-
-            if (addStreakDay)
-            {
-                _model.AddStreakDay();
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool StreakIsLoosed(TimeSpan timeSinceStartStreak)
-        {
-            var streakIsLoosed = timeSinceStartStreak.TotalSeconds > DailyBonusInfo.SecondsToResetStreak;
-            return streakIsLoosed;
-        }
-
-        private bool IsFirstLaunch(DateTime startStreakData)
-        {
-            var isFirstLaunch = startStreakData == DateTime.UnixEpoch;
-            return isFirstLaunch;
-        }
-
-        private bool AreAllRewardsReceived()
-        {
-            var currentStreakDay = _model.GetStreakDay();
-            var config = _dto.GetDays();
-            var lastStreakDayInDto = config.Last().StreakDay;
-            var isAllRewardsReceived = currentStreakDay > lastStreakDayInDto;
-            return isAllRewardsReceived;
-        }
         
         private void CreateDays()
         {
@@ -126,20 +77,6 @@ namespace Content.DailyBonus.Scripts.Presenter
             foreach (var dayController in dayControllers)
             {
                 dayController.Init();
-            }
-        }
-
-        private void GetItems()
-        {
-            var streakDay = _model.GetStreakDay();
-            var config = _dto.GetDays();
-            
-            foreach (var dayConfig in config)
-            {
-                if (dayConfig.StreakDay == streakDay)
-                {
-                    _inventoryManager.AddItem(dayConfig.ItemName, dayConfig.ItemCount);
-                }
             }
         }
         
