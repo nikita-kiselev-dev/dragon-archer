@@ -1,5 +1,11 @@
 ﻿using Content.DailyBonus.Scripts;
 using Content.DailyBonus.Scripts.Data;
+using Content.Items.Gems;
+using Content.Items.Gems.Data;
+using Content.Items.Gold;
+using Content.Items.Gold.Data;
+using Content.Items.Scripts;
+using Content.Items.Scripts.Data;
 using Content.LoadingCurtain.Scripts.Controller;
 using Content.Settings.Scripts;
 using Content.Settings.Scripts.Data;
@@ -46,7 +52,8 @@ namespace Infrastructure.Game
             builder.Register<IDateConverter, DateConverter>(Lifetime.Singleton);
             
             RegisterDataServices(builder);
-            RegisterData(builder);
+            RegisterItemsData(builder);
+            RegisterFeaturesData(builder);
             RegisterTutorialData(builder);
             RegisterDataManager(builder);
             
@@ -77,8 +84,19 @@ namespace Infrastructure.Game
             builder.Register<IFileService, FileService>(Lifetime.Singleton);
             builder.Register<IDataSerializer, JsonDataSerializer>(Lifetime.Singleton);
         }
+        
+        private void RegisterItemsData(IContainerBuilder builder)
+        {
+            builder.Register<Service.SaveLoad.Data, GoldData>(Lifetime.Singleton).As<ItemData>().AsSelf();
+            builder.Register<IItemManager, GoldManager>(Lifetime.Singleton);
+            
+            builder.Register<Service.SaveLoad.Data, GemsData>(Lifetime.Singleton).As<ItemData>().AsSelf();
+            builder.Register<IItemManager, GemsManager>(Lifetime.Singleton);
+            
+            builder.Register<IInventoryManager, InventoryManager>(Lifetime.Singleton);
+        }
 
-        private void RegisterData(IContainerBuilder builder)
+        private void RegisterFeaturesData(IContainerBuilder builder)
         {
             builder.Register<Service.SaveLoad.Data, SettingsPopupData>(Lifetime.Singleton).AsSelf();
             builder.Register<Service.SaveLoad.Data, DailyBonusData>(Lifetime.Singleton).AsSelf();

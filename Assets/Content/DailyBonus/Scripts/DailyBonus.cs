@@ -2,6 +2,7 @@
 using Content.DailyBonus.Scripts.Dto;
 using Content.DailyBonus.Scripts.Model;
 using Content.DailyBonus.Scripts.Presenter;
+using Content.Items.Scripts;
 using Infrastructure.Service.Asset;
 using Infrastructure.Service.Date;
 using Infrastructure.Service.Dto;
@@ -19,6 +20,7 @@ namespace Content.DailyBonus.Scripts
         [Inject] private readonly IViewManager _viewManager;
         [Inject] private readonly IAssetLoader _assetLoader;
         [Inject] private readonly IServerTimeService _serverTimeService;
+        [Inject] private readonly IInventoryManager _inventoryManager;
         
         [Inject] private readonly DailyBonusData _data;
         [Inject] private readonly IDateConverter _dateConverter;
@@ -42,8 +44,14 @@ namespace Content.DailyBonus.Scripts
         {
             var dto = _dtoReader.Read<DailyBonusDto>(DailyBonusInfo.DailyBonusConfig);
             
-            _presenter = 
-                new DailyBonusPresenter(dto, _model, _viewFactory, _viewManager, _assetLoader, _serverTimeService);
+            _presenter = new DailyBonusPresenter(
+                    dto, 
+                    _model, 
+                    _viewFactory, 
+                    _viewManager, 
+                    _assetLoader, 
+                    _serverTimeService, 
+                    _inventoryManager);
         }
     }
 }

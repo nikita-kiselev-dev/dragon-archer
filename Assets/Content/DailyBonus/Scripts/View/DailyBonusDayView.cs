@@ -16,9 +16,9 @@ namespace Content.DailyBonus.Scripts.View
             m_DayText.text = text;
         }
 
-        public void SetItemIcon(Image icon)
+        public void SetItemSprite(Sprite sprite)
         {
-            m_ItemIcon = icon;
+            m_ItemIcon.sprite = sprite;
         }
 
         public void SetItemCount(string text)

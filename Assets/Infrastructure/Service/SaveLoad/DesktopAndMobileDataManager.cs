@@ -108,15 +108,43 @@ namespace Infrastructure.Service.SaveLoad
 
         private void FillWithLoadedData(Data cleanData, Data loadedData)
         {
-            var fields = cleanData
-                .GetType()
-                .GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
-                .Where(field => field.IsDefined(typeof(SerializeField), false));
+            var parentCount = GetParentCount(loadedData.GetType());
+            var type = loadedData.GetType();
 
-            foreach (var field in fields)
+            for (var index = 0; index < parentCount; index++)
             {
-                field.SetValue(cleanData, field.GetValue(loadedData));
+                var fields = type
+                    .GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
+                    .Where(field => field.IsDefined(typeof(SerializeField), false));
+
+                var fieldInfos = fields.ToList();
+                
+                if (fieldInfos.Any())
+                {
+                    foreach (var field in fieldInfos)
+                    {
+                        field.SetValue(cleanData, field.GetValue(loadedData));
+                    }
+                    
+                    return;
+                }
+
+                type = type.BaseType;
             }
+        }
+        
+        private int GetParentCount(Type type)
+        {
+            var count = 0;
+            var currentType = type.BaseType;
+
+            while (currentType != null)
+            {
+                count++;
+                currentType = currentType.BaseType;
+            }
+
+            return count;
         }
         
         private void PrepareNewData()

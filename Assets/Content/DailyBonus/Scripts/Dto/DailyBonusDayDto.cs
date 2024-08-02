@@ -8,13 +8,13 @@ namespace Content.DailyBonus.Scripts.Dto
     public class DailyBonusDayDto
     {
         [JsonProperty("streak_day")] private int _streakDay;
-        [JsonProperty("item")] private string _item;
-        [JsonProperty("item_icon")] private string _itemIcon;
+        [JsonProperty("item_name")] private string _itemName;
+        [JsonProperty("item_sprite")] private string _itemSprite;
         [JsonProperty("item_count")] private int _itemCount;
 
         public int StreakDay => _streakDay;
-        public string Item => _item;
-        public string ItemIcon => _itemIcon;
+        public string ItemName => _itemName;
+        public string ItemSprite => _itemSprite;
         public int ItemCount => _itemCount;
     }
 }

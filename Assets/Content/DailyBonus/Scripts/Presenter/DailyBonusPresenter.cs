@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Content.DailyBonus.Scripts.Config;
 using Content.DailyBonus.Scripts.Dto;
 using Content.DailyBonus.Scripts.Model;
 using Content.DailyBonus.Scripts.View;
+using Content.Items.Scripts;
 using Infrastructure.Service.Asset;
 using Infrastructure.Service.LiveOps;
 using Infrastructure.Service.View.ViewFactory;
@@ -22,6 +21,7 @@ namespace Content.DailyBonus.Scripts.Presenter
         private readonly IViewManager _viewManager;
         private readonly IAssetLoader _assetLoader;
         private readonly IServerTimeService _serverTimeService;
+        private readonly IInventoryManager _inventoryManager;
 
         private IDailyBonusView _view;
         private IViewInteractor _viewInteractor;
@@ -32,7 +32,8 @@ namespace Content.DailyBonus.Scripts.Presenter
             IViewFactory viewFactory,
             IViewManager viewManager,
             IAssetLoader assetLoader,
-            IServerTimeService serverTimeService)
+            IServerTimeService serverTimeService,
+            IInventoryManager inventoryManager)
         {
             _dto = dto;
             _model = model;
@@ -40,6 +41,7 @@ namespace Content.DailyBonus.Scripts.Presenter
             _viewManager = viewManager;
             _assetLoader = assetLoader;
             _serverTimeService = serverTimeService;
+            _inventoryManager = inventoryManager;
         }
         
         public async void Init()
@@ -53,6 +55,7 @@ namespace Content.DailyBonus.Scripts.Presenter
             
             RegisterAndInitView();
             CreateDays();
+            GetItems();
             Open(); 
         }
         
@@ -82,8 +85,8 @@ namespace Content.DailyBonus.Scripts.Presenter
                 return true;
             }
 
-            var addStreakDay = timeSinceStartStreak.Hours 
-                is > DailyBonusInfo.MinHoursToGetReward and < DailyBonusInfo.HoursToResetStreak;
+            var addStreakDay = timeSinceStartStreak.TotalSeconds 
+                is > DailyBonusInfo.MinSecondsToGetReward and < DailyBonusInfo.SecondsToResetStreak;
 
             if (addStreakDay)
             {
@@ -96,7 +99,7 @@ namespace Content.DailyBonus.Scripts.Presenter
 
         private bool StreakIsLoosed(TimeSpan timeSinceStartStreak)
         {
-            var streakIsLoosed = timeSinceStartStreak.Hours > DailyBonusInfo.HoursToResetStreak;
+            var streakIsLoosed = timeSinceStartStreak.TotalSeconds > DailyBonusInfo.SecondsToResetStreak;
             return streakIsLoosed;
         }
 
@@ -123,6 +126,20 @@ namespace Content.DailyBonus.Scripts.Presenter
             foreach (var dayController in dayControllers)
             {
                 dayController.Init();
+            }
+        }
+
+        private void GetItems()
+        {
+            var streakDay = _model.GetStreakDay();
+            var config = _dto.GetDays();
+            
+            foreach (var dayConfig in config)
+            {
+                if (dayConfig.StreakDay == streakDay)
+                {
+                    _inventoryManager.AddItem(dayConfig.ItemName, dayConfig.ItemCount);
+                }
             }
         }
         

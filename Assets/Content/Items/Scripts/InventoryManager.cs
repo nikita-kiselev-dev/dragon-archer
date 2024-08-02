@@ -1,23 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using VContainer;
 
 namespace Content.Items.Scripts
 {
     public class InventoryManager : IInventoryManager
     {
-        [Inject] private IReadOnlyList<IItemManager> _injectedItemManagers;
+        [Inject] private readonly IReadOnlyList<IItemManager> _injectedItemManagers;
 
-        private Dictionary<Type, IItemManager> _itemManagers;
+        private readonly Dictionary<string, IItemManager> _itemManagers = new();
 
-        public void AddItem<T>(int itemCount) where T : IItem
+        public bool AddItem(string itemName, int itemCount)
         {
-            var itemType = typeof(T);
+            if (string.IsNullOrEmpty(itemName) && !_itemManagers.ContainsKey(itemName))
+            {
+                return false;
+            }
+            
+            var isSuccess = _itemManagers[itemName].AddItem(itemCount);
+            return isSuccess;
         }
 
-        public void RemoveItem<T>(int itemCount) where T : IItem
+        public bool RemoveItem(string itemName, int itemCount)
         {
-            var itemType = typeof(T);
+            if (string.IsNullOrEmpty(itemName) && !_itemManagers.ContainsKey(itemName!))
+            {
+                return false;
+            }
+            
+            var isSuccess = _itemManagers[itemName].RemoveItem(itemCount);
+            return isSuccess;
         }
         
         [Inject]
@@ -25,7 +36,7 @@ namespace Content.Items.Scripts
         {
             foreach (var itemManager in _injectedItemManagers)
             {
-                _itemManagers[itemManager.GetType()] = itemManager;
+                _itemManagers[itemManager.ItemName] = itemManager;
             }
         }
     }

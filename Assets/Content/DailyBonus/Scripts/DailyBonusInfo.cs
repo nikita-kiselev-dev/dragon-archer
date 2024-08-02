@@ -11,7 +11,7 @@
         
         public const string DailyBonusConfig = "DailyBonusConfig";
         
-        public const int MinHoursToGetReward = 24;
-        public const int HoursToResetStreak = 48;
+        public const int MinSecondsToGetReward = 86400;
+        public const int SecondsToResetStreak = 172800;
     }
 }

@@ -29,6 +29,7 @@ namespace Content.DailyBonus.Scripts.Presenter
             
             _view.SetDayText(dayText);
             _view.SetItemCount($"x" + $"{_config.ItemCount}");
+            _view.SetItemSprite(_config.ItemSprite);
         }
     }
 }
