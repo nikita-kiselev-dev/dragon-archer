@@ -13,10 +13,10 @@ namespace Content.DailyBonus.Scripts.Presenter
     {
         private readonly IDailyBonusDto _dto;
         private readonly IDailyBonusModel _model;
-        private readonly RewardRowsManager _rewardRowsManager;
+        private readonly IRewardRowsManager _rewardRowsManager;
         private readonly IAssetLoader _assetLoader;
 
-        public DailyBonusDayConfigurator(IDailyBonusDto dto, IDailyBonusModel model, RewardRowsManager rewardRowsManager, IAssetLoader assetLoader)
+        public DailyBonusDayConfigurator(IDailyBonusDto dto, IDailyBonusModel model, IRewardRowsManager rewardRowsManager, IAssetLoader assetLoader)
         {
             _dto = dto;
             _model = model;
@@ -48,9 +48,14 @@ namespace Content.DailyBonus.Scripts.Presenter
             
             for (var index = 0; index < config.Count; index++)
             {
-                var dayParent = _rewardRowsManager.GetRewardParent(index, config.Count);
+                var isLastDay = index == config.Count - 1;
+                
+                var dayParent = isLastDay ? 
+                    _rewardRowsManager.GetLastRewardParent() : 
+                    _rewardRowsManager.GetRewardParent(index, config.Count - 1);
+                
                 var dayDto = config[index];
-                var dayType = GetDayType(dayDto.StreakDay, currentStreakDay);
+                var dayType = GetDayType(dayDto.StreakDay, currentStreakDay, isLastDay);
                 var itemSprite = _assetLoader.LoadAsset<Sprite>(dayDto.ItemSprite).Result;
                 
                 var dayConfig = new DailyBonusDayConfig(
@@ -67,15 +72,23 @@ namespace Content.DailyBonus.Scripts.Presenter
             return dayConfigs;
         }
         
-        private string GetDayType(int streakDay, int currentStreakDay)
+        private string GetDayType(int streakDay, int currentStreakDay, bool isLastDay)
         {
             if (currentStreakDay > streakDay)
             {
                 return DailyBonusInfo.DailyBonusPreviousDay;
             }
+            else if (currentStreakDay < streakDay && isLastDay)
+            {
+                return DailyBonusInfo.DailyBonusLastDay;
+            }
             else if (currentStreakDay < streakDay)
             {
                 return DailyBonusInfo.DailyBonusNextDay;
+            }
+            else if (isLastDay)
+            {
+                return DailyBonusInfo.DailyBonusTodayLastDay;
             }
             else
             {

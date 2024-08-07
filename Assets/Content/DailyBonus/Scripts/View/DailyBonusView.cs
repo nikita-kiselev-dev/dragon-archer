@@ -2,7 +2,6 @@
 using Infrastructure.Service.View.ViewSignalManager;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Content.DailyBonus.Scripts.View
@@ -10,7 +9,7 @@ namespace Content.DailyBonus.Scripts.View
     public class DailyBonusView : MonoBehaviour, IDailyBonusView
     {
         [SerializeField] private Button m_CloseButton;
-        [FormerlySerializedAs("m_RewardRowManager")] [SerializeField] private RewardRowsManager m_RewardRowsManager;
+        [SerializeField] private RewardRowsManager m_RewardRowsManager;
         
         private UnityAction _onCloseButtonClicked;
 

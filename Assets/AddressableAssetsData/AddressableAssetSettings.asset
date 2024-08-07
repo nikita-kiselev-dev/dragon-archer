@@ -45,13 +45,13 @@ MonoBehaviour:
   m_overridePlayerVersion: '[UnityEditor.PlayerSettings.bundleVersion]'
   m_GroupAssets:
   - {fileID: 11400000, guid: 2a677a55bfeee6649a1cbe7b42038b9f, type: 2}
-  - {fileID: 11400000, guid: 0010c654feb4105479a7bcaf24864561, type: 2}
-  - {fileID: 11400000, guid: f3e36b89c222e7a41ba4c5ddf4802062, type: 2}
-  - {fileID: 11400000, guid: efa50ac76d40d1d47aea0f1cc4204b34, type: 2}
   - {fileID: 11400000, guid: 293b83cc9c5ffcb4394c7a06e2fc41eb, type: 2}
   - {fileID: 11400000, guid: 4ec264bec0062d9479073dbf272c686f, type: 2}
   - {fileID: 11400000, guid: 5fe892368a34c414b9da5c26594401a1, type: 2}
   - {fileID: 11400000, guid: 43ff8b66e6b56bc459f32c94dc236a20, type: 2}
+  - {fileID: 11400000, guid: 0010c654feb4105479a7bcaf24864561, type: 2}
+  - {fileID: 11400000, guid: f3e36b89c222e7a41ba4c5ddf4802062, type: 2}
+  - {fileID: 11400000, guid: efa50ac76d40d1d47aea0f1cc4204b34, type: 2}
   - {fileID: 11400000, guid: 1e93c245369e79e479a0ca9c249d6a41, type: 2}
   - {fileID: 11400000, guid: f73a55bf035d3c1429150e251acef390, type: 2}
   - {fileID: 11400000, guid: 81ec71ee8c5f748448a0c4e11fa44bc3, type: 2}

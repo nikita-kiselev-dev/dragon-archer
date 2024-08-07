@@ -8,6 +8,7 @@
         public const string DailyBonusToday = "DailyBonusToday";
         public const string DailyBonusNextDay = "DailyBonusNextDay";
         public const string DailyBonusLastDay = "DailyBonusLastDay";
+        public const string DailyBonusTodayLastDay = "DailyBonusTodayLastDay";
         
         public const string DailyBonusConfig = "DailyBonusConfig";
         

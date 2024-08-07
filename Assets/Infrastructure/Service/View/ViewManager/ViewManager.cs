@@ -1,72 +1,40 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Infrastructure.Service.View.ViewManager.ViewAnimation;
-using UnityEngine;
 using VContainer;
 
 namespace Infrastructure.Service.View.ViewManager
 {
     public class ViewManager : IViewManager
     {
-        [Inject] private readonly IViewAnimator _backgroundAnimator;
-         
         private readonly Dictionary<string, IViewWrapper> _viewWrappers = new();
+        private readonly Dictionary<string, IViewEntity> _viewEntities;
+        private readonly Queue<IViewWrapper> _viewQueue = new();
 
-        private IViewWrapper _lastViewWrapper;
+        private bool _viewIsOpen;
+
+        [Inject]
+        public ViewManager(IViewAnimator backgroundAnimator)
+        {
+            _viewEntities = new Dictionary<string, IViewEntity>
+            {
+                { ViewType.Popup, new PopupViewEntity(_viewQueue, backgroundAnimator) },
+                { ViewType.Window, new WindowViewEntity() },
+                { ViewType.Service, new ServiceViewEntity() }
+            };
+        }
 
         public void Open(string viewKey)
         {
-            _lastViewWrapper = GetViewWrapper(viewKey);
-            var customAnimation = _lastViewWrapper.CustomOpenAnimation;
-
-            if (customAnimation != null)
-            {
-                customAnimation();
-            }
-            else
-            {
-                if (_lastViewWrapper is not { View: MonoBehaviour viewMonoBehaviour })
-                {
-                    return;
-                }
-
-                var viewType = _lastViewWrapper.ViewType;
-                var animator = GetAnimator(viewType, viewMonoBehaviour.transform);
-
-                if (viewType == ViewType.Popup)
-                {
-                    _backgroundAnimator.Show();
-                }
-                
-                animator.Show();
-            }
+            var viewWrapper = GetViewWrapper(viewKey);
+            _viewIsOpen = _viewEntities[viewWrapper.ViewType].Open(viewWrapper, _viewIsOpen);
         }
 
         public void Close(string viewKey)
         {
             var viewWrapper = GetViewWrapper(viewKey);
-            var customAnimation = viewWrapper.CustomCloseAnimation;
-
-            if (customAnimation != null)
-            {
-                customAnimation();
-            }
-            else
-            {
-                if (viewWrapper is not { View: MonoBehaviour viewMonoBehaviour })
-                {
-                    return;
-                }
-
-                var viewType = viewWrapper.ViewType;
-                var animator = GetAnimator(viewType, viewMonoBehaviour.transform);
-                
-                if (viewType == ViewType.Popup)
-                {
-                    _backgroundAnimator.Hide();
-                }
-                
-                animator.Hide();
-            }
+            _viewIsOpen = _viewEntities[viewWrapper.ViewType].Close(viewWrapper, _viewIsOpen);
+            OpenNext();
         }
 
         public void CloseAll()
@@ -79,9 +47,12 @@ namespace Infrastructure.Service.View.ViewManager
 
         public void CloseLast()
         {
-            if (_lastViewWrapper != null)
+            var lastView = _viewQueue.LastOrDefault();
+            var lastViewExists = _viewQueue.LastOrDefault() != null;
+
+            if (lastViewExists)
             {
-                Close(_lastViewWrapper.ViewKey);
+                Close(lastView?.ViewKey);
             }
         }
 
@@ -89,6 +60,17 @@ namespace Infrastructure.Service.View.ViewManager
         {
             _viewWrappers.Add(viewWrapper.ViewKey, viewWrapper);
             ConfigureAfterRegistration(viewWrapper);
+        }
+
+        private void OpenNext()
+        {
+            var lastView = _viewQueue.LastOrDefault();
+            var lastViewExists = _viewQueue.LastOrDefault() != null;
+
+            if (lastViewExists)
+            {
+                Open(lastView?.ViewKey);
+            }
         }
 
         private IViewWrapper GetViewWrapper(string viewKey)
@@ -101,18 +83,6 @@ namespace Infrastructure.Service.View.ViewManager
         {
             var view = viewWrapper.View;
             view.SetActive(viewWrapper.IsEnabledOnStart);
-        }
-
-        private IViewAnimator GetAnimator(string viewType, Transform transform)
-        {
-            if (viewType is ViewType.Window or ViewType.Service)
-            {
-                return new WindowAnimator(transform);
-            }
-            else
-            {
-                return new PopupAnimator(transform);
-            }
         }
     }
 }

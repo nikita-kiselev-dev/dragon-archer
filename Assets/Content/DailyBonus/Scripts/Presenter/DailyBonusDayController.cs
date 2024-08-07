@@ -8,8 +8,7 @@ namespace Content.DailyBonus.Scripts.Presenter
     {
         private readonly IDailyBonusDayView _view;
         private readonly IDailyBonusDayConfig _config;
-
-
+        
         public DailyBonusDayController(IDailyBonusDayView view, IDailyBonusDayConfig config)
         {
             _view = view;
@@ -23,10 +22,12 @@ namespace Content.DailyBonus.Scripts.Presenter
         
         private async void ConfigureView()
         {
-            var dayText = _config.DayType != DailyBonusInfo.DailyBonusToday
-                ? await "time/day".LocalizeAsync() + $" {_config.DayNumber}"
-                : await "time/today".LocalizeAsync();
-            
+            var dayText = _config.DayType == DailyBonusInfo.DailyBonusTodayLastDay
+                ? await "congratulations".LocalizeAsync() + "!"
+                : _config.DayType != DailyBonusInfo.DailyBonusToday
+                    ? await "time/day".LocalizeAsync() + $" {_config.DayNumber}"
+                    : await "time/today".LocalizeAsync();
+
             _view.SetDayText(dayText);
             _view.SetItemCount($"x" + $"{_config.ItemCount}");
             _view.SetItemSprite(_config.ItemSprite);

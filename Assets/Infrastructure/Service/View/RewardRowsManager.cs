@@ -8,29 +8,48 @@ namespace Infrastructure.Service.View
     [Serializable]
     public class RewardRowsManager : IRewardRowsManager
     {
-        [SerializeField] private int m_RewardsInRow;
+        [SerializeField] private bool m_AllowRuntimeConfiguration;
+        [SerializeField] private float m_ScaleFactor = 0.75f;
+        [SerializeField, Range(1, 10)] private int m_ConfigurationStartAtRowCount;
+        [Space]
+        [SerializeField, Range(1, 10)] private int m_MaxRewardsInRow;
         [SerializeField] private GameObject m_RowTemplate;
         [SerializeField] private Transform m_RowsParent;
+        [SerializeField] private Transform m_LastRewardParent;
 
         private List<Transform> _rows;
+        private int _rewardsInRow;
 
         public Transform GetRewardParent(int rewardIndex, int rewardCount)
         {
             _rows ??= ConfigureRows(rewardCount);
-            var row = _rows[GetRowIndex(rewardIndex)];
+            _rewardsInRow = GetRewardsInRowCount(rewardCount);
+            var rowIndex = GetRowIndex(rewardIndex);
+            var row = _rows[rowIndex];
             
             if (row)
             {
                 return row;
             }
             
-            throw new NullReferenceException("Can't find row in RewardRowManager!");
+            throw new NullReferenceException($"Can't find row in {GetType().Name}!");
+        }
+
+        public Transform GetLastRewardParent()
+        {
+            return m_LastRewardParent;
         }
         
         private List<Transform> ConfigureRows(int rewardCount)
         {
-            var rowsNumber = Math.Ceiling((float)rewardCount / m_RewardsInRow);
+            var rowsNumber = CalculateRowsNumber(rewardCount);
 
+            if (m_AllowRuntimeConfiguration)
+            {
+                ConfigureAtRuntime(rowsNumber);
+                rowsNumber = CalculateRowsNumber(rewardCount);
+            }
+            
             _rows = new List<Transform> { m_RowTemplate.transform };
 
             for (var index = 0; index < rowsNumber - 1; index++)
@@ -41,9 +60,46 @@ namespace Infrastructure.Service.View
             return _rows;
         }
 
+        private int CalculateRowsNumber(int rewardCount)
+        {
+            var rowsNumber = (int)Math.Ceiling((float)rewardCount / m_MaxRewardsInRow);
+            return rowsNumber;
+        }
+
+        private int GetRewardsInRowCount(int rewardCount)
+        {
+            if (_rewardsInRow != 0)
+            {
+               return _rewardsInRow;
+            }
+            
+            var minRewardsInRow = (int)Math.Ceiling((float)rewardCount / _rows.Count);
+            var rewardsInRow = Math.Min(minRewardsInRow, m_MaxRewardsInRow);
+            _rewardsInRow = rewardsInRow == 0 ? 1 : rewardsInRow;
+
+            return _rewardsInRow;
+        }
+        
         private int GetRowIndex(int rewardIndex)
         {
-            return rewardIndex / m_RewardsInRow;
+            var rowIndex = rewardIndex / _rewardsInRow;
+            return rowIndex;
+        }
+
+        private void ConfigureAtRuntime(int rowsNumberBeforeConfiguration)
+        {
+            var value = rowsNumberBeforeConfiguration - m_ConfigurationStartAtRowCount;
+
+            if (rowsNumberBeforeConfiguration < m_ConfigurationStartAtRowCount)
+            {
+                return;
+            }
+            
+            for (var index = 0; index <= value; index++)
+            {
+                m_MaxRewardsInRow++;
+                m_RowsParent.localScale *= m_ScaleFactor;
+            }
         }
     }
 }
