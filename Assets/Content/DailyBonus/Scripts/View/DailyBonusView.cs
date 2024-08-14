@@ -13,6 +13,7 @@ namespace Content.DailyBonus.Scripts.View
         
         private UnityAction _onCloseButtonClicked;
 
+        public MonoBehaviour MonoBehaviour => this;
         public RewardRowsManager RewardRowsManager => m_RewardRowsManager;
         
         public void Init(IViewSignalManager viewSignalManager)

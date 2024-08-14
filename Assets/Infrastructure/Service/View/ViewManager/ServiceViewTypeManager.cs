@@ -1,9 +1,8 @@
 ﻿using Infrastructure.Service.View.ViewManager.ViewAnimation;
-using UnityEngine;
 
 namespace Infrastructure.Service.View.ViewManager
 {
-    public class ServiceViewEntity : IViewEntity
+    public class ServiceViewTypeManager : IViewTypeManager
     {
         public bool Open(IViewWrapper viewWrapper, bool viewIsOpen)
         {
@@ -15,12 +14,14 @@ namespace Infrastructure.Service.View.ViewManager
             }
             else
             {
-                if (viewWrapper is not { View: MonoBehaviour viewMonoBehaviour })
+                var monoBehaviour = viewWrapper.View.MonoBehaviour;
+                
+                if (!monoBehaviour)
                 {
                     return false;
                 }
 
-                new WindowAnimator(viewMonoBehaviour.transform).Show();
+                new WindowAnimator(monoBehaviour.transform).Show();
             }
 
             return true;
@@ -36,12 +37,14 @@ namespace Infrastructure.Service.View.ViewManager
             }
             else
             {
-                if (viewWrapper is not { View: MonoBehaviour viewMonoBehaviour })
+                var monoBehaviour = viewWrapper.View.MonoBehaviour;
+                
+                if (!monoBehaviour)
                 {
                     return false;
                 }
                 
-                new WindowAnimator(viewMonoBehaviour.transform).Hide();
+                new WindowAnimator(monoBehaviour.transform).Hide();
             }
             
             return false;

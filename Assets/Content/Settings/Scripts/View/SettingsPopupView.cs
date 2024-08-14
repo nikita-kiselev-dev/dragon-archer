@@ -14,6 +14,8 @@ namespace Content.Settings.Scripts.View
  
         private UnityAction _onCloseButtonClicked;
         
+        public MonoBehaviour MonoBehaviour => this;
+        
         public void Init(IViewSignalManager viewSignalManager)
         {
             _onCloseButtonClicked = viewSignalManager.GetCloseSignal();

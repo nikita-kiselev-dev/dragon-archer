@@ -8,7 +8,7 @@ namespace Infrastructure.Service.View.ViewManager
     public class ViewManager : IViewManager
     {
         private readonly Dictionary<string, IViewWrapper> _viewWrappers = new();
-        private readonly Dictionary<string, IViewEntity> _viewEntities;
+        private readonly Dictionary<string, IViewTypeManager> _viewEntities;
         private readonly Queue<IViewWrapper> _viewQueue = new();
 
         private bool _viewIsOpen;
@@ -16,11 +16,11 @@ namespace Infrastructure.Service.View.ViewManager
         [Inject]
         public ViewManager(IViewAnimator backgroundAnimator)
         {
-            _viewEntities = new Dictionary<string, IViewEntity>
+            _viewEntities = new Dictionary<string, IViewTypeManager>
             {
-                { ViewType.Popup, new PopupViewEntity(_viewQueue, backgroundAnimator) },
-                { ViewType.Window, new WindowViewEntity() },
-                { ViewType.Service, new ServiceViewEntity() }
+                { ViewType.Popup, new PopupViewTypeManager(_viewQueue, backgroundAnimator) },
+                { ViewType.Window, new WindowViewTypeManager() },
+                { ViewType.Service, new ServiceViewTypeManager() }
             };
         }
 

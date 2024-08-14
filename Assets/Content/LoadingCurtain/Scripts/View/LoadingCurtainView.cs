@@ -15,6 +15,7 @@ namespace Content.LoadingCurtain.Scripts.View
         private string _loadingLocalizedString;
         private Coroutine _textAnimationCoroutine;
         
+        public MonoBehaviour MonoBehaviour => this;
         public CanvasGroup CanvasGroup => m_CanvasGroup;
         public GradientColor GradientColor => m_GradientColor;
         

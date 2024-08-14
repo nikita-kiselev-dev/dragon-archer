@@ -16,6 +16,8 @@ namespace Content.StartScreen.Scripts.View
         private UnityAction _onSettingsButtonClicked;
         private UnityAction _onWebSiteButtonClicked;
 
+        public MonoBehaviour MonoBehaviour => this;
+        
         public void Init(IViewSignalManager viewSignalManager)
         {
             _onPlayButtonClicked = viewSignalManager.GetSignal(StartScreenInfo.StartGameSignal);
@@ -23,7 +25,6 @@ namespace Content.StartScreen.Scripts.View
             _onWebSiteButtonClicked = viewSignalManager.GetSignal(StartScreenInfo.OpenWebSiteSignal);
             
             SetupButtons();
-            
         }
 
         public void SetActive(bool isActive)

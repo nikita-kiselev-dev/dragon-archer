@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -8,14 +9,14 @@ namespace Infrastructure.Service.View
     [Serializable]
     public class RewardRowsManager : IRewardRowsManager
     {
-        [SerializeField] private bool m_AllowRuntimeConfiguration;
-        [SerializeField] private float m_ScaleFactor = 0.75f;
-        [SerializeField, Range(1, 10)] private int m_ConfigurationStartAtRowCount;
+        [SerializeField, BoxGroup("Runtime Configuration")] private bool m_AllowRuntimeConfiguration;
+        [SerializeField, BoxGroup("Runtime Configuration"), ShowIf("m_AllowRuntimeConfiguration")] private float m_ScaleFactor = 0.75f;
+        [SerializeField, BoxGroup("Runtime Configuration"), ShowIf("m_AllowRuntimeConfiguration"), Range(1, 10)] private int m_ConfigurationStartAtRowCount;
         [Space]
-        [SerializeField, Range(1, 10)] private int m_MaxRewardsInRow;
-        [SerializeField] private GameObject m_RowTemplate;
-        [SerializeField] private Transform m_RowsParent;
-        [SerializeField] private Transform m_LastRewardParent;
+        [SerializeField, BoxGroup("Reward Management"), Range(1, 10)] private int m_MaxRewardsInRow;
+        [SerializeField, BoxGroup("Reward Management"), Required] private GameObject m_RowTemplate;
+        [SerializeField, BoxGroup("Reward Management"), Required] private Transform m_RowsParent;
+        [SerializeField, BoxGroup("Reward Management"), Required] private Transform m_LastRewardParent;
 
         private List<Transform> _rows;
         private int _rewardsInRow;
