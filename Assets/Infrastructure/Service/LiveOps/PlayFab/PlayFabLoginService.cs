@@ -9,11 +9,13 @@ namespace Infrastructure.Service.LiveOps.PlayFab
     public class PlayFabLoginService
     {
         private readonly ISignalBus _signalBus;
-        private readonly Action<bool> _onLoginCompleted;
+        private readonly Action _onLoginCompleted;
         
         private bool _isLoggedIn;
 
-        public PlayFabLoginService(ISignalBus signalBus, Action<bool> onLoginCompleted)
+        public bool IsLoggedIn => _isLoggedIn;
+
+        public PlayFabLoginService(ISignalBus signalBus, Action onLoginCompleted)
         {
             _signalBus = signalBus;
             _onLoginCompleted = onLoginCompleted;
@@ -35,13 +37,13 @@ namespace Infrastructure.Service.LiveOps.PlayFab
             Debug.Log($"{GetType().Name} - login successful!\nWelcome, " + result.PlayFabId + "!");
             _isLoggedIn = true;
             GetPlayerProfile();
-            _onLoginCompleted?.Invoke(true);
+            _onLoginCompleted?.Invoke();
         }
 
         private void OnLoginFailure(PlayFabError error)
         {
             Debug.LogError($"{GetType().Name} - error logging in: " + error.GenerateErrorReport());
-            _onLoginCompleted?.Invoke(false);
+            _signalBus.Trigger<ServerLoginCompletedSignal, bool>(false);
         }
 
         private void GetPlayerProfile()

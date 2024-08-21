@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using Infrastructure.Service.Localization;
 using Infrastructure.Service.View.UIEffects;
 using TMPro;
 using UnityEngine;
@@ -23,10 +22,10 @@ namespace Content.LoadingCurtain.Scripts.View
         {
             gameObject.SetActive(isActive);
         }
-        
-        private async void Awake()
+
+        public void SetLoadingText(string text)
         {
-            _loadingLocalizedString = await "loading".LocalizeAsync();
+            _loadingLocalizedString = text;
         }
 
         private void OnEnable()

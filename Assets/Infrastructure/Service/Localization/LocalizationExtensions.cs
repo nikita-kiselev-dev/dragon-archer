@@ -1,21 +1,21 @@
-﻿using System.Threading.Tasks;
-using UnityEngine.Localization;
+﻿using UnityEngine.Localization;
 
 namespace Infrastructure.Service.Localization
 {
     public static class LocalizationExtensions
     {
-        public static async Task<string> LocalizeAsync(this string localizationKey)
+        public static string Localize(this string localizationKey)
         {
             var localizedString = new LocalizedString(LocalizationInfo.MainStringTableName, localizationKey);
-            var localizedStringOperation = localizedString.GetLocalizedStringAsync();
-            return await localizedStringOperation.Task;
+            var localizedStringResult = localizedString.GetLocalizedString();
+            return localizedStringResult;
         }
         
-        public static  string Localize(this string localizationKey)
+        public static string LocalizeAsync(this string localizationKey)
         {
             var localizedString = new LocalizedString(LocalizationInfo.MainStringTableName, localizationKey);
             var localizedStringOperation = localizedString.GetLocalizedStringAsync();
+            localizedStringOperation.WaitForCompletion();
             return localizedStringOperation.Result;
         }
     }

@@ -31,6 +31,7 @@ namespace Infrastructure.Service.View.ViewManager.ViewAnimation
         public void Hide()
         {
             var sequence = DOTween.Sequence();
+            
             sequence
                 .Append(_viewTransform.DOScale(Vector3.zero, PopOutDuration / 1.2f))
                 .AppendCallback(() =>

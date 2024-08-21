@@ -13,6 +13,8 @@
 /[Uu]ser[Ss]ettings/
 /[Aa]sset[Bb]undles/**/*.zip
 /Assets/Layer Lab/
+/WebGL Builds/
+/Assets/Plugins/UnityEditorDarkMode
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data

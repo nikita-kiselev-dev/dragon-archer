@@ -47,7 +47,7 @@ namespace Infrastructure.Service.View.ViewManager
             return true;
         }
 
-        public bool Close(IViewWrapper viewWrapper, bool viewIsOpen)
+        public bool Close(IViewWrapper viewWrapper)
         {
             var customAnimation = viewWrapper.CustomCloseAnimation;
 

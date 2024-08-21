@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Threading.Tasks;
 using PlayFab;
 using PlayFab.ClientModels;
 using UnityEngine;
@@ -23,7 +22,7 @@ namespace Infrastructure.Service.LiveOps.PlayFab
             _coroutineRunner = coroutineRunner;
         }
         
-        public async Task<DateTime> GetServerTimeAsync()
+        public DateTime GetServerTimeAsync()
         {
             if (_isRequestingServerTime && _requestDelayCoroutine != null)
             {
@@ -31,7 +30,7 @@ namespace Infrastructure.Service.LiveOps.PlayFab
             }
 
             _isRequestingServerTime = true;
-            _cachedServerTime = await RequestServerTimeAsync();
+            _cachedServerTime = RequestServerTimeAsync();
             _isRequestingServerTime = false;
 
             _requestDelayCoroutine = _coroutineRunner.StartCoroutine(RequestDelayCoroutine());
@@ -44,28 +43,24 @@ namespace Infrastructure.Service.LiveOps.PlayFab
             yield return new WaitForSeconds(ServerTimeRequestDelayInSeconds);
         }
         
-        private Task<DateTime> RequestServerTimeAsync()
-        {
-            var taskCompletionSource = new TaskCompletionSource<DateTime>();
-
+        private DateTime RequestServerTimeAsync()
+        { 
             PlayFabClientAPI.GetTime(new GetTimeRequest(),
-                result => OnGetTimeSuccess(result, taskCompletionSource),
-                error => OnGetTimeFailure(error, taskCompletionSource));
+                result => OnGetTimeSuccess(result),
+                error => OnGetTimeFailure(error));
 
-            return taskCompletionSource.Task;
+            return DateTime.Now;
         }
 
-        private void OnGetTimeSuccess(GetTimeResult result, TaskCompletionSource<DateTime> taskCompletionSource)
+        private void OnGetTimeSuccess(GetTimeResult result)
         {
             _cachedServerTime = result.Time;
             Debug.Log($"{GetType().Name} - server time: " + _cachedServerTime);
-            taskCompletionSource.SetResult(result.Time);
         }
         
-        private void OnGetTimeFailure(PlayFabError error, TaskCompletionSource<DateTime> taskCompletionSource)
+        private void OnGetTimeFailure(PlayFabError error)
         {
             Debug.LogError($"{GetType().Name} - error getting server time: " + error.GenerateErrorReport());
-            taskCompletionSource.SetException(new Exception(error.GenerateErrorReport()));
         }
     }
 }

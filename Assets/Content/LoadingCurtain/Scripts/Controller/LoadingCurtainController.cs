@@ -1,5 +1,5 @@
 ﻿using Content.LoadingCurtain.Scripts.View;
-using Infrastructure.Service.View;
+using Infrastructure.Service.Localization;
 using Infrastructure.Service.View.ViewFactory;
 using Infrastructure.Service.View.ViewManager;
 using VContainer;
@@ -10,12 +10,14 @@ namespace Content.LoadingCurtain.Scripts.Controller
     {
         [Inject] private readonly IViewFactory _viewFactory;
         [Inject] private readonly IViewManager _viewManager;
-        
+
+        private ILoadingCurtainView _view;
         private IViewInteractor _viewInteractor;
         
         public void Init()
         {
             RegisterAndInitView();
+            ConfigureView();
         }
         
         public void Show()
@@ -30,19 +32,25 @@ namespace Content.LoadingCurtain.Scripts.Controller
         
         private void RegisterAndInitView()
         {
-            var view = _viewFactory
-                .CreateView<IMonoBehaviour>(ViewInfo.LoadingCurtain, ViewType.Service);
+            _view = _viewFactory
+                .CreateView<ILoadingCurtainView>(ViewInfo.LoadingCurtain, ViewType.Service);
             
-            var animator = new LoadingCurtainViewAnimator(view as ILoadingCurtainView);
+            var animator = new LoadingCurtainViewAnimator(_view);
             
             _viewInteractor = new ViewRegistrar(_viewManager)
                 .SetViewKey(ViewInfo.LoadingCurtain)
                 .SetViewType(ViewType.Service)
-                .SetView(view)
+                .SetView(_view)
                 .SetCustomOpenAnimation(animator)
                 .SetCustomCloseAnimation(animator)
                 .EnableFromStart()
                 .RegisterAndInit();
+        }
+
+        private void ConfigureView()
+        {
+            var loadingLocalizedString = "loading".LocalizeAsync();
+            _view.SetLoadingText(loadingLocalizedString);
         }
     }
 }

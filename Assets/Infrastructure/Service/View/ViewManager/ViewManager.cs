@@ -8,7 +8,7 @@ namespace Infrastructure.Service.View.ViewManager
     public class ViewManager : IViewManager
     {
         private readonly Dictionary<string, IViewWrapper> _viewWrappers = new();
-        private readonly Dictionary<string, IViewTypeManager> _viewEntities;
+        private readonly Dictionary<string, IViewTypeManager> _viewTypeManagers;
         private readonly Queue<IViewWrapper> _viewQueue = new();
 
         private bool _viewIsOpen;
@@ -16,7 +16,7 @@ namespace Infrastructure.Service.View.ViewManager
         [Inject]
         public ViewManager(IViewAnimator backgroundAnimator)
         {
-            _viewEntities = new Dictionary<string, IViewTypeManager>
+            _viewTypeManagers = new Dictionary<string, IViewTypeManager>
             {
                 { ViewType.Popup, new PopupViewTypeManager(_viewQueue, backgroundAnimator) },
                 { ViewType.Window, new WindowViewTypeManager() },
@@ -27,14 +27,30 @@ namespace Infrastructure.Service.View.ViewManager
         public void Open(string viewKey)
         {
             var viewWrapper = GetViewWrapper(viewKey);
-            _viewIsOpen = _viewEntities[viewWrapper.ViewType].Open(viewWrapper, _viewIsOpen);
+            
+            var viewIsOpen = _viewTypeManagers[viewWrapper.ViewType].Open(viewWrapper, _viewIsOpen);
+
+            if (viewWrapper.ViewType == ViewType.Service)
+            {
+                return;
+            }
+            
+            _viewIsOpen = viewIsOpen;
         }
 
         public void Close(string viewKey)
         {
             var viewWrapper = GetViewWrapper(viewKey);
-            _viewIsOpen = _viewEntities[viewWrapper.ViewType].Close(viewWrapper, _viewIsOpen);
+
+            var viewIsOpen = _viewTypeManagers[viewWrapper.ViewType].Close(viewWrapper);
+
+            if (viewWrapper.ViewType == ViewType.Service)
+            {
+                return;
+            }
+            
             OpenNext();
+            _viewIsOpen = viewIsOpen;
         }
 
         public void CloseAll()

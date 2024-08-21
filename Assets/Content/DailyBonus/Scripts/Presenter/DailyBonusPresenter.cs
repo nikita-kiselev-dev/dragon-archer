@@ -43,10 +43,10 @@ namespace Content.DailyBonus.Scripts.Presenter
             _inventoryManager = inventoryManager;
         }
         
-        public async void Init()
+        public void Init()
         {
             _core = new DailyBonusCore(_dto, _model, _serverTimeService, _inventoryManager);
-            var needToShowPopup = await _core.NeedToShowPopup();
+            var needToShowPopup = _core.NeedToShowPopup();
 
             if (!needToShowPopup)
             {

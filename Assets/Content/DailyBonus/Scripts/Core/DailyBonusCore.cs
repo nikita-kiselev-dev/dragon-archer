@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using Content.DailyBonus.Scripts.Dto;
 using Content.DailyBonus.Scripts.Model;
 using Content.Items.Scripts;
@@ -27,9 +26,9 @@ namespace Content.DailyBonus.Scripts.Core
             _inventoryManager = inventoryManager;
         }
         
-        public async Task<bool> NeedToShowPopup()
+        public bool NeedToShowPopup()
         {
-            var serverTime = await _serverTimeService.GetServerTime();
+            var serverTime = _serverTimeService.ServerTime;
             var startStreakData = _model.GetStartStreakData();
             var timeSinceStartStreak = serverTime - startStreakData;
 

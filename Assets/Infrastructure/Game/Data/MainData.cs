@@ -19,9 +19,9 @@ namespace Infrastructure.Game.Data
         public long FirstLaunchDateUtc => m_FirstLaunchDateUtc;
         
         //TODO: transfer to main playfab data model
-        public override async void WhenDataIsNew()
+        public override void WhenDataIsNew()
         {
-            var serverTime = await _serverTimeService.GetServerTime();
+            var serverTime = _serverTimeService.ServerTime;
             var convertedServerTime = _dateConverter.DateTimeToUnixTimeStamp(serverTime);
             m_FirstLaunchDateUtc = convertedServerTime;
         }
