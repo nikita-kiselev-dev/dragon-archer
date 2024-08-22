@@ -46,13 +46,13 @@ namespace Content.DailyBonus.Scripts.Core
             var addStreakDay = timeSinceStartStreak.TotalSeconds 
                 is > DailyBonusInfo.MinSecondsToGetReward and < DailyBonusInfo.SecondsToResetStreak;
 
-            if (addStreakDay)
+            if (!addStreakDay)
             {
-                _model.AddStreakDay();
-                return true;
+                return false;
             }
-
-            return false;
+            
+            _model.AddStreakDay();
+            return true;
         }
         
         public void GetStreakReward()

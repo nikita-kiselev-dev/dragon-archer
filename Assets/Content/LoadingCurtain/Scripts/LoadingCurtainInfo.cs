@@ -10,7 +10,6 @@ namespace Content.LoadingCurtain.Scripts
         public const float ColorChangeHideAnimationDuration = 1.3f;
         public const float HideAnimationDuration = FadeOutAnimationDuration + ColorChangeHideAnimationDuration;
         
-        
         public const float AddDotAnimationDelay = 0.3f;
         public const int DotsToAddInAnimation = 3;
     }

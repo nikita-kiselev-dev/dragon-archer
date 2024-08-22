@@ -1,4 +1,5 @@
-using System.Collections;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using Infrastructure.Service.Scene.Signals;
 using Infrastructure.Service.SignalBus;
 using UnityEngine;
@@ -12,18 +13,22 @@ namespace Infrastructure.Service.SaveLoad
         [Inject] private readonly IDataSaver _dataSaver;
         
         private const bool IsAutoSaveEnabled = true;
-        private const int AutoSaveInterval = 60;
-        private const int AutoSaveDelay = 5;
+        private const int AutoSaveIntervalInSeconds = 60;
+        private const int AutoSaveDelayInSeconds = 5;
 
         private bool _isReadyForSave = true;
-        private Coroutine _autoSaveCoroutine;
-        private Coroutine _saveDelayCoroutine;
+        
+        private CancellationTokenSource _autoSaveCancellationTokenSource;
+        private CancellationTokenSource _saveDelayCancellationTokenSource;
 
         private void Awake()
         {
             DontDestroyOnLoad(gameObject);
+
+            _autoSaveCancellationTokenSource = new CancellationTokenSource();
+            AutoSave(_autoSaveCancellationTokenSource.Token).Forget();
+            
             _signalBus.Subscribe<SceneChangedSignal>(this, Save);
-            _autoSaveCoroutine = StartCoroutine(AutoSave());
         }
 
         private void OnApplicationPause(bool pauseStatus)
@@ -36,25 +41,25 @@ namespace Infrastructure.Service.SaveLoad
 
         private void OnApplicationQuit()
         {
-            if (_autoSaveCoroutine != null)
-            {
-                StopCoroutine(_autoSaveCoroutine);
-            }
-            
+            _autoSaveCancellationTokenSource?.Cancel();
             Save();
         }
 
         private void OnDestroy()
         {
-            StopCoroutine(_autoSaveCoroutine);
+            _autoSaveCancellationTokenSource?.Cancel();
+            _saveDelayCancellationTokenSource?.Cancel();
             _signalBus.Unsubscribe<SceneChangedSignal>(this);
         }
 
-        private IEnumerator AutoSave()
+        private async UniTask AutoSave(CancellationToken cancellationTokenSource)
         {
-            while (IsAutoSaveEnabled)
+            while (!cancellationTokenSource.IsCancellationRequested)
             {
-                yield return new WaitForSeconds(AutoSaveInterval);
+                await UniTask.WaitForSeconds(
+                    AutoSaveIntervalInSeconds, 
+                    cancellationToken: cancellationTokenSource);
+                
                 TrySave();
             }
         }
@@ -69,12 +74,9 @@ namespace Infrastructure.Service.SaveLoad
             Save();
             _isReadyForSave = false;
             
-            if (_saveDelayCoroutine != null)
-            {
-                StopCoroutine(_saveDelayCoroutine);
-            }
-            
-            _saveDelayCoroutine = StartCoroutine(SaveDelay());
+            _saveDelayCancellationTokenSource?.Cancel();
+            _saveDelayCancellationTokenSource = new CancellationTokenSource();
+            SaveDelay(_saveDelayCancellationTokenSource.Token).Forget();
         }
 
         private void Save()
@@ -82,9 +84,12 @@ namespace Infrastructure.Service.SaveLoad
             _dataSaver.Save();
         }
 
-        private IEnumerator SaveDelay()
+        private async UniTask SaveDelay(CancellationToken cancellationTokenSource)
         {
-            yield return new WaitForSeconds(AutoSaveDelay);
+            await UniTask.WaitForSeconds(
+                AutoSaveDelayInSeconds, 
+                cancellationToken: cancellationTokenSource);
+            
             _isReadyForSave = true;
         }
     }
