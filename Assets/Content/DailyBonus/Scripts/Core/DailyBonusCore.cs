@@ -3,6 +3,7 @@ using System.Linq;
 using Content.DailyBonus.Scripts.Dto;
 using Content.DailyBonus.Scripts.Model;
 using Content.Items.Scripts;
+using Cysharp.Threading.Tasks;
 using Infrastructure.Service.LiveOps;
 
 namespace Content.DailyBonus.Scripts.Core
@@ -26,9 +27,9 @@ namespace Content.DailyBonus.Scripts.Core
             _inventoryManager = inventoryManager;
         }
         
-        public bool NeedToShowPopup()
+        public async UniTask<bool> NeedToShowPopup()
         {
-            var serverTime = _serverTimeService.ServerTime;
+            var serverTime = await _serverTimeService.GetServerTime();
             var startStreakData = _model.GetStartStreakData();
             var timeSinceStartStreak = serverTime - startStreakData;
 

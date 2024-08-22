@@ -46,6 +46,7 @@ namespace Infrastructure.Service.SaveLoad
 
         private void OnDestroy()
         {
+            StopCoroutine(_autoSaveCoroutine);
             _signalBus.Unsubscribe<SceneChangedSignal>(this);
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Infrastructure.Service.SignalBus;
 using VContainer;
 
@@ -9,18 +10,16 @@ namespace Infrastructure.Service.LiveOps.PlayFab
     {
         [Inject] private ICoroutineRunner _coroutineRunner;
         [Inject] private ISignalBus _signalBus;
-        
-        private PlayFabServerTimeService _timeService;
+
+        private readonly PlayFabServerTimeService _timeService = new();
         private PlayFabLoginService _loginService;
         private PlayFabDtoService _dtoService;
 
         public bool IsConnectedToServer => _loginService.IsLoggedIn;
-        public DateTime ServerTime => _timeService.GetServerTimeAsync();
         
         public void Init()
         {
-            _timeService = new PlayFabServerTimeService(_coroutineRunner);
-            _loginService = new PlayFabLoginService(_signalBus, LoadServices);
+            _loginService = new PlayFabLoginService(_signalBus, GetLiveOps);
             _dtoService = new PlayFabDtoService(_signalBus);
             _loginService.Login();
         }
@@ -30,9 +29,16 @@ namespace Infrastructure.Service.LiveOps.PlayFab
             return _dtoService.TitleData;
         }
 
-        private void LoadServices()
+        public async UniTask<DateTime> GetServerTime()
         {
-            _dtoService.LoadTitleDataFromServer();
+            var serverTime = await _timeService.GetServerTimeAsync();
+            return serverTime;
+        }
+
+        private void GetLiveOps()
+        {
+            _timeService.GetServerTimeAsync();
+            _dtoService.GetTitleDataFromServer();
         }
     }
 }

@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace Infrastructure.Service.Audio
 {
     public interface IAudioLoader
     {
-        public AudioClip LoadAudio(string audioClipName, string audioType);
+        public UniTask<AudioClip> LoadAudio(string audioClipName, string audioType);
     }
 }

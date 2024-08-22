@@ -45,9 +45,9 @@ namespace Content.StartScreen.Scripts.Controller
             ExternalSourcesController.Instance.OpenPrivacyPolicy();
         }
 
-        private void RegisterAndInitView()
+        private async void RegisterAndInitView()
         {
-            var view = _viewFactory.CreateView<IView>(ViewInfo.StartScreen, ViewType.Window);
+            var view = await _viewFactory.CreateView<IView>(ViewInfo.StartScreen, ViewType.Window);
             
             var viewSignalManager = new ViewSignalManager()
                 .AddSignal(StartScreenInfo.StartGameSignal, StartGame)

@@ -1,4 +1,5 @@
 ﻿using System;
+using Cysharp.Threading.Tasks;
 using Infrastructure.Service.Asset;
 using UnityEngine;
 
@@ -14,10 +15,10 @@ namespace Infrastructure.Service.Audio
             _assetLoader = assetLoader;
         }
         
-        public AudioClip LoadAudio(string audioClipName, string audioType)
+        public async UniTask<AudioClip> LoadAudio(string audioClipName, string audioType)
         {
             var audioClipAddressPath = audioType + "/" + audioClipName + AudioFileFormat;
-            var audioClip = _assetLoader.LoadAsset<AudioClip>(audioClipAddressPath).Result;
+            var audioClip = await _assetLoader.LoadAssetAsync<AudioClip>(audioClipAddressPath);
 
             if (audioClip)
             {

@@ -20,7 +20,7 @@ namespace Infrastructure.Service.LiveOps.PlayFab
             _signalBus = signalBus;
         }
         
-        public void LoadTitleDataFromServer()
+        public void GetTitleDataFromServer()
         {
             PlayFabClientAPI.GetTitleData(new GetTitleDataRequest(), OnLoadTitleDataSuccess, OnLoadTitleDataFailure);
         }

@@ -1,7 +1,9 @@
-﻿namespace Infrastructure.Service.View.ViewFactory
+﻿using Cysharp.Threading.Tasks;
+
+namespace Infrastructure.Service.View.ViewFactory
 {
     public interface IViewFactory : IFactory
     {
-        public T CreateView<T>(string viewKey, string viewType);
+        public UniTask<T> CreateView<T>(string viewKey, string viewType);
     }
 }

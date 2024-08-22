@@ -1,9 +1,10 @@
 ﻿using System;
+using Cysharp.Threading.Tasks;
 
 namespace Infrastructure.Service.Asset
 {
-    public interface IOperationHandler<out T> : IOperationStatus, IDisposable
+    public interface IOperationHandler<T> : IDisposable
     {
-        T Result { get; }
+        public UniTask<T> Result();
     }
 }

@@ -1,57 +1,39 @@
-﻿using UnityEngine;
+﻿using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace Infrastructure.Service.Asset
 {
     public class AddressableAssetOperationHandler<T> : IOperationHandler<T>
     {
-        private AsyncOperationHandle<T> m_OperationHandle;
-
-        public AddressableAssetOperationHandler(AsyncOperationHandle<T> operationHandle)
+        private readonly UniTask<T> _operationHandle;
+        
+        public AddressableAssetOperationHandler(UniTask<T> operationHandle)
         {
-            m_OperationHandle = operationHandle;
+            _operationHandle = operationHandle;
         }
 
-        public bool IsSuccessful
-            => m_OperationHandle.IsDone
-               && m_OperationHandle.Status 
-               == AsyncOperationStatus.Succeeded;
-
-        public bool IsCompleted
-            => m_OperationHandle.IsDone;
-
-        private string Message { get; set; }
-
-        public T Result
+        public async UniTask<T> Result()
         {
-            get
+            try
             {
-                if (!IsSuccessful)
-                {
-                    return default;
-                }
-
-                var asset = m_OperationHandle.Result;
-                if (asset != null)
-                {
-                    return asset;
-                }
-
-                Message
-                    = $"'{m_OperationHandle.Result}' not assignable from '{typeof(T)}'"; 
-                throw new MissingComponentException(Message);
+                var asset = await _operationHandle;
+                return asset;
             }
-        }
-
-        public void Release()
-        {
-            if (m_OperationHandle.IsValid())
+            catch (Exception exception)
             {
-                Addressables.Release(m_OperationHandle);    
+                throw;
             }
+
+            return default;
         }
         
+        
         public void Dispose() => Release();
+        
+        private void Release()
+        {
+            Addressables.Release(_operationHandle);    
+        }
     }
 }

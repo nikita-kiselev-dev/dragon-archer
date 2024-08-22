@@ -1,66 +1,40 @@
-﻿using UnityEngine;
+﻿using System;
+using Cysharp.Threading.Tasks;
+using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace Infrastructure.Service.Asset
 {
     public class AddressableGameObjectOperationHandler<T> : IOperationHandler<T>
     {
-        private readonly AsyncOperationHandle<GameObject> m_OperationHandle;
-        private T m_Result;
+        private readonly UniTask<GameObject> _operationHandle;
         
-        public AddressableGameObjectOperationHandler(AsyncOperationHandle<GameObject> operationHandle)
+        public AddressableGameObjectOperationHandler(UniTask<GameObject> operationHandle)
         {
-            m_OperationHandle = operationHandle;
+            _operationHandle = operationHandle;
         }
 
-        public bool IsSuccessful
-            => m_OperationHandle.IsDone
-               && m_OperationHandle.Status 
-               == AsyncOperationStatus.Succeeded;
-
-        public bool IsCompleted
-            => m_OperationHandle.IsDone;
-
-        private string Message { get; set; }
-
-        public T Result
+        public async UniTask<T> Result()
         {
-            get
+            try
             {
-                if (m_Result != null)
-                {
-                    return m_Result;
-                }
-                
-                if (!IsSuccessful)
-                {
-                    return default;
-                }
-
-                m_Result = m_OperationHandle.Result.GetComponent<T>();
-                if (m_Result != null)
-                {
-                    return m_Result;
-                }
-
-                Message
-                    = $"'{m_OperationHandle.Result}' not assignable from '{typeof(T)}'"; 
-                throw new MissingComponentException(Message);
+                var asset = await _operationHandle;
+                return asset.GetComponent<T>();
             }
-        }
-
-        private void ReleaseInstance()
-        {
-            if (m_OperationHandle.IsValid())
+            catch (Exception exception)
             {
-                Addressables.Release(m_OperationHandle);
+                throw;
             }
-        }
 
-        public void Dispose()
+            return default;
+        }
+        
+        
+        public void Dispose() => Release();
+        
+        private void Release()
         {
-            ReleaseInstance();
+            Addressables.Release(_operationHandle);    
         }
     }
 }

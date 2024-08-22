@@ -1,17 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Infrastructure.Service.View.ViewManager.ViewAnimation;
 using VContainer;
 
 namespace Infrastructure.Service.View.ViewManager
 {
-    public class ViewManager : IViewManager
+    public class ViewManager : IViewManager, IBackgroundViewActionHandler
     {
         private readonly Dictionary<string, IViewWrapper> _viewWrappers = new();
         private readonly Dictionary<string, IViewTypeManager> _viewTypeManagers;
         private readonly Queue<IViewWrapper> _viewQueue = new();
 
         private bool _viewIsOpen;
+
+        public Action BackgroundViewAction => CloseLast;
 
         [Inject]
         public ViewManager(IViewAnimator backgroundAnimator)

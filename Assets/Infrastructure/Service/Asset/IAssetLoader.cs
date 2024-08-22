@@ -1,10 +1,12 @@
-﻿using UnityEngine;
+﻿using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace Infrastructure.Service.Asset
 {
     public interface IAssetLoader
     {
-        IOperationHandler<T> LoadAsset<T>(object key); 
-        IOperationHandler<T> Instantiate<T>(object key, Transform parent = null);
+        public void Instantiate(object key, Transform parent = null);
+        public UniTask<T> LoadAssetAsync<T>(object key); 
+        public UniTask<T> InstantiateAsync<T>(object key, Transform parent = null);
     }
 }

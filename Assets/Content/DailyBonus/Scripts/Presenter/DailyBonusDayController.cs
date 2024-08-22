@@ -20,13 +20,13 @@ namespace Content.DailyBonus.Scripts.Presenter
             ConfigureView();
         }
         
-        private void ConfigureView()
+        private async void ConfigureView()
         {
             var dayText = _config.DayType == DailyBonusInfo.DailyBonusTodayLastDay
-                ? "congratulations".LocalizeAsync() + "!"
+                ? await "congratulations".LocalizeAsync() + "!"
                 : _config.DayType != DailyBonusInfo.DailyBonusToday
-                    ? "time/day".LocalizeAsync() + $" {_config.DayNumber}"
-                    : "time/today".LocalizeAsync();
+                    ? await "time/day".LocalizeAsync() + $" {_config.DayNumber}"
+                    : await "time/today".LocalizeAsync();
 
             _view.SetDayText(dayText);
             _view.SetItemCount($"x" + $"{_config.ItemCount}");

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace Infrastructure.Service.Audio
@@ -7,7 +8,7 @@ namespace Infrastructure.Service.Audio
     {
         [SerializeField] private protected AudioSource m_AudioSource;
         
-        private readonly Dictionary<string, AudioClip> _audioList = new Dictionary<string, AudioClip>();
+        private readonly Dictionary<string, AudioClip> _audioList = new();
         private IAudioLoader _audioLoader;
 
         public void Init(IAudioLoader audioLoader)
@@ -36,7 +37,7 @@ namespace Infrastructure.Service.Audio
             m_AudioSource.volume = volume;
         }
         
-        private protected AudioClip GetAudio(string audioClipName, string audioType)
+        private protected async UniTask<AudioClip> GetAudio(string audioClipName, string audioType)
         {
             if (_audioList.TryGetValue(audioClipName, out var audioClip))
             {
@@ -44,7 +45,8 @@ namespace Infrastructure.Service.Audio
             }
             else
             {
-                audioClip = _audioLoader.LoadAudio(audioClipName, audioType);
+                audioClip = await _audioLoader.LoadAudio(audioClipName, audioType);
+                _audioList.Add(audioClipName, audioClip);
                 return audioClip;
             }
         }

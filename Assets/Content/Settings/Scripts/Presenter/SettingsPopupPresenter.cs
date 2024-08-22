@@ -1,5 +1,6 @@
 ﻿using Content.Settings.Scripts.Model;
 using Content.Settings.Scripts.View;
+using Cysharp.Threading.Tasks;
 using Infrastructure.Service.Audio;
 using Infrastructure.Service.View.ViewFactory;
 using Infrastructure.Service.View.ViewManager;
@@ -23,9 +24,9 @@ namespace Content.Settings.Scripts.Presenter
             _viewManager = viewManager;
         }
         
-        public void Init()
+        public async void Init()
         {
-            RegisterAndInitView();
+            await RegisterAndInitView();
             ConfigureView();
         }
         
@@ -39,9 +40,9 @@ namespace Content.Settings.Scripts.Presenter
             _viewInteractor.Close();
         }
 
-        private void RegisterAndInitView()
+        private async UniTask RegisterAndInitView()
         {
-            _view = _viewFactory.CreateView<ISettingsPopupView>(ViewInfo.SettingsPopup, ViewType.Popup);
+            _view = await _viewFactory.CreateView<ISettingsPopupView>(ViewInfo.SettingsPopup, ViewType.Popup);
             
             var viewSignalManager = new ViewSignalManager()
                 .AddSignal<float>(SettingsPopupSignals.SoundsVolumeChangedSignal, SetSoundsVolume)

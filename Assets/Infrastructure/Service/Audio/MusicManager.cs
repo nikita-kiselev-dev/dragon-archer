@@ -10,7 +10,7 @@ namespace Infrastructure.Service.Audio
         private const float FadeInDuration = 1.0f;
         private const float FadeOutDuration = 1.0f;
         
-        public void Play(string audioClipName, bool isLooped = true)
+        public async void Play(string audioClipName, bool isLooped = true)
         {
             var isNewAudioClipAlreadyPlaying = m_AudioSource.isPlaying && audioClipName == m_AudioSource.clip.name;
             
@@ -19,7 +19,7 @@ namespace Infrastructure.Service.Audio
                 return;
             }
 
-            var audioClip = GetAudio(audioClipName, AudioType);
+            var audioClip = await GetAudio(audioClipName, AudioType);
             
             if (m_AudioSource.isPlaying)
             {

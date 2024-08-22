@@ -56,9 +56,9 @@ namespace Infrastructure.Game
             RegisterFeaturesData(builder);
             RegisterTutorialData(builder);
             RegisterDataManager(builder);
+            RegisterAssetLoader(builder);
             
             builder.Register<ITutorialService, TutorialService>(Lifetime.Singleton);
-            builder.Register<IAssetLoader, AddressableAssetLoader>(Lifetime.Singleton);
             builder.Register<IViewFactory, ViewFactory>(Lifetime.Singleton);
             builder.Register<IMainCanvasController, MainCanvasController>(Lifetime.Singleton);
             builder.Register<IViewAnimator, BackgroundAnimator>(Lifetime.Singleton);
@@ -68,7 +68,7 @@ namespace Infrastructure.Game
             builder.Register<ILoadingCurtainController, LoadingCurtainController>(Lifetime.Singleton);
             builder.Register<IStartScreenController, StartScreenController>(Lifetime.Singleton);
             builder.Register<ISettingsPopup, SettingsPopup>(Lifetime.Singleton);
-            builder.Register<IViewManager, ViewManager>(Lifetime.Singleton);
+            builder.Register<ViewManager>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<ISignalBus, EventSignalBus>(Lifetime.Singleton);
             
             builder.Register<IDailyBonus, DailyBonus>(Lifetime.Singleton);
@@ -110,15 +110,20 @@ namespace Infrastructure.Game
         private void RegisterDataManager(IContainerBuilder builder)
         {
             /*#if UNITY_STANDALONE || UNITY_IOS || UNITY_ANDROID
-                builder.Register<IDataManager, DesktopAndMobileDataManager>(Lifetime.Singleton);
+                builder.Register<IDataManager, MainDataManager>(Lifetime.Singleton);
             #endif
                         
             #if UNITY_WEBGL
                 builder.Register<IDataManager, WebDataManager>(Lifetime.Singleton);
             #endif*/
             
-            builder.Register<IDataManager, DesktopAndMobileDataManager>(Lifetime.Singleton).As<IDataSaver>();
+            builder.Register<IDataManager, MainDataManager>(Lifetime.Singleton).As<IDataSaver>();
             builder.Register<IDtoManager, DtoManager>(Lifetime.Singleton).As<IDtoReader>();
+        }
+
+        private void RegisterAssetLoader(IContainerBuilder builder)
+        {
+            builder.Register<IAssetLoader, MainAddressableAssetLoader>(Lifetime.Singleton);
         }
         
         private void RegisterGameManagers(IContainerBuilder builder)

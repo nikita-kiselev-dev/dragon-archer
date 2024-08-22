@@ -21,9 +21,9 @@ namespace Infrastructure.Game.Data
         //TODO: transfer to main playfab data model
         public override void WhenDataIsNew()
         {
-            var serverTime = _serverTimeService.ServerTime;
+            /*var serverTime = _serverTimeService.ServerTime.GetAwaiter().GetResult();
             var convertedServerTime = _dateConverter.DateTimeToUnixTimeStamp(serverTime);
-            m_FirstLaunchDateUtc = convertedServerTime;
+            m_FirstLaunchDateUtc = convertedServerTime;*/
         }
     }
 }

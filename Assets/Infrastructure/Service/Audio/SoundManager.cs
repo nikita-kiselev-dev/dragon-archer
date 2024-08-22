@@ -4,9 +4,9 @@
     {
         private const string AudioType = "Sounds";
         
-        public void Play(string audioClipName)
+        public async void Play(string audioClipName)
         {
-            var audioClip = GetAudio(audioClipName, AudioType);
+            var audioClip = await GetAudio(audioClipName, AudioType);
             m_AudioSource.PlayOneShot(audioClip);
         }
     }

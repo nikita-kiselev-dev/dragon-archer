@@ -1,66 +1,68 @@
 ﻿using System;
-using System.Collections;
+using Cysharp.Threading.Tasks;
 using PlayFab;
 using PlayFab.ClientModels;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 
 namespace Infrastructure.Service.LiveOps.PlayFab
 {
     public class PlayFabServerTimeService
     {
         private const int ServerTimeRequestDelayInSeconds = 300;
-
-        private readonly ICoroutineRunner _coroutineRunner;
         
         private DateTime _cachedServerTime;
         private bool _isRequestingServerTime;
         private Coroutine _requestDelayCoroutine;
-
-        public PlayFabServerTimeService(ICoroutineRunner coroutineRunner)
-        {
-            _coroutineRunner = coroutineRunner;
-        }
+        private bool _isRequestDelayEnabled;
         
-        public DateTime GetServerTimeAsync()
+        public async UniTask<DateTime> GetServerTimeAsync()
         {
-            if (_isRequestingServerTime && _requestDelayCoroutine != null)
+            if (_isRequestingServerTime || _isRequestDelayEnabled)
             {
                 return _cachedServerTime;
             }
 
             _isRequestingServerTime = true;
-            _cachedServerTime = RequestServerTimeAsync();
+            _cachedServerTime = await RequestServerTimeAsync();
             _isRequestingServerTime = false;
 
-            _requestDelayCoroutine = _coroutineRunner.StartCoroutine(RequestDelayCoroutine());
+            if (!_isRequestDelayEnabled)
+            {
+                await WaitRequestDelay();
+            }
             
             return _cachedServerTime;
         }
 
-        private IEnumerator RequestDelayCoroutine()
-        {
-            yield return new WaitForSeconds(ServerTimeRequestDelayInSeconds);
+        private async UniTask WaitRequestDelay()
+        { 
+            _isRequestDelayEnabled = true;
+            await UniTask.WaitForSeconds(ServerTimeRequestDelayInSeconds);
+            _isRequestDelayEnabled = false;
         }
         
-        private DateTime RequestServerTimeAsync()
+        private UniTask<DateTime> RequestServerTimeAsync()
         { 
+            var uniTaskCompletionSource = new UniTaskCompletionSource<DateTime>();
+            
             PlayFabClientAPI.GetTime(new GetTimeRequest(),
-                result => OnGetTimeSuccess(result),
-                error => OnGetTimeFailure(error));
-
-            return DateTime.Now;
+                result => OnGetTimeSuccess(result, uniTaskCompletionSource),
+                error => OnGetTimeFailure(error, uniTaskCompletionSource));
+            
+            return uniTaskCompletionSource.Task;
         }
 
-        private void OnGetTimeSuccess(GetTimeResult result)
+        private void OnGetTimeSuccess(GetTimeResult result, IResolvePromise<DateTime> uniTaskCompletionSource)
         {
             _cachedServerTime = result.Time;
             Debug.Log($"{GetType().Name} - server time: " + _cachedServerTime);
+            uniTaskCompletionSource.TrySetResult(result.Time);
         }
         
-        private void OnGetTimeFailure(PlayFabError error)
+        private void OnGetTimeFailure(PlayFabError error, IRejectPromise uniTaskCompletionSource)
         {
             Debug.LogError($"{GetType().Name} - error getting server time: " + error.GenerateErrorReport());
+            uniTaskCompletionSource.TrySetException(new Exception(error.GenerateErrorReport()));
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.Threading;
+using Cysharp.Threading.Tasks;
 using Infrastructure.Service.View.UIEffects;
 using TMPro;
 using UnityEngine;
@@ -12,7 +13,7 @@ namespace Content.LoadingCurtain.Scripts.View
         [SerializeField] private GradientColor m_GradientColor;
 
         private string _loadingLocalizedString;
-        private Coroutine _textAnimationCoroutine;
+        private CancellationTokenSource _cancellationTokenSource;
         
         public MonoBehaviour MonoBehaviour => this;
         public CanvasGroup CanvasGroup => m_CanvasGroup;
@@ -30,27 +31,34 @@ namespace Content.LoadingCurtain.Scripts.View
 
         private void OnEnable()
         {
-            _textAnimationCoroutine = StartCoroutine(TextAnimation());
+            _cancellationTokenSource = new CancellationTokenSource();
+            TextAnimation(_cancellationTokenSource.Token).Forget();
         }
 
         private void OnDisable()
         {
-            if (_textAnimationCoroutine != null)
-            {
-                StopCoroutine(_textAnimationCoroutine);
-            }
+            _cancellationTokenSource?.Cancel(); 
         }
-
-        private IEnumerator TextAnimation()
+        
+        private async UniTask TextAnimation(CancellationToken cancellationToken)
         {
-            while (true)
+            var loadingLocalizedTextReady = !string.IsNullOrEmpty(_loadingLocalizedString);
+            
+            await UniTask.WaitUntil(
+                () => loadingLocalizedTextReady, 
+                cancellationToken: cancellationToken);
+            
+            while (!cancellationToken.IsCancellationRequested)
             {
                 m_LoadingText.text = _loadingLocalizedString;
                 var dotsToAdd = LoadingCurtainInfo.DotsToAddInAnimation;
 
                 while (dotsToAdd >= 0)
                 {
-                    yield return new WaitForSeconds(LoadingCurtainInfo.AddDotAnimationDelay);
+                    await UniTask.WaitForSeconds(
+                        LoadingCurtainInfo.AddDotAnimationDelay, 
+                        cancellationToken: cancellationToken);
+                    
                     m_LoadingText.text += ".";
                     dotsToAdd--;
                 }

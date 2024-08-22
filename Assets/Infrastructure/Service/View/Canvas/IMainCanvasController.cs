@@ -1,4 +1,5 @@
 ﻿using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,8 +7,7 @@ namespace Infrastructure.Service.View.Canvas
 {
     public interface IMainCanvasController : ICanvasController
     {
-        public void TryCreateCanvas(Action onBackgroundClicked);
+        public UniTask<Transform> GetParent(string viewType, Action onBackgroundClickAction);
         public Image GetPopupBackground();
-        public Transform GetParent(string viewType);
     }
 }

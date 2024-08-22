@@ -3,6 +3,7 @@ using Content.DailyBonus.Scripts.Dto;
 using Content.DailyBonus.Scripts.Model;
 using Content.DailyBonus.Scripts.View;
 using Content.Items.Scripts;
+using Cysharp.Threading.Tasks;
 using Infrastructure.Service.Asset;
 using Infrastructure.Service.LiveOps;
 using Infrastructure.Service.View.ViewFactory;
@@ -43,18 +44,19 @@ namespace Content.DailyBonus.Scripts.Presenter
             _inventoryManager = inventoryManager;
         }
         
-        public void Init()
+        public async void Init()
         {
             _core = new DailyBonusCore(_dto, _model, _serverTimeService, _inventoryManager);
-            var needToShowPopup = _core.NeedToShowPopup();
+            var needToShowPopup = await _core.NeedToShowPopup();
 
             if (!needToShowPopup)
             {
+                //TODO: Remove on Production
                 //return;
             }
             
-            RegisterAndInitView();
-            CreateDays();
+            await RegisterAndInitView();
+            await CreateDays();
             Open();
             _core.GetStreakReward();
         }
@@ -69,20 +71,9 @@ namespace Content.DailyBonus.Scripts.Presenter
             _viewInteractor.Close();
         }
         
-        private void CreateDays()
+        private async UniTask RegisterAndInitView()
         {
-            var dayConfigurator = new DailyBonusDayConfigurator(_dto, _model, _view.RewardRowsManager, _assetLoader);
-            var dayControllers = dayConfigurator.GetConfiguredDayControllers();
-
-            foreach (var dayController in dayControllers)
-            {
-                dayController.Init();
-            }
-        }
-        
-        private void RegisterAndInitView()
-        {
-            _view = _viewFactory.CreateView<IDailyBonusView>(DailyBonusInfo.DailyBonusPopup, ViewType.Popup);
+            _view = await _viewFactory.CreateView<IDailyBonusView>(DailyBonusInfo.DailyBonusPopup, ViewType.Popup);
             
             var viewSignalManager = new ViewSignalManager()
                 .AddCloseSignal(Close);
@@ -93,6 +84,17 @@ namespace Content.DailyBonus.Scripts.Presenter
                 .SetView(_view)
                 .SetViewSignalManager(viewSignalManager)
                 .RegisterAndInit();
+        }
+        
+        private async UniTask CreateDays()
+        {
+            var dayConfigurator = new DailyBonusDayConfigurator(_dto, _model, _view.RewardRowsManager, _assetLoader);
+            var dayControllers = await dayConfigurator.GetConfiguredDayControllers();
+
+            foreach (var dayController in dayControllers)
+            {
+                dayController.Init();
+            }
         }
     }
 }

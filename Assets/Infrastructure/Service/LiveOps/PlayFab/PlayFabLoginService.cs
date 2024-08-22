@@ -36,8 +36,8 @@ namespace Infrastructure.Service.LiveOps.PlayFab
         {
             Debug.Log($"{GetType().Name} - login successful!\nWelcome, " + result.PlayFabId + "!");
             _isLoggedIn = true;
-            GetPlayerProfile();
             _onLoginCompleted?.Invoke();
+            GetPlayerProfile();
         }
 
         private void OnLoginFailure(PlayFabError error)

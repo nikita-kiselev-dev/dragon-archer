@@ -1,4 +1,5 @@
 ﻿using Content.LoadingCurtain.Scripts.View;
+using Cysharp.Threading.Tasks;
 using Infrastructure.Service.Localization;
 using Infrastructure.Service.View.ViewFactory;
 using Infrastructure.Service.View.ViewManager;
@@ -14,9 +15,9 @@ namespace Content.LoadingCurtain.Scripts.Controller
         private ILoadingCurtainView _view;
         private IViewInteractor _viewInteractor;
         
-        public void Init()
+        public async void Init()
         {
-            RegisterAndInitView();
+            await RegisterAndInitView();
             ConfigureView();
         }
         
@@ -30,9 +31,9 @@ namespace Content.LoadingCurtain.Scripts.Controller
             _viewInteractor.Close();
         }
         
-        private void RegisterAndInitView()
+        private async UniTask RegisterAndInitView()
         {
-            _view = _viewFactory
+            _view = await _viewFactory
                 .CreateView<ILoadingCurtainView>(ViewInfo.LoadingCurtain, ViewType.Service);
             
             var animator = new LoadingCurtainViewAnimator(_view);
@@ -47,9 +48,9 @@ namespace Content.LoadingCurtain.Scripts.Controller
                 .RegisterAndInit();
         }
 
-        private void ConfigureView()
+        private async void ConfigureView()
         {
-            var loadingLocalizedString = "loading".LocalizeAsync();
+            var loadingLocalizedString = await "loading".LocalizeAsync();
             _view.SetLoadingText(loadingLocalizedString);
         }
     }

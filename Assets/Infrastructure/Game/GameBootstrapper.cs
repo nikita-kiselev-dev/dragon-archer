@@ -18,6 +18,9 @@ namespace Infrastructure.Game
         [Inject] private readonly ILoadingCurtainController _loadingCurtainController;
         [Inject] private readonly ILiveOpsController _liveOpsController;
         [Inject] private readonly IGame _game;
+
+        private bool _isLocalizationReady;
+        private bool _isServerLoginCompleted;
         
         void IStartable.Start()
         {
@@ -39,7 +42,7 @@ namespace Infrastructure.Game
             _liveOpsController.Init();
         }
 
-        private void InitGame(bool isLoginCompleted)
+        private void InitGame(bool isLoggedIn)
         {
             _loadingCurtainController.Hide();
             _game.Init();

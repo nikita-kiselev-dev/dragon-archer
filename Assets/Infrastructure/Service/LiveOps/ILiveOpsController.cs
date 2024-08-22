@@ -1,7 +1,7 @@
 ﻿namespace Infrastructure.Service.LiveOps
 {
-    public interface ILiveOpsController
+    public interface ILiveOpsController : IInitiable
     {
-        public void Init();
+        
     }
 }

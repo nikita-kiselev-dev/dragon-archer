@@ -1,5 +1,6 @@
 ﻿using Content.DailyBonus.Scripts.Config;
 using Content.DailyBonus.Scripts.View;
+using Cysharp.Threading.Tasks;
 using Infrastructure.Service.Asset;
 
 namespace Content.DailyBonus.Scripts.Factory
@@ -13,9 +14,9 @@ namespace Content.DailyBonus.Scripts.Factory
             _assetLoader = assetLoader;
         }
 
-        public IDailyBonusDayView CreateDayView(IDailyBonusDayConfig config)
+        public async UniTask<IDailyBonusDayView> CreateDayView(IDailyBonusDayConfig config)
         {
-            var view = _assetLoader.Instantiate<IDailyBonusDayView>(config.DayType, config.Parent).Result;
+            var view = await _assetLoader.InstantiateAsync<IDailyBonusDayView>(config.DayType, config.Parent);
             return view;
         }
     }

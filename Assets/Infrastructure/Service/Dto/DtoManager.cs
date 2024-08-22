@@ -110,7 +110,7 @@ namespace Infrastructure.Service.Dto
         
         private string GetDummyDto(string configName)
         {
-            var config = _assetLoader.LoadAsset<TextAsset>(configName).Result;
+            var config = _assetLoader.LoadAssetAsync<TextAsset>(configName);
             return config.ToString();
         }
 

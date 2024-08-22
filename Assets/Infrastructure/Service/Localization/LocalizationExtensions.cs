@@ -1,4 +1,5 @@
-﻿using UnityEngine.Localization;
+﻿using Cysharp.Threading.Tasks;
+using UnityEngine.Localization;
 
 namespace Infrastructure.Service.Localization
 {
@@ -11,12 +12,11 @@ namespace Infrastructure.Service.Localization
             return localizedStringResult;
         }
         
-        public static string LocalizeAsync(this string localizationKey)
+        public static async UniTask<string> LocalizeAsync(this string localizationKey)
         {
             var localizedString = new LocalizedString(LocalizationInfo.MainStringTableName, localizationKey);
-            var localizedStringOperation = localizedString.GetLocalizedStringAsync();
-            localizedStringOperation.WaitForCompletion();
-            return localizedStringOperation.Result;
+            var localizedStringOperation = localizedString.GetLocalizedStringAsync().ToUniTask();
+            return await localizedStringOperation;
         }
     }
 }
