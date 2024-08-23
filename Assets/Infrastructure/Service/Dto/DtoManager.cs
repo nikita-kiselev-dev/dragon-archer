@@ -29,7 +29,7 @@ namespace Infrastructure.Service.Dto
         {
             TryCreateDirectory();
             TryGetDataDto();
-            _signalBus.Subscribe<GetLiveOpsDataCompletedSignal>(this, () => _serverDto = _dtoService.GetDto());
+            _signalBus.Subscribe<GetLiveOpsDataCompletedSignal>(this, SetServerDto);
             _isInited = true;
         }
         
@@ -37,7 +37,7 @@ namespace Infrastructure.Service.Dto
         {
             if (!_isInited)
             {
-                throw new ArgumentNullException();
+                return default;
             }
             
             string config;
@@ -126,6 +126,11 @@ namespace Infrastructure.Service.Dto
                 .SequenceEqual(secondDto.OrderBy(kvp => kvp.Key));
 
             return areEqual;
+        }
+
+        private void SetServerDto()
+        {
+            _serverDto = _dtoService.GetDto();
         }
 
         void IDisposable.Dispose()

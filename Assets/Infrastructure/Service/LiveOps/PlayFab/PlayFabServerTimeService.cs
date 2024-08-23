@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using PlayFab;
 using PlayFab.ClientModels;
@@ -9,10 +10,10 @@ namespace Infrastructure.Service.LiveOps.PlayFab
     public class PlayFabServerTimeService
     {
         private const int ServerTimeRequestDelayInSeconds = 300;
+        private const int ServerTimeoutInSeconds = 5;
         
         private DateTime _cachedServerTime;
         private bool _isRequestingServerTime;
-        private Coroutine _requestDelayCoroutine;
         private bool _isRequestDelayEnabled;
         
         public async UniTask<DateTime> GetServerTimeAsync()
@@ -43,13 +44,25 @@ namespace Infrastructure.Service.LiveOps.PlayFab
         
         private UniTask<DateTime> RequestServerTimeAsync()
         { 
-            var uniTaskCompletionSource = new UniTaskCompletionSource<DateTime>();
+            var completionSource = new UniTaskCompletionSource<DateTime>();
+            var cancellationTokenSource = new CancellationTokenSource();
+            cancellationTokenSource.CancelAfterSlim(TimeSpan.FromSeconds(ServerTimeoutInSeconds));
+
+            try
+            {
+                PlayFabClientAPI.GetTime(new GetTimeRequest(),
+                    result => OnGetTimeSuccess(result, completionSource),
+                    error => OnGetTimeFailure(error, completionSource));
+            }
+            catch (OperationCanceledException exception)
+            {
+                if (exception.CancellationToken == cancellationTokenSource.Token)
+                {
+                    completionSource.TrySetException(new Exception(exception.ToString()));
+                }
+            }
             
-            PlayFabClientAPI.GetTime(new GetTimeRequest(),
-                result => OnGetTimeSuccess(result, uniTaskCompletionSource),
-                error => OnGetTimeFailure(error, uniTaskCompletionSource));
-            
-            return uniTaskCompletionSource.Task;
+            return completionSource.Task;
         }
 
         private void OnGetTimeSuccess(GetTimeResult result, IResolvePromise<DateTime> uniTaskCompletionSource)

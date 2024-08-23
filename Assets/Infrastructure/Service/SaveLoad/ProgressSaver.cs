@@ -41,7 +41,6 @@ namespace Infrastructure.Service.SaveLoad
 
         private void OnApplicationQuit()
         {
-            _autoSaveCancellationTokenSource?.Cancel();
             Save();
         }
 

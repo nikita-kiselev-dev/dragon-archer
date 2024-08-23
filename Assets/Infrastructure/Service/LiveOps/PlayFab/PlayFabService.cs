@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Infrastructure.Service.SignalBus;
+using PlayFab;
 using VContainer;
 
 namespace Infrastructure.Service.LiveOps.PlayFab
@@ -37,6 +38,11 @@ namespace Infrastructure.Service.LiveOps.PlayFab
 
         private void GetLiveOps()
         {
+            if (!PlayFabClientAPI.IsClientLoggedIn())
+            {
+                return;
+            }
+            
             _timeService.GetServerTimeAsync();
             _dtoService.GetTitleDataFromServer();
         }

@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using Infrastructure.Service.LiveOps.Signals;
 using Infrastructure.Service.SignalBus;
 using PlayFab;
@@ -9,8 +12,8 @@ namespace Infrastructure.Service.LiveOps.PlayFab
 {
     public class PlayFabDtoService
     {
+        private const int ServerTimeoutInSeconds = 5;
         private readonly ISignalBus _signalBus;
-        
         private Dictionary<string, string> _titleData;
 
         public Dictionary<string, string> TitleData => _titleData;
@@ -22,7 +25,24 @@ namespace Infrastructure.Service.LiveOps.PlayFab
         
         public void GetTitleDataFromServer()
         {
-            PlayFabClientAPI.GetTitleData(new GetTitleDataRequest(), OnLoadTitleDataSuccess, OnLoadTitleDataFailure);
+            var completionSource = new UniTaskCompletionSource<Dictionary<string, string>>();
+            var cancellationTokenSource = new CancellationTokenSource();
+            cancellationTokenSource.CancelAfterSlim(TimeSpan.FromSeconds(ServerTimeoutInSeconds));
+            
+            try
+            {
+                PlayFabClientAPI.GetTitleData(
+                    new GetTitleDataRequest(),
+                    OnLoadTitleDataSuccess,
+                    OnLoadTitleDataFailure);
+            }
+            catch (OperationCanceledException exception)
+            {
+                if (exception.CancellationToken == cancellationTokenSource.Token)
+                {
+                    completionSource.TrySetException(new Exception(exception.ToString()));
+                }
+            }
         }
 
         private void OnLoadTitleDataSuccess(GetTitleDataResult result)
