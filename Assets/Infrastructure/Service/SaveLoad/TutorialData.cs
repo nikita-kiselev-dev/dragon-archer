@@ -1,25 +1,20 @@
-using System;
-using Newtonsoft.Json;
-using UnityEngine;
+using MemoryPack;
 
 namespace Infrastructure.Service.SaveLoad
 {
-    [Serializable]
-    [JsonObject(MemberSerialization.Fields)]
-    public class TutorialData : Data
-    {
-        [SerializeField] private bool m_IsTutorialCompleted;
+    [MemoryPackable]
+    public partial class TutorialData : Data
+    { 
+        [DataProperty] public bool IsTutorialCompleted { get; internal set; }
 
-        public bool IsTutorialCompleted => m_IsTutorialCompleted;
-
-        public sealed override void WhenDataIsNew()
+        public sealed override void PrepareNewData()
         {
-            m_IsTutorialCompleted = false;
+            IsTutorialCompleted = false;
         }
 
         public void SetTutorialCompleted()
         {
-            m_IsTutorialCompleted = true;
+            IsTutorialCompleted = true;
         }
     }
 }

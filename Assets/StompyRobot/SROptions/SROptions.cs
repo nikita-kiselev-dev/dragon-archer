@@ -1,46 +1,49 @@
 ﻿using System.ComponentModel;
 using UnityEngine;
 
-public delegate void SROptionsPropertyChanged(object sender, string propertyName);
-
-public partial class SROptions : INotifyPropertyChanged
+namespace StompyRobot.SROptions
 {
-    private static readonly SROptions _current = new SROptions();
+    public delegate void SROptionsPropertyChanged(object sender, string propertyName);
 
-    public static SROptions Current
+    public partial class SROptions : INotifyPropertyChanged
     {
-        get { return _current; }
-    }
+        private static readonly SROptions _current = new SROptions();
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-    public static void OnStartup()
-    {
-        SRDebug.Instance.AddOptionContainer(Current);
-    }
+        public static SROptions Current
+        {
+            get { return _current; }
+        }
 
-    public event SROptionsPropertyChanged PropertyChanged;
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        public static void OnStartup()
+        {
+            SRDebug.Instance.AddOptionContainer(Current);
+        }
+
+        public event SROptionsPropertyChanged PropertyChanged;
     
 #if UNITY_EDITOR
-    [JetBrains.Annotations.NotifyPropertyChangedInvocator]
+        [JetBrains.Annotations.NotifyPropertyChangedInvocator]
 #endif
-    public void OnPropertyChanged(string propertyName)
-    {
-        if (PropertyChanged != null)
+        public void OnPropertyChanged(string propertyName)
         {
-            PropertyChanged(this, propertyName);
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, propertyName);
+            }
+
+            if (InterfacePropertyChangedEventHandler != null)
+            {
+                InterfacePropertyChangedEventHandler(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
-        if (InterfacePropertyChangedEventHandler != null)
+        private event PropertyChangedEventHandler InterfacePropertyChangedEventHandler;
+
+        event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
         {
-            InterfacePropertyChangedEventHandler(this, new PropertyChangedEventArgs(propertyName));
+            add { InterfacePropertyChangedEventHandler += value; }
+            remove { InterfacePropertyChangedEventHandler -= value; }
         }
-    }
-
-    private event PropertyChangedEventHandler InterfacePropertyChangedEventHandler;
-
-    event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
-    {
-        add { InterfacePropertyChangedEventHandler += value; }
-        remove { InterfacePropertyChangedEventHandler -= value; }
     }
 }

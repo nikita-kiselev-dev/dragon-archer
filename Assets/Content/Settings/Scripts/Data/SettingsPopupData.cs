@@ -1,35 +1,31 @@
 using System;
-using Newtonsoft.Json;
-using UnityEngine;
+using Infrastructure.Service.SaveLoad;
+using MemoryPack;
 
 namespace Content.Settings.Scripts.Data
 {
-    [Serializable]
-    [JsonObject(MemberSerialization.Fields)]
-    public class SettingsPopupData : Infrastructure.Service.SaveLoad.Data
+    [MemoryPackable]
+    public partial class SettingsPopupData : Infrastructure.Service.SaveLoad.Data
     {
-        [SerializeField] private float m_SoundsVolume;
-        [SerializeField] private float m_MusicVolume;
+        [DataProperty] public float SoundsVolume { get; private set; }
+        [DataProperty] public float MusicVolume { get; private set; }
 
-        public float SoundsVolume => m_SoundsVolume;
-        public float MusicVolume => m_MusicVolume;
-
-        public override void WhenDataIsNew()
+        public override void PrepareNewData()
         {
-            m_SoundsVolume = SettingsPopupInfo.DefaultSoundsVolume;
-            m_MusicVolume = SettingsPopupInfo.DefaultMusicVolume;
+            SoundsVolume = SettingsPopupInfo.DefaultSoundsVolume;
+            MusicVolume = SettingsPopupInfo.DefaultMusicVolume;
         }
 
         public void SetSoundsVolumeData(float value)
         {
             var roundedValue = Math.Round(value, 2);
-            m_SoundsVolume = (float)roundedValue;
+            SoundsVolume = (float)roundedValue;
         }
 
         public void SetMusicVolumeData(float value)
         {
             var roundedValue = Math.Round(value, 2);
-            m_MusicVolume = (float)roundedValue;
+            MusicVolume = (float)roundedValue;
         }
     }
 }

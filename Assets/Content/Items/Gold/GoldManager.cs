@@ -8,7 +8,7 @@ namespace Content.Items.Gold
     {
         [Inject] private readonly GoldData _itemData;
 
-        public string ItemName => "gold";
+        public string ItemName => ItemsInfo.GoldItemName;
 
         public bool AddItem(int itemCount)
         {

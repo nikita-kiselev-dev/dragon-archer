@@ -1,8 +1,10 @@
 ﻿//#define ENABLE_TEST_SROPTIONS
 
-public partial class SROptions
+namespace StompyRobot.SROptions
 {
-    // Uncomment the #define at the top of file to enable test options
+    public partial class SROptions
+    {
+        // Uncomment the #define at the top of file to enable test options
 
 #if ENABLE_TEST_SROPTIONS
 
@@ -354,4 +356,5 @@ public partial class SROptions
     }
 
 #endif
+    }
 }

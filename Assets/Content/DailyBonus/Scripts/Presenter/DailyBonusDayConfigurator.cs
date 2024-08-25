@@ -86,23 +86,23 @@ namespace Content.DailyBonus.Scripts.Presenter
         {
             if (currentStreakDay > streakDay)
             {
-                return DailyBonusInfo.DailyBonusPreviousDay;
+                return DailyBonusInfo.PreviousDay;
             }
             else if (currentStreakDay < streakDay && isLastDay)
             {
-                return DailyBonusInfo.DailyBonusLastDay;
+                return DailyBonusInfo.LastDay;
             }
             else if (currentStreakDay < streakDay)
             {
-                return DailyBonusInfo.DailyBonusNextDay;
+                return DailyBonusInfo.NextDay;
             }
             else if (isLastDay)
             {
-                return DailyBonusInfo.DailyBonusTodayLastDay;
+                return DailyBonusInfo.TodayLastDay;
             }
             else
             {
-                return DailyBonusInfo.DailyBonusToday;
+                return DailyBonusInfo.Today;
             }
         }
     }

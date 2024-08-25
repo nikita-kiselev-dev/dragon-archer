@@ -1,5 +1,4 @@
-﻿using System;
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -16,17 +15,8 @@ namespace Infrastructure.Service.Asset
 
         public async UniTask<T> Result()
         {
-            try
-            {
-                var asset = await _operationHandle;
-                return asset.GetComponent<T>();
-            }
-            catch (Exception exception)
-            {
-                throw;
-            }
-
-            return default;
+            var asset = await _operationHandle;
+            return asset.GetComponent<T>();
         }
         
         

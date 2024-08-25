@@ -1,25 +1,18 @@
-﻿using System;
-using Infrastructure.Service.Date;
-using Infrastructure.Service.LiveOps;
-using Newtonsoft.Json;
-using UnityEngine;
+﻿using Infrastructure.Service.LiveOps;
+using MemoryPack;
 using VContainer;
 
 namespace Infrastructure.Game.Data
 {
-    [Serializable]
-    [JsonObject(MemberSerialization.Fields)]
-    public class MainData : Service.SaveLoad.Data
+    [MemoryPackable]
+    public partial class MainData : Service.SaveLoad.Data
     {
         [Inject] private IServerTimeService _serverTimeService;
-        [Inject] private IDateConverter _dateConverter;
         
-        [SerializeField] private long m_FirstLaunchDateUtc;
+        /*[MemoryPackInclude] public long FirstLaunchDateUtc { get; private set; }*/
 
-        public long FirstLaunchDateUtc => m_FirstLaunchDateUtc;
-        
         //TODO: transfer to main playfab data model
-        public override void WhenDataIsNew()
+        public override void PrepareNewData()
         {
             /*var serverTime = _serverTimeService.ServerTime.GetAwaiter().GetResult();
             var convertedServerTime = _dateConverter.DateTimeToUnixTimeStamp(serverTime);

@@ -22,9 +22,9 @@ namespace Content.DailyBonus.Scripts.Presenter
         
         private async void ConfigureView()
         {
-            var dayText = _config.DayType == DailyBonusInfo.DailyBonusTodayLastDay
+            var dayText = _config.DayType == DailyBonusInfo.TodayLastDay
                 ? await "congratulations".LocalizeAsync() + "!"
-                : _config.DayType != DailyBonusInfo.DailyBonusToday
+                : _config.DayType != DailyBonusInfo.Today
                     ? await "time/day".LocalizeAsync() + $" {_config.DayNumber}"
                     : await "time/today".LocalizeAsync();
 

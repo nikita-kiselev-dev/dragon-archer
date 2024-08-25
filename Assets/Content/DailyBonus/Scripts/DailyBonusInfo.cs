@@ -2,17 +2,20 @@
 {
     public static class DailyBonusInfo
     {
-        public const string DailyBonusPopup = "DailyBonusPopup";
+        public const string Popup = "DailyBonusPopup";
         
-        public const string DailyBonusPreviousDay = "DailyBonusPreviousDay";
-        public const string DailyBonusToday = "DailyBonusToday";
-        public const string DailyBonusNextDay = "DailyBonusNextDay";
-        public const string DailyBonusLastDay = "DailyBonusLastDay";
-        public const string DailyBonusTodayLastDay = "DailyBonusTodayLastDay";
+        public const string PreviousDay = "DailyBonusPreviousDay";
+        public const string Today = "DailyBonusToday";
+        public const string NextDay = "DailyBonusNextDay";
+        public const string LastDay = "DailyBonusLastDay";
+        public const string TodayLastDay = "DailyBonusTodayLastDay";
         
-        public const string DailyBonusConfig = "DailyBonusConfig";
-        
-        public const int MinSecondsToGetReward = 86400;
-        public const int SecondsToResetStreak = 172800;
+        public const string Config = "DailyBonusConfig";
+
+        public const string PopupOpenEventName = "daily_bonus_popup_open";
+        public const string PopupOpenEventParameterCurrentDay = "current_day";
+
+        public const string StreakLoseEventName = "daily_bonus_streak_lose";
+        public const string StreakLoseEventParameterStreakLoseDay = "streak_lose_day";
     }
 }

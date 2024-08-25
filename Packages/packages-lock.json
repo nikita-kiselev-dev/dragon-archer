@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.amplitude.unityplugin": {
+      "version": "https://github.com/amplitude/unity-plugin.git?path=/Assets",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "28b74ce7e1c90c916a91cb01c1d106e00ecbf649"
+    },
     "com.cysharp.unitask": {
       "version": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
       "depth": 0,

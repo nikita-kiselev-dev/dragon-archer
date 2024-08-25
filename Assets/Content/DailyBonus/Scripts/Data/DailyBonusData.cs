@@ -1,39 +1,35 @@
 using System;
-using Newtonsoft.Json;
-using UnityEngine;
+using Infrastructure.Service.SaveLoad;
+using MemoryPack;
 
 namespace Content.DailyBonus.Scripts.Data
 {
-    [Serializable]
-    [JsonObject(MemberSerialization.Fields)]
-    public class DailyBonusData : Infrastructure.Service.SaveLoad.Data
+    [MemoryPackable]
+    public partial class DailyBonusData : Infrastructure.Service.SaveLoad.Data
     {
-        [SerializeField] private int m_StreakDay;
-        [SerializeField] private long m_StartStreakDate;
-
-        public int StreakDay => m_StreakDay;
-        public long StartStreakDate => m_StartStreakDate;
+        [DataProperty] public int StreakDay { get; private set; }
+        [DataProperty] public DateTime StartStreakDate { get; private set; }
         
-        public override void WhenDataIsNew()
+        public override void PrepareNewData()
         {
-            m_StreakDay = 0;
-            m_StartStreakDate = 0;
+            StreakDay = 0;
+            StartStreakDate = DateTime.UnixEpoch;
         }
 
-        public void ResetStreak()
+        public bool IsFirstLaunch()
         {
-            m_StreakDay = 1;
-            m_StartStreakDate = 0;
+            return StartStreakDate == DateTime.UnixEpoch;
+        }
+
+        public void ResetStreak(DateTime startStreakDate)
+        {
+            StreakDay = 1;
+            StartStreakDate = startStreakDate;
         }
 
         public void AddStreakDayData()
         {
-            m_StreakDay++;
-        }
-
-        public void SetStartStreakDateData(long date)
-        {
-            m_StartStreakDate = date;
+            StreakDay++;
         }
     }
 }

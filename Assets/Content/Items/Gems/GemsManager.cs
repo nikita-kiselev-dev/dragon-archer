@@ -8,7 +8,7 @@ namespace Content.Items.Gems
     {
         [Inject] private readonly GemsData _itemData;
         
-        public string ItemName => "gems";
+        public string ItemName => ItemsInfo.GemsItemName;
         
         public bool AddItem(int itemCount)
         {

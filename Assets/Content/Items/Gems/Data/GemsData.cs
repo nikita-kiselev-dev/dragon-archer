@@ -1,13 +1,10 @@
-﻿using System;
-using Content.Items.Scripts.Data;
-using Newtonsoft.Json;
+﻿using Content.Items.Scripts.Data;
+using MemoryPack;
 
 namespace Content.Items.Gems.Data
 {
-    [Serializable]
-    [JsonObject(MemberSerialization.Fields)]
-    public class GemsData : ItemData
+    [MemoryPackable]
+    public partial class GemsData : ItemData
     {
-        
     }
 }

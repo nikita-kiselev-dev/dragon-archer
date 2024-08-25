@@ -15,19 +15,21 @@ namespace Content.DailyBonus.Scripts.Presenter
     public class DailyBonusPresenter : IDailyBonusPresenter
     {
         private readonly IDailyBonusDto _dto;
+        private readonly IDailyBonusAnalytics _analytics;
         private readonly IDailyBonusModel _model;
         private readonly IViewFactory _viewFactory;
         private readonly IViewManager _viewManager;
         private readonly IAssetLoader _assetLoader;
         private readonly IServerTimeService _serverTimeService;
         private readonly IInventoryManager _inventoryManager;
-
+        
         private IDailyBonusCore _core;
         private IDailyBonusView _view;
         private IViewInteractor _viewInteractor;
 
         public DailyBonusPresenter(
             IDailyBonusDto dto,
+            IDailyBonusAnalytics analytics,
             IDailyBonusModel model,
             IViewFactory viewFactory,
             IViewManager viewManager,
@@ -36,6 +38,7 @@ namespace Content.DailyBonus.Scripts.Presenter
             IInventoryManager inventoryManager)
         {
             _dto = dto;
+            _analytics = analytics;
             _model = model;
             _viewFactory = viewFactory;
             _viewManager = viewManager;
@@ -46,7 +49,13 @@ namespace Content.DailyBonus.Scripts.Presenter
         
         public async void Init()
         {
-            _core = new DailyBonusCore(_dto, _model, _serverTimeService, _inventoryManager);
+            _core = new DailyBonusCore(
+                _dto,
+                _model,
+                _analytics,
+                _serverTimeService,
+                _inventoryManager);
+            
             var needToShowPopup = await _core.NeedToShowPopup();
 
             if (!needToShowPopup)
@@ -61,19 +70,20 @@ namespace Content.DailyBonus.Scripts.Presenter
             _core.GetStreakReward();
         }
         
-        public void Open()
+        private void Open()
         {
             _viewInteractor.Open();
+            _analytics.LogPopupOpen(_model.GetStreakDay());
         }
 
-        public void Close()
+        private void Close()
         {
             _viewInteractor.Close();
         }
         
         private async UniTask RegisterAndInitView()
         {
-            _view = await _viewFactory.CreateView<IDailyBonusView>(DailyBonusInfo.DailyBonusPopup, ViewType.Popup);
+            _view = await _viewFactory.CreateView<IDailyBonusView>(DailyBonusInfo.Popup, ViewType.Popup);
             
             var viewSignalManager = new ViewSignalManager()
                 .AddCloseSignal(Close);

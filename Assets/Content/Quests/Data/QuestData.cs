@@ -1,20 +1,15 @@
-using System;
-using Newtonsoft.Json;
-using UnityEngine;
+using MemoryPack;
 
 namespace Content.Quests.Data
 {
-    [Serializable]
-    [JsonObject(MemberSerialization.Fields)]
-    public class QuestData : Infrastructure.Service.SaveLoad.Data
+    [MemoryPackable]
+    public partial class QuestData : Infrastructure.Service.SaveLoad.Data
     {
-        [SerializeField] private bool m_IsCompleted;
+        /*[MemoryPackInclude] public bool IsCompleted { get; private set; }*/
 
-        public bool IsCompleted => m_IsCompleted;
-        
-        public override void WhenDataIsNew()
+        public override void PrepareNewData()
         {
-            m_IsCompleted = false;
+           // IsCompleted = false;
         }
     }
 }

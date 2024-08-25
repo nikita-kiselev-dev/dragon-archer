@@ -14,10 +14,11 @@ using Infrastructure.Game.GameManager;
 using Infrastructure.Game.Tutorials;
 using Infrastructure.Game.Tutorials.Data;
 using Infrastructure.Service;
+using Infrastructure.Service.Analytics;
+using Infrastructure.Service.Analytics.Amplitude;
 using Infrastructure.Service.Asset;
-using Infrastructure.Service.Data;
-using Infrastructure.Service.Date;
 using Infrastructure.Service.Dto;
+using Infrastructure.Service.File;
 using Infrastructure.Service.LiveOps.PlayFab;
 using Infrastructure.Service.SaveLoad;
 using Infrastructure.Service.Scene;
@@ -49,22 +50,23 @@ namespace Infrastructure.Game
             builder.RegisterComponent<ICoroutineRunner>(m_CoroutineRunner);
             builder.RegisterComponent(m_ServiceCanvas);
             
-            builder.Register<IDateConverter, DateConverter>(Lifetime.Singleton);
-            
-            RegisterDataServices(builder);
+            RegisterFileServices(builder);
             RegisterItemsData(builder);
             RegisterFeaturesData(builder);
             RegisterTutorialData(builder);
             RegisterDataManager(builder);
             RegisterAssetLoader(builder);
-            
+
             builder.Register<ITutorialService, TutorialService>(Lifetime.Singleton);
             builder.Register<IViewFactory, ViewFactory>(Lifetime.Singleton);
             builder.Register<IMainCanvasController, MainCanvasController>(Lifetime.Singleton);
             builder.Register<IViewAnimator, BackgroundAnimator>(Lifetime.Singleton);
             builder.Register<ISceneService, SceneService>(Lifetime.Singleton);
             builder.Register<IStateMachine, SceneStateMachine>(Lifetime.Singleton);
-            builder.Register<PlayFabService>(Lifetime.Singleton).AsImplementedInterfaces();
+            
+            RegisterAnalytics(builder);
+            RegisterLiveOps(builder);
+            
             builder.Register<ILoadingCurtainController, LoadingCurtainController>(Lifetime.Singleton);
             builder.Register<IStartScreenController, StartScreenController>(Lifetime.Singleton);
             builder.Register<ISettingsPopup, SettingsPopup>(Lifetime.Singleton);
@@ -79,10 +81,9 @@ namespace Infrastructure.Game
             builder.RegisterEntryPoint<GameBootstrapper>();
         }
 
-        private void RegisterDataServices(IContainerBuilder builder)
+        private void RegisterFileServices(IContainerBuilder builder)
         {
             builder.Register<IFileService, FileService>(Lifetime.Singleton);
-            builder.Register<IDataSerializer, JsonDataSerializer>(Lifetime.Singleton);
         }
         
         private void RegisterItemsData(IContainerBuilder builder)
@@ -117,7 +118,8 @@ namespace Infrastructure.Game
                 builder.Register<IDataManager, WebDataManager>(Lifetime.Singleton);
             #endif*/
             
-            builder.Register<IDataManager, MainDataManager>(Lifetime.Singleton).As<IDataSaver>();
+            builder.Register<ISaveLoadService, SaveLoadService>(Lifetime.Singleton).As<IDataSaver>();
+            builder.Register<IDataManager, DataManager>(Lifetime.Singleton);
             builder.Register<IDtoManager, DtoManager>(Lifetime.Singleton).As<IDtoReader>();
         }
 
@@ -131,6 +133,17 @@ namespace Infrastructure.Game
             builder.Register<IStartGameManager, StartGameManager>(Lifetime.Singleton);
             builder.Register<IMetaGameManager, MetaGameManager>(Lifetime.Singleton);
             builder.Register<ICoreGameManager, CoreGameManager>(Lifetime.Singleton);
+        }
+
+        private void RegisterAnalytics(IContainerBuilder builder)
+        {
+            builder.Register<IAnalyticsService, AmplitudeAnalytics>(Lifetime.Singleton);
+            builder.Register<IAnalyticsManager, AnalyticsManager>(Lifetime.Singleton);
+        }
+
+        private void RegisterLiveOps(IContainerBuilder builder)
+        {
+            builder.Register<PlayFabService>(Lifetime.Singleton).AsImplementedInterfaces();
         }
     }
 }

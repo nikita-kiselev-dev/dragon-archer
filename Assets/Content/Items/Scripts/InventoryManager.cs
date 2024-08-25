@@ -8,7 +8,7 @@ namespace Content.Items.Scripts
         private readonly Dictionary<string, IItemManager> _itemManagers = new();
 
         [Inject]
-        public InventoryManager(IReadOnlyList<IItemManager> injectedItemManagers)
+        private InventoryManager(IReadOnlyList<IItemManager> injectedItemManagers)
         {
             foreach (var itemManager in injectedItemManagers)
             {

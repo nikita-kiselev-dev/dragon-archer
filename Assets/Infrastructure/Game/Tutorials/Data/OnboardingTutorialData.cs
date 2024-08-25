@@ -1,12 +1,10 @@
-using System;
 using Infrastructure.Service.SaveLoad;
-using Newtonsoft.Json;
+using MemoryPack;
 
 namespace Infrastructure.Game.Tutorials.Data
 {
-    [Serializable]
-    [JsonObject(MemberSerialization.Fields)]
-    public class OnboardingTutorialData : TutorialData
+    [MemoryPackable]
+    public partial class OnboardingTutorialData : TutorialData
     {
     }
 }

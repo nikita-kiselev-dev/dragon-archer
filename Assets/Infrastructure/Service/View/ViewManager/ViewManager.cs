@@ -17,7 +17,7 @@ namespace Infrastructure.Service.View.ViewManager
         public Action BackgroundViewAction => CloseLast;
 
         [Inject]
-        public ViewManager(IViewAnimator backgroundAnimator)
+        private ViewManager(IViewAnimator backgroundAnimator)
         {
             _viewTypeManagers = new Dictionary<string, IViewTypeManager>
             {

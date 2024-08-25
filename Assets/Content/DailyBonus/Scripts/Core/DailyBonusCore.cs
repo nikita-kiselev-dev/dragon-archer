@@ -2,6 +2,7 @@
 using System.Linq;
 using Content.DailyBonus.Scripts.Dto;
 using Content.DailyBonus.Scripts.Model;
+using Content.DailyBonus.Scripts.Presenter;
 using Content.Items.Scripts;
 using Cysharp.Threading.Tasks;
 using Infrastructure.Service.LiveOps;
@@ -12,17 +13,20 @@ namespace Content.DailyBonus.Scripts.Core
     {
         private readonly IDailyBonusDto _dto;
         private readonly IDailyBonusModel _model;
+        private readonly IDailyBonusAnalytics _analytics;
         private readonly IServerTimeService _serverTimeService;
         private readonly IInventoryManager _inventoryManager;
 
         public DailyBonusCore(
             IDailyBonusDto dto, 
             IDailyBonusModel model, 
+            IDailyBonusAnalytics analytics,
             IServerTimeService serverTimeService, 
             IInventoryManager inventoryManager)
         {
             _dto = dto;
             _model = model;
+            _analytics = analytics;
             _serverTimeService = serverTimeService;
             _inventoryManager = inventoryManager;
         }
@@ -30,11 +34,15 @@ namespace Content.DailyBonus.Scripts.Core
         public async UniTask<bool> NeedToShowPopup()
         {
             var serverTime = await _serverTimeService.GetServerTime();
-            var startStreakData = _model.GetStartStreakData();
-            var timeSinceStartStreak = serverTime - startStreakData;
-
-            var streakIsLoosed = StreakIsLoosed(timeSinceStartStreak);
-            var isFirstLaunch = IsFirstLaunch(startStreakData);
+            var startStreakTime = _model.GetStartStreakTime();
+            var streakIsLoosed = StreakIsLoosed(serverTime, startStreakTime);
+            var isFirstLaunch = _model.IsFirstLaunch();
+            
+            if (streakIsLoosed && !isFirstLaunch)
+            {
+                _analytics.LogStreakLose(_model.GetStreakDay());
+            }
+            
             var areAllRewardsReceived = AreAllRewardsReceived();
             
             if (streakIsLoosed || isFirstLaunch || areAllRewardsReceived)
@@ -43,10 +51,7 @@ namespace Content.DailyBonus.Scripts.Core
                 return true;
             }
 
-            var addStreakDay = timeSinceStartStreak.TotalSeconds 
-                is > DailyBonusInfo.MinSecondsToGetReward and < DailyBonusInfo.SecondsToResetStreak;
-
-            if (!addStreakDay)
+            if (streakIsLoosed)
             {
                 return false;
             }
@@ -69,10 +74,10 @@ namespace Content.DailyBonus.Scripts.Core
             }
         }
         
-        private bool StreakIsLoosed(TimeSpan timeSinceStartStreak)
+        private bool StreakIsLoosed(DateTime serverTime, DateTime startStreakTime)
         {
-            var streakIsLoosed = timeSinceStartStreak.TotalSeconds > DailyBonusInfo.SecondsToResetStreak;
-            return streakIsLoosed;
+            var dayDifference = (serverTime - startStreakTime).Days;
+            return dayDifference != 1;
         }
 
         private bool IsFirstLaunch(DateTime startStreakData)

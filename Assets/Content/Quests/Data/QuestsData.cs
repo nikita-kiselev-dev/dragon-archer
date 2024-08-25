@@ -1,13 +1,11 @@
-using System;
-using Newtonsoft.Json;
+using MemoryPack;
 
 namespace Content.Quests.Data
 {
-    [Serializable]
-    [JsonObject(MemberSerialization.Fields)]
-    public class QuestsData : Infrastructure.Service.SaveLoad.Data
+    [MemoryPackable]
+    public partial class QuestsData : Infrastructure.Service.SaveLoad.Data
     {
-        public override void WhenDataIsNew()
+        public override void PrepareNewData()
         {
             throw new System.NotImplementedException();
         }
