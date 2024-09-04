@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
+using Infrastructure.Service.LiveOps.Signals;
 using Infrastructure.Service.SignalBus;
 using PlayFab;
 using PlayFab.ClientModels;
@@ -8,6 +11,8 @@ namespace Infrastructure.Service.LiveOps.PlayFab
 {
     public class PlayFabLoginService
     {
+        private const int LoginTimeoutInSeconds = 5;
+        
         private readonly ISignalBus _signalBus;
         private readonly Action _onLoginCompleted;
         
@@ -29,7 +34,20 @@ namespace Infrastructure.Service.LiveOps.PlayFab
                 CreateAccount = false 
             };
             
-            PlayFabClientAPI.LoginWithCustomID(request, OnLoginSuccess, OnLoginFailure);
+            var cancellationTokenSource = new CancellationTokenSource();
+            cancellationTokenSource.CancelAfterSlim(TimeSpan.FromSeconds(LoginTimeoutInSeconds));
+
+            try
+            {
+                PlayFabClientAPI.LoginWithCustomID(request, OnLoginSuccess, OnLoginFailure);
+            }
+            catch (OperationCanceledException exception)
+            {
+                if (exception.CancellationToken == cancellationTokenSource.Token)
+                {
+                    Debug.LogError($"{GetType().Name}: login timeout! Wait time: {LoginTimeoutInSeconds} seconds.");
+                }
+            }
         }
 
         private void OnLoginSuccess(LoginResult result)

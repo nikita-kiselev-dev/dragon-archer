@@ -3,6 +3,7 @@ using Content.DailyBonus.Scripts.Dto;
 using Content.DailyBonus.Scripts.Model;
 using Content.DailyBonus.Scripts.Presenter;
 using Content.Items.Scripts;
+using Infrastructure.Game.Data;
 using Infrastructure.Service.Analytics;
 using Infrastructure.Service.Asset;
 using Infrastructure.Service.Dto;
@@ -21,7 +22,8 @@ namespace Content.DailyBonus.Scripts
         [Inject] private readonly IAssetLoader _assetLoader;
         [Inject] private readonly IServerTimeService _serverTimeService;
         [Inject] private readonly IInventoryManager _inventoryManager;
-        [Inject] private readonly DailyBonusData _data;
+        [Inject] private readonly DailyBonusData _dailyBonusData;
+        [Inject] private readonly IMainDataManager _mainDataManager;
         [Inject] private readonly IAnalyticsManager _analyticsManager;
         
         private IDailyBonusModel _model;
@@ -36,16 +38,15 @@ namespace Content.DailyBonus.Scripts
 
         private void CreateModel()
         {
-            _model = new DailyBonusModel(_data);
+            var dto = _dtoReader.Read<DailyBonusDto>(DailyBonusInfo.Config);
+            _model = new DailyBonusModel(dto, _dailyBonusData, _mainDataManager);
         }
         
         private void CreatePresenter()
         {
-            var dto = _dtoReader.Read<DailyBonusDto>(DailyBonusInfo.Config);
             var analytics = new DailyBonusAnalytics(_analyticsManager);
             
             _presenter = new DailyBonusPresenter(
-                    dto, 
                     analytics,
                     _model, 
                     _viewFactory, 

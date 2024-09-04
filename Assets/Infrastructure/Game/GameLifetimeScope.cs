@@ -10,6 +10,7 @@ using Content.LoadingCurtain.Scripts.Controller;
 using Content.Settings.Scripts;
 using Content.Settings.Scripts.Data;
 using Content.StartScreen.Scripts.Controller;
+using Infrastructure.Game.Data;
 using Infrastructure.Game.GameManager;
 using Infrastructure.Game.Tutorials;
 using Infrastructure.Game.Tutorials.Data;
@@ -99,6 +100,8 @@ namespace Infrastructure.Game
 
         private void RegisterFeaturesData(IContainerBuilder builder)
         {
+            builder.Register<IMainDataManager, MainDataManager>(Lifetime.Singleton);
+            builder.Register<Service.SaveLoad.Data, MainData>(Lifetime.Singleton).AsSelf();
             builder.Register<Service.SaveLoad.Data, SettingsPopupData>(Lifetime.Singleton).AsSelf();
             builder.Register<Service.SaveLoad.Data, DailyBonusData>(Lifetime.Singleton).AsSelf();
         }

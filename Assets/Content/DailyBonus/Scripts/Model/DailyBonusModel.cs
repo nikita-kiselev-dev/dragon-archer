@@ -1,40 +1,82 @@
 using System;
+using System.Collections.Generic;
 using Content.DailyBonus.Scripts.Data;
+using Content.DailyBonus.Scripts.Dto;
+using Cysharp.Threading.Tasks;
+using Infrastructure.Game.Data;
+using UnityEngine;
 
 namespace Content.DailyBonus.Scripts.Model
 {
     public class DailyBonusModel : IDailyBonusModel
     {
-        private readonly DailyBonusData _data;
+        private readonly DailyBonusData _dailyBonusData;
+        private readonly IDailyBonusDto _dto;
+        private readonly IMainDataManager _mainDataManager;
         
-        public DailyBonusModel(DailyBonusData data)
+        public int StreakDay => _dailyBonusData.StreakDay;
+        public IReadOnlyList<DailyBonusDayDto> DayConfigs => _dto.GetDays();
+        public DateTime LastSessionServerTime => _mainDataManager.LastSessionServerTime;
+        public bool TodayRewardWasReceived => _dailyBonusData.TodayRewardWasReceived;
+        
+        public DailyBonusModel(IDailyBonusDto dto, DailyBonusData dailyBonusData, IMainDataManager mainDataManager)
         {
-            _data = data;
+            _dto = dto;
+            _dailyBonusData = dailyBonusData;
+            _mainDataManager = mainDataManager;
         }
 
-        public bool IsFirstLaunch()
+        public async UniTask<bool> IsFirstServerLaunch()
         {
-            return _data.IsFirstLaunch();
-        }
-
-        public int GetStreakDay()
-        {
-            return _data.StreakDay;
+            return await _mainDataManager.IsFirstServerLaunch();
         }
 
         public void AddStreakDay()
         {
-            _data.AddStreakDayData();
+            _dailyBonusData.AddStreakDayData();
         }
 
-        public DateTime GetStartStreakTime()
+        public void ResetData()
         {
-            return _data.StartStreakDate;
+            _dailyBonusData.ResetStreak();
         }
 
-        public void ResetData(DateTime startDate)
+        public void SetTodayRewardStatus(bool isReceived)
         {
-            _data.ResetStreak(startDate);
+            _dailyBonusData.SetTodayRewardStatus(isReceived);
+        }
+        
+        public int GetNextRewardDayIndex()
+        {
+            var nextStreakDay = _dto.GetNextDay(StreakDay).StreakDay;
+            return nextStreakDay;
+        }
+        
+        public bool AreAllRewardsReceived()
+        {
+            var lastDayConfig = _dto.GetLastDay();
+            
+            if (lastDayConfig == null)
+            {
+                Debug.LogError($"{GetType().Name}: last day dto config does not exists!");
+                return true;
+            }
+            
+            var lastStreakDayInDto = lastDayConfig.StreakDay;
+            var isAllRewardsReceived = StreakDay > lastStreakDayInDto;
+            return isAllRewardsReceived;
+        }
+
+        public bool TodayIsRewardDay()
+        {
+            var dayConfig = _dto.GetDay(StreakDay);
+            return dayConfig != null;
+        }
+
+        public DailyBonusDayDto GetDayConfig()
+        {
+            var dayConfig = _dto.GetDay(StreakDay);
+            return dayConfig;
         }
     }
 }

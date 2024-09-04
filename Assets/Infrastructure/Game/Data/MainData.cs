@@ -1,22 +1,44 @@
-﻿using Infrastructure.Service.LiveOps;
+﻿using System;
+using Infrastructure.Service.SaveLoad;
 using MemoryPack;
-using VContainer;
 
 namespace Infrastructure.Game.Data
 {
     [MemoryPackable]
     public partial class MainData : Service.SaveLoad.Data
     {
-        [Inject] private IServerTimeService _serverTimeService;
+        [DataProperty] public DateTime FirstSessionLocalTime { get; private set; }
+        [DataProperty] public DateTime LastSessionLocalTime { get; private set; }
+        [DataProperty] public DateTime FirstSessionServerTime { get; private set; }
+        [DataProperty] public DateTime LastSessionServerTime { get; private set; }
         
-        /*[MemoryPackInclude] public long FirstLaunchDateUtc { get; private set; }*/
-
-        //TODO: transfer to main playfab data model
+        
         public override void PrepareNewData()
         {
-            /*var serverTime = _serverTimeService.ServerTime.GetAwaiter().GetResult();
-            var convertedServerTime = _dateConverter.DateTimeToUnixTimeStamp(serverTime);
-            m_FirstLaunchDateUtc = convertedServerTime;*/
+            FirstSessionLocalTime = DateTime.UnixEpoch;
+            LastSessionLocalTime = DateTime.UnixEpoch;
+            FirstSessionServerTime = DateTime.UnixEpoch;
+            LastSessionServerTime = DateTime.UnixEpoch;
+        }
+
+        public void SetLocalTime(DateTime time)
+        {
+            if (FirstSessionLocalTime == DateTime.UnixEpoch)
+            {
+                FirstSessionLocalTime = time;
+            }
+            
+            LastSessionLocalTime = time;
+        }
+
+        public void SetServerTime(DateTime time)
+        {
+            if (FirstSessionServerTime == DateTime.UnixEpoch)
+            {
+                FirstSessionServerTime = time;
+            }
+            
+            LastSessionServerTime = time;
         }
     }
 }

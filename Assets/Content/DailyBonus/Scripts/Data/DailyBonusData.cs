@@ -1,4 +1,3 @@
-using System;
 using Infrastructure.Service.SaveLoad;
 using MemoryPack;
 
@@ -8,28 +7,28 @@ namespace Content.DailyBonus.Scripts.Data
     public partial class DailyBonusData : Infrastructure.Service.SaveLoad.Data
     {
         [DataProperty] public int StreakDay { get; private set; }
-        [DataProperty] public DateTime StartStreakDate { get; private set; }
+        [DataProperty] public bool TodayRewardWasReceived { get; private set; }
         
         public override void PrepareNewData()
         {
             StreakDay = 0;
-            StartStreakDate = DateTime.UnixEpoch;
+            TodayRewardWasReceived = false;
         }
 
-        public bool IsFirstLaunch()
-        {
-            return StartStreakDate == DateTime.UnixEpoch;
-        }
-
-        public void ResetStreak(DateTime startStreakDate)
+        public void ResetStreak()
         {
             StreakDay = 1;
-            StartStreakDate = startStreakDate;
+            TodayRewardWasReceived = false;
         }
 
         public void AddStreakDayData()
         {
             StreakDay++;
+        }
+
+        public void SetTodayRewardStatus(bool isReceived)
+        {
+            TodayRewardWasReceived = isReceived;
         }
     }
 }

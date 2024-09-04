@@ -1,5 +1,7 @@
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Infrastructure.Game.Data;
 using Infrastructure.Service.Scene.Signals;
 using Infrastructure.Service.SignalBus;
 using UnityEngine;
@@ -11,6 +13,7 @@ namespace Infrastructure.Service.SaveLoad
     {
         [Inject] private readonly ISignalBus _signalBus;
         [Inject] private readonly IDataSaver _dataSaver;
+        [Inject] private readonly IMainDataManager _mainDataManager;
         
         private const bool IsAutoSaveEnabled = true;
         private const int AutoSaveIntervalInSeconds = 60;
@@ -77,12 +80,7 @@ namespace Infrastructure.Service.SaveLoad
             _saveDelayCancellationTokenSource = new CancellationTokenSource();
             SaveDelay(_saveDelayCancellationTokenSource.Token).Forget();
         }
-
-        private void Save()
-        {
-            _dataSaver.Save();
-        }
-
+        
         private async UniTask SaveDelay(CancellationToken cancellationTokenSource)
         {
             await UniTask.WaitForSeconds(
@@ -90,6 +88,12 @@ namespace Infrastructure.Service.SaveLoad
                 cancellationToken: cancellationTokenSource);
             
             _isReadyForSave = true;
+        }
+
+        private void Save()
+        {
+            _mainDataManager.SetLocalTime(DateTime.Now.ToUniversalTime());
+            _dataSaver.Save();
         }
     }
 }

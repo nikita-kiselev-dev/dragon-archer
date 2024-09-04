@@ -1,5 +1,4 @@
 ﻿using Content.DailyBonus.Scripts.Core;
-using Content.DailyBonus.Scripts.Dto;
 using Content.DailyBonus.Scripts.Model;
 using Content.DailyBonus.Scripts.View;
 using Content.Items.Scripts;
@@ -14,7 +13,6 @@ namespace Content.DailyBonus.Scripts.Presenter
 {
     public class DailyBonusPresenter : IDailyBonusPresenter
     {
-        private readonly IDailyBonusDto _dto;
         private readonly IDailyBonusAnalytics _analytics;
         private readonly IDailyBonusModel _model;
         private readonly IViewFactory _viewFactory;
@@ -28,7 +26,6 @@ namespace Content.DailyBonus.Scripts.Presenter
         private IViewInteractor _viewInteractor;
 
         public DailyBonusPresenter(
-            IDailyBonusDto dto,
             IDailyBonusAnalytics analytics,
             IDailyBonusModel model,
             IViewFactory viewFactory,
@@ -37,7 +34,6 @@ namespace Content.DailyBonus.Scripts.Presenter
             IServerTimeService serverTimeService,
             IInventoryManager inventoryManager)
         {
-            _dto = dto;
             _analytics = analytics;
             _model = model;
             _viewFactory = viewFactory;
@@ -50,7 +46,6 @@ namespace Content.DailyBonus.Scripts.Presenter
         public async void Init()
         {
             _core = new DailyBonusCore(
-                _dto,
                 _model,
                 _analytics,
                 _serverTimeService,
@@ -60,20 +55,20 @@ namespace Content.DailyBonus.Scripts.Presenter
 
             if (!needToShowPopup)
             {
-                //TODO: Remove on Production
-                //return;
+                return;
             }
             
             await RegisterAndInitView();
             await CreateDays();
             Open();
-            _core.GetStreakReward();
+            _core.GiveReward();
         }
         
         private void Open()
         {
             _viewInteractor.Open();
-            _analytics.LogPopupOpen(_model.GetStreakDay());
+            var streakDay = _model.StreakDay;
+            _analytics.LogPopupOpen(streakDay);
         }
 
         private void Close()
@@ -98,7 +93,7 @@ namespace Content.DailyBonus.Scripts.Presenter
         
         private async UniTask CreateDays()
         {
-            var dayConfigurator = new DailyBonusDayConfigurator(_dto, _model, _view.RewardRowsManager, _assetLoader);
+            var dayConfigurator = new DailyBonusDayConfigurator(_model, _view.RewardRowsManager, _assetLoader);
             var dayControllers = await dayConfigurator.GetConfiguredDayControllers();
 
             foreach (var dayController in dayControllers)

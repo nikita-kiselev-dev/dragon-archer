@@ -5,6 +5,6 @@ namespace Content.DailyBonus.Scripts.Core
     public interface IDailyBonusCore
     {
         public UniTask<bool> NeedToShowPopup();
-        public void GetStreakReward();
+        public void GiveReward();
     }
 }

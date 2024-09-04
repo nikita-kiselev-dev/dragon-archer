@@ -12,14 +12,15 @@ namespace Content.DailyBonus.Scripts.Presenter
 {
     public class DailyBonusDayConfigurator : IDailyBonusDayConfigurator
     {
-        private readonly IDailyBonusDto _dto;
         private readonly IDailyBonusModel _model;
         private readonly IRewardRowsManager _rewardRowsManager;
         private readonly IAssetLoader _assetLoader;
 
-        public DailyBonusDayConfigurator(IDailyBonusDto dto, IDailyBonusModel model, IRewardRowsManager rewardRowsManager, IAssetLoader assetLoader)
+        public DailyBonusDayConfigurator(
+            IDailyBonusModel model, 
+            IRewardRowsManager rewardRowsManager, 
+            IAssetLoader assetLoader)
         {
-            _dto = dto;
             _model = model;
             _rewardRowsManager = rewardRowsManager;
             _assetLoader = assetLoader;
@@ -44,8 +45,8 @@ namespace Content.DailyBonus.Scripts.Presenter
         private async UniTask<List<IDailyBonusDayConfig>> CreateDayConfigs()
         {
             var dayConfigs = new List<IDailyBonusDayConfig>();
-            var currentStreakDay = _model.GetStreakDay();
-            var config = _dto.GetDays();
+            var currentStreakDay = _model.StreakDay;
+            var config = _model.DayConfigs;
             
             for (var index = 0; index < config.Count; index++)
             {
