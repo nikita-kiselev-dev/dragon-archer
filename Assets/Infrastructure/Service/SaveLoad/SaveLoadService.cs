@@ -20,7 +20,7 @@ namespace Infrastructure.Service.SaveLoad
         public void Init()
         {
             CreateDirectory();
-            LoadData();
+            Load();
 
             _isInited = true;
             
@@ -48,7 +48,7 @@ namespace Infrastructure.Service.SaveLoad
             }
         }
         
-        private void LoadData()
+        private void Load()
         {
             _dataManager.PrepareNewData();
             var saveFile = _fileService.Load<byte[]>(SaveLoadInfo.SaveFilePath);

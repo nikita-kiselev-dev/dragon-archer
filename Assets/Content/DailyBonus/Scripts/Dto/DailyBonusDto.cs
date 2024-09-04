@@ -36,18 +36,6 @@ namespace Content.DailyBonus.Scripts.Dto
             return dayDto;
         }
 
-        public DailyBonusDayDto GetNextDay(int streakDay)
-        {
-            GetDays();
-            
-            var nextDayDto = _sortedDays
-                .SkipWhile(day => day.StreakDay != streakDay)
-                .Skip(1)
-                .FirstOrDefault();
-
-            return nextDayDto;
-        }
-
         public DailyBonusDayDto GetLastDay()
         {
             GetDays();

@@ -46,12 +46,6 @@ namespace Content.DailyBonus.Scripts.Model
             _dailyBonusData.SetTodayRewardStatus(isReceived);
         }
         
-        public int GetNextRewardDayIndex()
-        {
-            var nextStreakDay = _dto.GetNextDay(StreakDay).StreakDay;
-            return nextStreakDay;
-        }
-        
         public bool AreAllRewardsReceived()
         {
             var lastDayConfig = _dto.GetLastDay();
