@@ -1,9 +1,9 @@
-using Infrastructure.Service;
+using Cysharp.Threading.Tasks;
 
 namespace Content.DailyBonus.Scripts.Presenter
 {
-    public interface IDailyBonusPresenter : IInitiable
+    public interface IDailyBonusPresenter
     {
-
+        public UniTaskVoid Init();
     }
 }

@@ -1,9 +1,7 @@
-﻿using Infrastructure.Service;
-
-namespace Content.DailyBonus.Scripts.Presenter
+﻿namespace Content.DailyBonus.Scripts.Presenter
 {
-    public interface IDailyBonusDayController : IInitiable
+    public interface IDailyBonusDayController
     {
-        
+        public void Init();
     }
 }

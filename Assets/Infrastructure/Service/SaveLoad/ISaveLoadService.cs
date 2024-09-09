@@ -1,7 +1,7 @@
 ﻿namespace Infrastructure.Service.SaveLoad
 {
-    public interface ISaveLoadService : IInitiable
+    public interface ISaveLoadService
     {
-        
+        public void Init();
     }
 }

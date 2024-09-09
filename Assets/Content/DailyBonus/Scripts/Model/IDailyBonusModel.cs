@@ -7,17 +7,17 @@ namespace Content.DailyBonus.Scripts.Model
 {
     public interface IDailyBonusModel
     {
-        public int StreakDay { get; }
         public IReadOnlyList<DailyBonusDayDto> DayConfigs { get; }
-        public DateTime LastSessionServerTime { get; }
+        public int StreakDay { get; }
         public bool TodayRewardWasReceived { get; }
+        public DateTime LastSessionServerTime { get; }
 
-        public void SetTodayRewardStatus(bool isReceived);
-        public UniTask<bool> IsFirstServerLaunch();
-        public void AddStreakDay();
-        public bool AreAllRewardsReceived();
-        public bool TodayIsRewardDay();
         public DailyBonusDayDto GetDayConfig();
+        public void AddStreakDay();
+        public bool TodayIsRewardDay();
+        public void SetTodayRewardStatus(bool isReceived);
         public void ResetData();
+        public UniTask<bool> IsFirstServerLaunch();
+        public bool HasCollectedAllRewards();
     }
 }

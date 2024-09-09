@@ -43,7 +43,7 @@ namespace Content.DailyBonus.Scripts.Core
                 _analytics.LogStreakLose(_model.StreakDay);
             }
             
-            var areAllRewardsReceived = _model.AreAllRewardsReceived();
+            var areAllRewardsReceived = _model.HasCollectedAllRewards();
             
             if (streakIsLoosed || areAllRewardsReceived)
             {

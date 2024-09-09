@@ -1,4 +1,5 @@
-﻿using Infrastructure.Service.View.ViewManager.ViewAnimation;
+﻿using System;
+using Infrastructure.Service.View.ViewManager.ViewAnimation;
 using Infrastructure.Service.View.ViewSignalManager;
 
 namespace Infrastructure.Service.View.ViewManager
@@ -10,8 +11,9 @@ namespace Infrastructure.Service.View.ViewManager
         public IViewBuilder SetView(IMonoBehaviour view);
         public IViewBuilder SetViewSignalManager(IViewSignalManager viewSignalManager);
         public IViewBuilder EnableFromStart();
-        public IViewBuilder SetCustomOpenAnimation(IViewAnimator animator);
-        public IViewBuilder SetCustomCloseAnimation(IViewAnimator animator);
+        public IViewBuilder SetAfterOpenAction(Action action);
+        public IViewBuilder SetAfterCloseAction(Action action);
+        public IViewBuilder SetCustomAnimator(IViewAnimator animator);
         public IViewInteractor RegisterAndInit();
     }
 }

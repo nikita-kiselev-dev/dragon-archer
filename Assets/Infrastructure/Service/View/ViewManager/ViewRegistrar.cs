@@ -46,15 +46,21 @@ namespace Infrastructure.Service.View.ViewManager
             return this;
         }
 
-        public IViewBuilder SetCustomOpenAnimation(IViewAnimator animator)
+        public IViewBuilder SetAfterOpenAction(Action action)
         {
-            _viewWrapper.CustomOpenAnimation = animator.Show;
+            _viewWrapper.AfterOpenAction = action;
             return this;
         }
 
-        public IViewBuilder SetCustomCloseAnimation(IViewAnimator animator)
+        public IViewBuilder SetAfterCloseAction(Action action)
         {
-            _viewWrapper.CustomCloseAnimation = animator.Hide;
+            _viewWrapper.AfterCloseAction = action;
+            return this;
+        }
+
+        public IViewBuilder SetCustomAnimator(IViewAnimator animator)
+        {
+            _viewWrapper.ViewAnimator = animator;
             return this;
         }
 
@@ -69,6 +75,7 @@ namespace Infrastructure.Service.View.ViewManager
             if (_viewWrapper.View == null)
                 throw new InvalidOperationException($"ViewBuilder: View is required for {_viewWrapper.ViewKey}!");
             
+            SetAnimator();
             _viewManager.RegisterView(_viewWrapper);
 
             if (_viewWrapper.View is IView view)
@@ -77,6 +84,29 @@ namespace Infrastructure.Service.View.ViewManager
             }
             
             return GetInteractor();
+        }
+
+        private void SetAnimator()
+        {
+            if (_viewWrapper.ViewAnimator != null)
+            {
+                return;
+            }
+            
+            if (_viewWrapper.ViewType == ViewType.Popup)
+            {
+                _viewWrapper.ViewAnimator = new PopupAnimator(
+                    _viewWrapper.View.MonoBehaviour.transform,
+                    _viewWrapper.AfterOpenAction,
+                    _viewWrapper.AfterCloseAction);
+            }
+            else
+            {
+                _viewWrapper.ViewAnimator = new WindowAnimator(
+                    _viewWrapper.View.MonoBehaviour.transform,
+                    _viewWrapper.AfterOpenAction,
+                    _viewWrapper.AfterCloseAction);
+            }
         }
 
         private IViewInteractor GetInteractor()

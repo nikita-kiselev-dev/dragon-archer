@@ -43,7 +43,7 @@ namespace Content.DailyBonus.Scripts.Presenter
             _inventoryManager = inventoryManager;
         }
         
-        public async void Init()
+        public async UniTaskVoid Init()
         {
             _core = new DailyBonusCore(
                 _model,
@@ -88,6 +88,7 @@ namespace Content.DailyBonus.Scripts.Presenter
                 .SetViewType(ViewType.Popup)
                 .SetView(_view)
                 .SetViewSignalManager(viewSignalManager)
+                .SetAfterCloseAction(AfterCloseAction)
                 .RegisterAndInit();
         }
         
@@ -100,6 +101,11 @@ namespace Content.DailyBonus.Scripts.Presenter
             {
                 dayController.Init();
             }
+        }
+
+        private void AfterCloseAction()
+        {
+            _view.Destroy();
         }
     }
 }

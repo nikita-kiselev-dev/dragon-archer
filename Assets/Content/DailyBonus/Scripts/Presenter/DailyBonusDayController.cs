@@ -1,5 +1,6 @@
 ﻿using Content.DailyBonus.Scripts.Config;
 using Content.DailyBonus.Scripts.View;
+using Cysharp.Threading.Tasks;
 using Infrastructure.Service.Localization;
 
 namespace Content.DailyBonus.Scripts.Presenter
@@ -17,10 +18,10 @@ namespace Content.DailyBonus.Scripts.Presenter
 
         public void Init()
         {
-            ConfigureView();
+            ConfigureView().Forget();
         }
         
-        private async void ConfigureView()
+        private async UniTaskVoid ConfigureView()
         {
             var dayText = _config.DayType == DailyBonusInfo.TodayLastDay
                 ? await "congratulations".LocalizeAsync() + "!"

@@ -11,14 +11,13 @@ namespace Infrastructure.Service.View.ViewFactory
         [Inject] private readonly IAssetLoader _assetLoader;
         [Inject] private readonly IMainCanvasController _mainCanvasController;
         [Inject] private readonly IBackgroundViewActionHandler _backgroundViewActionHandler;
-        [Inject] private readonly ServiceCanvas _serviceCanvas;
         
         public async UniTask<T> CreateView<T>(string viewKey, string viewType = null)
         {
             var isServiceView = viewType == ViewType.Service;
             
             var parent = isServiceView ? 
-                _serviceCanvas.transform : 
+                ServiceCanvas.Instance.transform : 
                 await _mainCanvasController.GetParent(viewType, _backgroundViewActionHandler.BackgroundViewAction);
             
             var operationHandler = await _assetLoader.InstantiateAsync<T>(viewKey, parent);

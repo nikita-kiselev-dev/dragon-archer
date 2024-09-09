@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections;
 using Content.LoadingCurtain.Scripts;
 using Content.LoadingCurtain.Scripts.Controller;
-using UnityEngine;
+using Cysharp.Threading.Tasks;
 using UnityEngine.SceneManagement;
 
 namespace Infrastructure.Service.Scene
@@ -16,14 +15,14 @@ namespace Infrastructure.Service.Scene
             _loadingCurtainController = loadingCurtainController;
         }
         
-        public IEnumerator LoadAsync(string sceneName, Action onLoaded = null)
+        public async UniTask LoadAsync(string sceneName, Action onLoaded = null)
         {
             var activeSceneName = SceneManager.GetActiveScene().name;
             
             if (activeSceneName == sceneName)
             {
                 onLoaded?.Invoke();
-                yield break;
+                return;
             }
 
             var isStartScene = sceneName == SceneInfo.StartScene;
@@ -31,24 +30,12 @@ namespace Infrastructure.Service.Scene
             if (!isStartScene)
             {
                 _loadingCurtainController.Show();
-                yield return new WaitForSeconds(LoadingCurtainInfo.ShowAnimationDuration);
+                await UniTask.WaitForSeconds(LoadingCurtainInfo.ShowAnimationDuration);
             }
             
-            var loadSceneAsync = SceneManager.LoadSceneAsync(sceneName);
-            
-            if (loadSceneAsync != null)
-            {
-                loadSceneAsync.completed += (_) =>
-                {
-                    onLoaded?.Invoke();
-
-                    if (!isStartScene)
-                    {
-                        _loadingCurtainController.Hide();
-                    }
-                };
-            }
+            var loadSceneAsync = SceneManager.LoadSceneAsync(sceneName).ToUniTask();
+            await loadSceneAsync;
+            onLoaded?.Invoke();
         }
-
     }
 }

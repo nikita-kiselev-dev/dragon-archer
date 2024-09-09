@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
 
 namespace Infrastructure.Service.Audio
@@ -10,7 +11,7 @@ namespace Infrastructure.Service.Audio
         private const float FadeInDuration = 1.0f;
         private const float FadeOutDuration = 1.0f;
         
-        public async void Play(string audioClipName, bool isLooped = true)
+        public async UniTaskVoid Play(string audioClipName, bool isLooped = true)
         {
             var isNewAudioClipAlreadyPlaying = m_AudioSource.isPlaying && audioClipName == m_AudioSource.clip.name;
             

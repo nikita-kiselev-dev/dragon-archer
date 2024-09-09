@@ -4,14 +4,14 @@ using VContainer;
 
 namespace Infrastructure.Service.Audio
 {
-    public class AudioService : MonoBehaviour, IAudioService
+    public class AudioController : MonoBehaviour, IAudioController
     {
         [Inject] private readonly IAssetLoader _assetLoader;
         
         [SerializeField] private SoundManager m_SoundSource;
         [SerializeField] private MusicManager m_MusicSource;
         
-        public static IAudioService Instance;
+        public static IAudioController Instance;
 
         [Inject]
         private void Init()
@@ -26,7 +26,7 @@ namespace Infrastructure.Service.Audio
         
         public void PlaySound(string audioClipName)
         {
-            m_SoundSource.Play(audioClipName);
+            m_SoundSource.Play(audioClipName).Forget();
         }
 
         public void SetSoundsVolume(float volume)
@@ -36,7 +36,7 @@ namespace Infrastructure.Service.Audio
 
         public void PlayMusic(string audioClipName)
         {
-            m_MusicSource.Play(audioClipName);
+            m_MusicSource.Play(audioClipName).Forget();
         }
 
         public void SetMusicVolume(float volume)

@@ -39,9 +39,9 @@ namespace Infrastructure.Game.GameManager
             /*var onboardingCompleted = _tutorialService
                 .IsTutorialCompleted<OnboardingTutorialData>();*/
 
-            var onboardingCompleted = true;
+            var isOnboardingCompleted = true;
             
-            Action startAction = onboardingCompleted
+            Action startAction = isOnboardingCompleted
                 ? () => _sceneStateMachine.EnterState<MetaSceneState>()
                 : () => _sceneStateMachine.EnterState<CoreSceneState>();
             

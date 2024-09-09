@@ -1,4 +1,5 @@
 ﻿using System;
+using Cysharp.Threading.Tasks;
 using Infrastructure.Game;
 using Infrastructure.Service.Audio;
 using Infrastructure.Service.View.ViewFactory;
@@ -26,8 +27,8 @@ namespace Content.StartScreen.Scripts.Controller
         
         public void Init()
         {
-            RegisterAndInitView();
-            AudioService.Instance.PlayMusic(MusicList.StartSceneMusic);
+            RegisterAndInitView().Forget();
+            AudioController.Instance.PlayMusic(MusicList.StartSceneMusic);
         }
 
         private void StartGame()
@@ -45,7 +46,7 @@ namespace Content.StartScreen.Scripts.Controller
             ExternalSourcesController.Instance.OpenPrivacyPolicy();
         }
 
-        private async void RegisterAndInitView()
+        private async UniTaskVoid RegisterAndInitView()
         {
             var view = await _viewFactory.CreateView<IView>(ViewInfo.StartScreen, ViewType.Window);
             

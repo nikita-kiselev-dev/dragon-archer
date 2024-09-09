@@ -1,6 +1,6 @@
 ﻿namespace Infrastructure.Service.Audio
 {
-    public interface IAudioService
+    public interface IAudioController
     {
         public void PlaySound(string audioClipName);
         public void SetSoundsVolume(float volume);

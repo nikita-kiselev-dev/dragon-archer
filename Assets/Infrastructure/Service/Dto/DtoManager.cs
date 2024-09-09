@@ -87,22 +87,15 @@ namespace Infrastructure.Service.Dto
         {
             var config = _fileService.Load<string>(DtoManagerInfo.ConfigPath);
             
-            if (config == null)
-            {
-                return;
-            }
-
-            var stringConfig = config.ToString();
-            
-            if (string.IsNullOrEmpty(stringConfig))
+            if (string.IsNullOrEmpty(config))
             {
                 return;
             }
             
-            _dataDto = JsonConvert.DeserializeObject<Dictionary<string, string>>(stringConfig);
+            _dataDto = JsonConvert.DeserializeObject<Dictionary<string, string>>(config);
         }
 
-        private bool IsConfigExists(string configName, Dictionary<string, string> dto)
+        private bool IsConfigExists(string configName, IReadOnlyDictionary<string, string> dto)
         {
             var isConfigExists = dto != null && dto.ContainsKey(configName);
             return isConfigExists;

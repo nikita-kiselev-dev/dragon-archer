@@ -26,7 +26,7 @@ namespace Infrastructure.Service.Audio
             }
             else
             {
-                throw new ArgumentNullException($"AudioController: can't load audio clip with name {audioClipName}!");
+                throw new ArgumentNullException($"{GetType().Name}: can't load audio clip with name {audioClipName}!");
             }
         }
     }

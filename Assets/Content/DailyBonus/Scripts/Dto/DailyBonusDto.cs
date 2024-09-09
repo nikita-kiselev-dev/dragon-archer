@@ -15,31 +15,19 @@ namespace Content.DailyBonus.Scripts.Dto
 
         public IReadOnlyList<DailyBonusDayDto> GetDays()
         {
-            if (_sortedDays == null)
-            {
-                _sortedDays = _days.OrderBy(config => config.StreakDay).ToList();
-                return _sortedDays;
-            }
-            else
-            {
-                return _sortedDays;
-            }
+            return _sortedDays ??= _days.OrderBy(config => config.StreakDay).ToList();
         }
 
         public DailyBonusDayDto GetDay(int streakDay)
         {
             GetDays();
-            
-            var dayDto = _sortedDays
-                .FirstOrDefault(day => day.StreakDay == streakDay);
-            
+            var dayDto = _sortedDays.FirstOrDefault(day => day.StreakDay == streakDay);
             return dayDto;
         }
 
         public DailyBonusDayDto GetLastDay()
         {
             GetDays();
-
             return _sortedDays.Last();
         }
     }

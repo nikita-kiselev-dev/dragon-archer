@@ -1,5 +1,6 @@
 using System;
 using Content.LoadingCurtain.Scripts.Controller;
+using Cysharp.Threading.Tasks;
 using Infrastructure.Service.Scene.Signals;
 using Infrastructure.Service.SignalBus;
 using UnityEngine.SceneManagement;
@@ -9,22 +10,20 @@ namespace Infrastructure.Service.Scene
 {
     public class SceneService : ISceneService, IDisposable
     {
-        [Inject] private readonly ICoroutineRunner _coroutineRunner;
-        [Inject] private readonly ISignalBus _signalBus;
-        [Inject] private readonly ILoadingCurtainController _loadingCurtainController;
-        
-        private ISceneLoader _sceneLoader;
+        private readonly ISignalBus _signalBus;
+        private readonly ISceneLoader _sceneLoader;
         
         [Inject]
-        public void Init()
+        public SceneService(ISignalBus signalBus, ILoadingCurtainController loadingCurtainController)
         {
-            _sceneLoader = new SceneLoader(_loadingCurtainController);
+            _signalBus = signalBus;
+            _sceneLoader = new SceneLoader(loadingCurtainController);
             SceneManager.activeSceneChanged += OnSceneChanged; 
         }
         
         public void LoadScene(string sceneName, Action onLoaded = null)
         {
-            _coroutineRunner.StartCoroutine(_sceneLoader.LoadAsync(sceneName, onLoaded));
+            _sceneLoader.LoadAsync(sceneName, onLoaded).Forget();
         }
 
         void IDisposable.Dispose()

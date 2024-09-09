@@ -102,7 +102,7 @@ namespace Infrastructure.Service.View.ViewSignalManager
             }
         }
 
-        private void PlayDefaultSound() => AudioService.Instance.PlaySound(SoundList.ClickSound0);
-        private void PlayCustomSound(string audioClipName) => AudioService.Instance.PlaySound(audioClipName);
+        private void PlayDefaultSound() => AudioController.Instance.PlaySound(SoundList.ClickSound0);
+        private void PlayCustomSound(string audioClipName) => AudioController.Instance.PlaySound(audioClipName);
     }
 }

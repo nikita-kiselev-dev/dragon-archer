@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Content.LoadingCurtain.Scripts
 {
-    public class LoadingCurtainViewAnimator : IViewAnimator
+    public class LoadingCurtainGradientColorAnimator : IViewAnimator
     {
         private readonly GameObject _gameObject;
         private readonly CanvasGroup _canvasGroup;
@@ -15,16 +15,11 @@ namespace Content.LoadingCurtain.Scripts
         private readonly Color _topColor;
         private readonly Color _bottomColor;
         
-        public LoadingCurtainViewAnimator(ILoadingCurtainView view)
+        public LoadingCurtainGradientColorAnimator(LoadingCurtainView view)
         {
-            if (view is not LoadingCurtainView gradientColorCurtainView)
-            {
-                return;
-            }
-            
-            _gameObject = gradientColorCurtainView.gameObject;
-            _canvasGroup = gradientColorCurtainView.CanvasGroup;
-            _gradientColor = gradientColorCurtainView.GradientColor;
+            _gameObject = view.gameObject;
+            _canvasGroup = view.CanvasGroup;
+            _gradientColor = view.GradientColor;
             _topColor = _gradientColor.colorTop;
             _bottomColor = _gradientColor.colorBottom;
         }

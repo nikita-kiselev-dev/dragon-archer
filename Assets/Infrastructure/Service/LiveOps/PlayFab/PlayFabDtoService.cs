@@ -25,7 +25,6 @@ namespace Infrastructure.Service.LiveOps.PlayFab
         
         public void GetTitleDataFromServer()
         {
-            var completionSource = new UniTaskCompletionSource<Dictionary<string, string>>();
             var cancellationTokenSource = new CancellationTokenSource();
             cancellationTokenSource.CancelAfterSlim(TimeSpan.FromSeconds(ServerTimeoutInSeconds));
             
@@ -40,7 +39,7 @@ namespace Infrastructure.Service.LiveOps.PlayFab
             {
                 if (exception.CancellationToken == cancellationTokenSource.Token)
                 {
-                    completionSource.TrySetException(new Exception(exception.ToString()));
+                    Debug.LogError(exception);
                 }
             }
         }

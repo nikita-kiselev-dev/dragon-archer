@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections;
+using Cysharp.Threading.Tasks;
 
 namespace Infrastructure.Service.Scene
 {
     public interface ISceneLoader
     {
-        public IEnumerator LoadAsync(string sceneName, Action onLoaded = null);
+        public UniTask LoadAsync(string sceneName, Action onLoaded = null);
     }
 }

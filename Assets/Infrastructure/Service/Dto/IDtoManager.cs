@@ -1,7 +1,7 @@
 ﻿namespace Infrastructure.Service.Dto
 {
-    public interface IDtoManager : IInitiable
+    public interface IDtoManager
     {
-        
+        public void Init();
     }
 }

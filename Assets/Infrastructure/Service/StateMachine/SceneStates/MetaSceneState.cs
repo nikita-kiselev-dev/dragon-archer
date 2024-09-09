@@ -12,6 +12,7 @@ namespace Infrastructure.Service.StateMachine.SceneStates
         {
             _sceneService = sceneService;
             _gameManager = gameManager;
+
         }
 
         public void Enter()

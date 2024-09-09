@@ -23,59 +23,23 @@ namespace Infrastructure.Service.View.ViewManager
             {
                 return false;
             }
-            
-            var customAnimation = viewWrapper.CustomOpenAnimation;
 
-            if (customAnimation != null)
-            {
-                customAnimation();
-            }
-            else
-            {
-                var monoBehaviour = viewWrapper.View.MonoBehaviour;
-                
-                if (!monoBehaviour)
-                {
-                    return false;
-                }
-
-                _backgroundAnimator.Show();
-
-                new PopupAnimator(monoBehaviour.transform).Show();
-            }
-
+            _backgroundAnimator.Show();
+            viewWrapper.ViewAnimator.Show();
             return true;
         }
 
         public bool Close(IViewWrapper viewWrapper)
         {
-            var customAnimation = viewWrapper.CustomCloseAnimation;
+            _backgroundAnimator.Hide();
+            viewWrapper.ViewAnimator.Hide();
 
-            if (customAnimation != null)
-            {
-                customAnimation();
-            }
-            else
-            {
-                var monoBehaviour = viewWrapper.View.MonoBehaviour;
-                
-                if (!monoBehaviour)
-                {
-                    return false;
-                }
-
-                _backgroundAnimator.Hide();
-                
-                new PopupAnimator(monoBehaviour.transform).Hide();
-            }
-            
             if (_viewQueue.LastOrDefault() != viewWrapper)
             {
                 return false;
             }
             
             _viewQueue.Dequeue();
-            
             return false;
         }
     }

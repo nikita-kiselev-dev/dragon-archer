@@ -1,52 +1,16 @@
-﻿using Infrastructure.Service.View.ViewManager.ViewAnimation;
-
-namespace Infrastructure.Service.View.ViewManager
+﻿namespace Infrastructure.Service.View.ViewManager
 {
     public class ServiceViewTypeManager : IViewTypeManager
     {
         public bool Open(IViewWrapper viewWrapper, bool viewIsOpen)
         {
-            var customAnimation = viewWrapper.CustomOpenAnimation;
-
-            if (customAnimation != null)
-            {
-                customAnimation();
-            }
-            else
-            {
-                var monoBehaviour = viewWrapper.View.MonoBehaviour;
-                
-                if (!monoBehaviour)
-                {
-                    return false;
-                }
-
-                new WindowAnimator(monoBehaviour.transform).Show();
-            }
-
+            viewWrapper.ViewAnimator.Show();
             return true;
         }
 
         public bool Close(IViewWrapper viewWrapper)
         {
-            var customAnimation = viewWrapper.CustomCloseAnimation;
-
-            if (customAnimation != null)
-            {
-                customAnimation();
-            }
-            else
-            {
-                var monoBehaviour = viewWrapper.View.MonoBehaviour;
-                
-                if (!monoBehaviour)
-                {
-                    return false;
-                }
-                
-                new WindowAnimator(monoBehaviour.transform).Hide();
-            }
-            
+            viewWrapper.ViewAnimator.Hide();
             return false;
         }
     }

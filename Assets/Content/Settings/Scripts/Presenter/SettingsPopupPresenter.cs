@@ -24,7 +24,7 @@ namespace Content.Settings.Scripts.Presenter
             _viewManager = viewManager;
         }
         
-        public async void Init()
+        public async UniTaskVoid Init()
         {
             await RegisterAndInitView();
             ConfigureView();
@@ -71,13 +71,13 @@ namespace Content.Settings.Scripts.Presenter
         private void SetSoundsVolume(float volume)
         {
             _model.SetSoundsVolume(volume);
-            AudioService.Instance.SetSoundsVolume(volume);
+            AudioController.Instance.SetSoundsVolume(volume);
         }
 
         private void SetMusicVolume(float volume)
         {
             _model.SetMusicVolume(volume);
-            AudioService.Instance.SetMusicVolume(volume);
+            AudioController.Instance.SetMusicVolume(volume);
         }
     }
 }

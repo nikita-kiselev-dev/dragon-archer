@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Infrastructure.Service.View.ViewManager.ViewAnimation;
+using UnityEngine;
 using VContainer;
 
 namespace Infrastructure.Service.View.ViewManager
@@ -30,6 +31,12 @@ namespace Infrastructure.Service.View.ViewManager
         public void Open(string viewKey)
         {
             var viewWrapper = GetViewWrapper(viewKey);
+
+            if (viewWrapper?.View == null)
+            {
+                Debug.LogError($"{GetType().Name}: {viewKey} - view wrapper or view is null!");
+                return;
+            }
             
             var viewIsOpen = _viewTypeManagers[viewWrapper.ViewType].Open(viewWrapper, _viewIsOpen);
 
@@ -44,6 +51,12 @@ namespace Infrastructure.Service.View.ViewManager
         public void Close(string viewKey)
         {
             var viewWrapper = GetViewWrapper(viewKey);
+            
+            if (viewWrapper?.View == null)
+            {
+                Debug.LogError($"{GetType().Name}: {viewKey} - view wrapper or view is null!");
+                return;
+            }
 
             var viewIsOpen = _viewTypeManagers[viewWrapper.ViewType].Close(viewWrapper);
 

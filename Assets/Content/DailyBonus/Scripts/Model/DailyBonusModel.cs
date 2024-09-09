@@ -14,10 +14,10 @@ namespace Content.DailyBonus.Scripts.Model
         private readonly IDailyBonusDto _dto;
         private readonly IMainDataManager _mainDataManager;
         
-        public int StreakDay => _dailyBonusData.StreakDay;
         public IReadOnlyList<DailyBonusDayDto> DayConfigs => _dto.GetDays();
-        public DateTime LastSessionServerTime => _mainDataManager.LastSessionServerTime;
+        public int StreakDay => _dailyBonusData.StreakDay;
         public bool TodayRewardWasReceived => _dailyBonusData.TodayRewardWasReceived;
+        public DateTime LastSessionServerTime => _mainDataManager.LastSessionServerTime;
         
         public DailyBonusModel(IDailyBonusDto dto, DailyBonusData dailyBonusData, IMainDataManager mainDataManager)
         {
@@ -25,28 +25,15 @@ namespace Content.DailyBonus.Scripts.Model
             _dailyBonusData = dailyBonusData;
             _mainDataManager = mainDataManager;
         }
-
-        public async UniTask<bool> IsFirstServerLaunch()
-        {
-            return await _mainDataManager.IsFirstServerLaunch();
-        }
-
-        public void AddStreakDay()
-        {
-            _dailyBonusData.AddStreakDayData();
-        }
-
-        public void ResetData()
-        {
-            _dailyBonusData.ResetStreak();
-        }
-
-        public void SetTodayRewardStatus(bool isReceived)
-        {
-            _dailyBonusData.SetTodayRewardStatus(isReceived);
-        }
         
-        public bool AreAllRewardsReceived()
+        public DailyBonusDayDto GetDayConfig() => _dto.GetDay(StreakDay);
+        public void AddStreakDay() => _dailyBonusData.AddStreakDayData();
+        public bool TodayIsRewardDay() => _dto.GetDay(StreakDay) != null;
+        public void SetTodayRewardStatus(bool isReceived) => _dailyBonusData.SetTodayRewardStatus(isReceived);
+        public void ResetData() => _dailyBonusData.ResetStreak();
+        public async UniTask<bool> IsFirstServerLaunch() => await _mainDataManager.IsFirstServerLaunch();
+        
+        public bool HasCollectedAllRewards()
         {
             var lastDayConfig = _dto.GetLastDay();
             
@@ -59,18 +46,6 @@ namespace Content.DailyBonus.Scripts.Model
             var lastStreakDayInDto = lastDayConfig.StreakDay;
             var isAllRewardsReceived = StreakDay > lastStreakDayInDto;
             return isAllRewardsReceived;
-        }
-
-        public bool TodayIsRewardDay()
-        {
-            var dayConfig = _dto.GetDay(StreakDay);
-            return dayConfig != null;
-        }
-
-        public DailyBonusDayDto GetDayConfig()
-        {
-            var dayConfig = _dto.GetDay(StreakDay);
-            return dayConfig;
         }
     }
 }

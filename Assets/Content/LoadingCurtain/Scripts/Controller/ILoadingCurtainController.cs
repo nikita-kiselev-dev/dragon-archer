@@ -1,10 +1,11 @@
-﻿using Infrastructure.Service;
+﻿using Cysharp.Threading.Tasks;
 
 namespace Content.LoadingCurtain.Scripts.Controller
 {
-    public interface ILoadingCurtainController : IInitiable
+    public interface ILoadingCurtainController
     {
+        public UniTaskVoid Init();
         public void Show();
-        public void Hide();
+        public UniTaskVoid Hide();
     }
 }

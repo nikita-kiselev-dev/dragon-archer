@@ -1,9 +1,7 @@
-﻿using Infrastructure.Service;
-
-namespace Content.StartScreen.Scripts.Controller
+﻿namespace Content.StartScreen.Scripts.Controller
 {
-    public interface IStartScreenController : IInitiable
+    public interface IStartScreenController
     {
-        
+        public void Init();
     }
 }

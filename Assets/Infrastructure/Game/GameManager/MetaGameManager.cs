@@ -1,5 +1,6 @@
 using Content.DailyBonus.Scripts;
 using Infrastructure.Service.LiveOps;
+using Infrastructure.Service.SignalBus;
 using UnityEngine;
 using VContainer;
 
@@ -7,8 +8,20 @@ namespace Infrastructure.Game.GameManager
 {
     public class MetaGameManager : IMetaGameManager
     {
-        [Inject] private readonly IServerConnectionService _serverConnectionService;
-        [Inject] private readonly IDailyBonus _dailyBonus;
+        private readonly IServerConnectionService _serverConnectionService;
+        private readonly ISignalBus _signalBus;
+        private readonly IDailyBonus _dailyBonus;
+
+        [Inject]
+        public MetaGameManager(
+            IServerConnectionService serverConnectionService, 
+            ISignalBus signalBus,
+            IDailyBonus dailyBonus)
+        {
+            _serverConnectionService = serverConnectionService;
+            _signalBus = signalBus;
+            _dailyBonus = dailyBonus;
+        }
         
         public void OnSceneStart()
         {
@@ -17,6 +30,7 @@ namespace Infrastructure.Game.GameManager
                 _dailyBonus.Init();
             }
             
+            _signalBus.Trigger<OnGameManagerStartedSignal>();
             Debug.Log($"{GetType().Name}: start");
         }
 
