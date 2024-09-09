@@ -57,8 +57,6 @@ namespace Content.DailyBonus.Scripts.Presenter
             {
                 return;
             }
-
-            //asdasd
             
             await RegisterAndInitView();
             await CreateDays();
