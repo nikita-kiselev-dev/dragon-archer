@@ -33,7 +33,6 @@ namespace Content.DailyBonus.Scripts.Presenter
                 { "streak_lose_day", streakDay },
             };
 
-
             var analyticsEvent = new AnalyticsEvent(
                 "daily_bonus_streak_lose", 
                 eventParameters);

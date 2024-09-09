@@ -16,7 +16,7 @@ namespace Content.LoadingCurtain.Scripts.Controller
         [Inject] private readonly IViewManager _viewManager;
         [Inject] private readonly ISignalBus _signalBus;
 
-        private readonly List<UniTask> _loadingOperationQueue = new();
+        private readonly List<UniTask> _loadingOperations = new();
         
         private ILoadingCurtainView _view;
         private IViewInteractor _viewInteractor;
@@ -33,20 +33,20 @@ namespace Content.LoadingCurtain.Scripts.Controller
         
         public void Show()
         {
-            _loadingOperationQueue.Clear();
+            _loadingOperations.Clear();
             _viewInteractor.Open();
         }
 
         public async UniTaskVoid Hide()
         {
             await WaitForOperationsCompletion();
-            _loadingOperationQueue.Clear();
+            _loadingOperations.Clear();
             _viewInteractor.Close();
         }
         
         public void AddLoadingOperation(UniTask loadingOperation)
         {
-            _loadingOperationQueue.Add(loadingOperation);
+            _loadingOperations.Add(loadingOperation);
         }
         
         public async UniTask WaitForOperationsCompletion()
@@ -57,7 +57,7 @@ namespace Content.LoadingCurtain.Scripts.Controller
             }
             else
             {
-                await UniTask.WhenAll(_loadingOperationQueue);
+                await UniTask.WhenAll(_loadingOperations);
             }
         }
         

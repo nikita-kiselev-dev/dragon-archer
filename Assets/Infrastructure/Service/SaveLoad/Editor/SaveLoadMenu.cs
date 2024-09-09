@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using UnityEditor;
 
-namespace Infrastructure.Service.SaveLoad
+namespace Infrastructure.Service.SaveLoad.Editor
 {
     public class SaveLoadMenu
     {
