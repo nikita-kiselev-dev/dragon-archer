@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 using Content.LoadingCurtain.Scripts.View;
 using Cysharp.Threading.Tasks;
 using Infrastructure.Game.GameManager;
@@ -6,6 +8,7 @@ using Infrastructure.Service.Localization;
 using Infrastructure.Service.SignalBus;
 using Infrastructure.Service.View.ViewFactory;
 using Infrastructure.Service.View.ViewManager;
+using UnityEngine;
 using VContainer;
 
 namespace Content.LoadingCurtain.Scripts.Controller
@@ -37,7 +40,10 @@ namespace Content.LoadingCurtain.Scripts.Controller
 
         public async UniTaskVoid Hide()
         {
-            await UniTask.WhenAll(_loadingOperations);
+            await UniTask
+                .WhenAll(_loadingOperations)
+                .TimeoutWithoutException(TimeSpan.FromSeconds(LoadingCurtainInfo.LoadingTimeoutInSeconds));
+            
             _loadingOperations.Clear();
             _viewInteractor.Close();
         }

@@ -9,7 +9,7 @@ using MemoryPackSerializer = MemoryPack.MemoryPackSerializer;
 
 namespace Infrastructure.Service.SaveLoad
 {
-    public class SaveLoadService : ISaveLoadService, IDataSaver
+    public class MainSaveLoadService : ISaveLoadService, IDataSaver
     {
         [Inject] private readonly IDataManager _dataManager;
         [Inject] private readonly IFileService _fileService;
@@ -21,9 +21,7 @@ namespace Infrastructure.Service.SaveLoad
         {
             CreateDirectory();
             Load();
-
             _isInited = true;
-            
             _signalBus.Trigger<SaveFileLoadCompletedSignal>();
         }
 

@@ -46,7 +46,7 @@ namespace Infrastructure.Service.SaveLoad
                 FillWithLoadedData(dataPair.InjectedData, dataPair.LoadedData, fullLoadedDataStringBuilder);
             }
 
-            Debug.Log($"{GetType().Name} - full save file:\n{fullLoadedDataStringBuilder}");
+            Debug.Log($"{GetType().Name} - loaded save file:\n{fullLoadedDataStringBuilder}");
             fullLoadedDataStringBuilder.Clear();
         }
         
@@ -67,7 +67,7 @@ namespace Infrastructure.Service.SaveLoad
                 {
                     var value = propertyInfo.GetValue(loadedData);
                     propertyInfo.SetValue(injectedData, value);
-                    fullLoadedDataStringBuilder.Append($"{loadedData.Name()} : {propertyInfo.Name} : {value}\n");
+                    fullLoadedDataStringBuilder.Append($"{loadedData.Name()} - {propertyInfo.Name}: {value}\n");
                 }
 
                 if (propertyInfos.Any())

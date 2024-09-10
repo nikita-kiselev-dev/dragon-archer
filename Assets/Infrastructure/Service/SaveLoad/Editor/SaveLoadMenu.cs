@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using UnityEditor;
+using UnityEngine;
 
 namespace Infrastructure.Service.SaveLoad.Editor
 {
@@ -26,6 +27,8 @@ namespace Infrastructure.Service.SaveLoad.Editor
             {
                 System.IO.File.Delete(filePath);
             }
+            
+            PlayerPrefs.DeleteAll();
         }
 
         private static void CreateDirectory()

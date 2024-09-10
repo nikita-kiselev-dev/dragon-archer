@@ -1,7 +1,9 @@
-﻿namespace Infrastructure.Service.Dto
+﻿using Cysharp.Threading.Tasks;
+
+namespace Infrastructure.Service.Dto
 {
     public interface IDtoReader
     {
-        public T Read<T>(string configName);
+        public UniTask<T> Read<T>(string configName);
     }
 }

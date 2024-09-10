@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+using Cysharp.Threading.Tasks;
 using Infrastructure.Service.Asset;
 using Infrastructure.Service.File;
 using Infrastructure.Service.LiveOps;
@@ -12,7 +14,7 @@ using VContainer;
 
 namespace Infrastructure.Service.Dto
 {
-    public class DtoManager : IDtoManager, IDtoReader
+    public class MainDtoManager : IDtoManager, IDtoReader
     {
         [Inject] private readonly IAssetLoader _assetLoader;
         [Inject] private readonly ISignalBus _signalBus;
@@ -32,7 +34,7 @@ namespace Infrastructure.Service.Dto
             _isInited = true;
         }
         
-        public T Read<T>(string configName)
+        public async UniTask<T> Read<T>(string configName)
         {
             if (!_isInited)
             {
@@ -55,10 +57,13 @@ namespace Infrastructure.Service.Dto
             }
             else
             {
-                config = GetDummyDto(configName);
+                config = await GetDummyDto(configName);
             }
             
             var result = (T)JsonConvert.DeserializeObject(config, typeof(T));
+            
+            Debug.Log($"{GetType().Name} - loaded config file:\n{result}");
+            
             return result;
         }
         
@@ -92,6 +97,8 @@ namespace Infrastructure.Service.Dto
             }
             
             _dataDto = JsonConvert.DeserializeObject<Dictionary<string, string>>(config);
+            var stringDto = BuildString(_dataDto);
+            Debug.Log($"{GetType().Name} - data config file:\n{stringDto}");
         }
 
         private bool IsConfigExists(string configName, IReadOnlyDictionary<string, string> dto)
@@ -100,9 +107,9 @@ namespace Infrastructure.Service.Dto
             return isConfigExists;
         }
         
-        private string GetDummyDto(string configName)
+        private async UniTask<string> GetDummyDto(string configName)
         {
-            var config = _assetLoader.LoadAssetAsync<TextAsset>(configName);
+            var config = await _assetLoader.LoadAssetAsync<TextAsset>(configName);
             return config.ToString();
         }
 
@@ -123,6 +130,22 @@ namespace Infrastructure.Service.Dto
         private void SetServerDto()
         {
             _serverDto = _dtoService.GetDto();
+            var stringDto = BuildString(_serverDto);
+            Debug.Log($"{GetType().Name} - server config file:\n{stringDto}");
+        }
+        
+        private string BuildString(Dictionary<string, string> dto)
+        {
+            var stringBuilder = new StringBuilder();
+
+            foreach (var kvp in dto)
+            {
+                stringBuilder.Append($"{kvp.Key}: {kvp.Value}\n");
+            }
+
+            var resultString = stringBuilder.ToString();
+            stringBuilder.Clear();
+            return resultString;
         }
     }
 }

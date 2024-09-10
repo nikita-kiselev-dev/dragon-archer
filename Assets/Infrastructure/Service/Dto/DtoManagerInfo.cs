@@ -5,8 +5,7 @@ namespace Infrastructure.Service.Dto
 {
     public class DtoManagerInfo
     {
-        private const string ConfigName = "Config.bin";
-        
+        public const string ConfigName = "Config.bin";
         public static readonly string ConfigDirectory = $"{Application.persistentDataPath}/Data/";
         public static readonly string ConfigPath = Path.Combine(ConfigDirectory, ConfigName);
     }

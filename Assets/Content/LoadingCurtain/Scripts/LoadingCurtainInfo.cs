@@ -12,5 +12,7 @@ namespace Content.LoadingCurtain.Scripts
         
         public const float AddDotAnimationDelay = 0.3f;
         public const int DotsToAddInAnimation = 3;
+
+        public const int LoadingTimeoutInSeconds = 10;
     }
 }

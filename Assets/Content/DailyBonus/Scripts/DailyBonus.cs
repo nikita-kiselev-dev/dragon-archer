@@ -3,6 +3,7 @@ using Content.DailyBonus.Scripts.Dto;
 using Content.DailyBonus.Scripts.Model;
 using Content.DailyBonus.Scripts.Presenter;
 using Content.Items.Scripts;
+using Cysharp.Threading.Tasks;
 using Infrastructure.Game.Data;
 using Infrastructure.Service.Analytics;
 using Infrastructure.Service.Asset;
@@ -31,16 +32,16 @@ namespace Content.DailyBonus.Scripts
 
         public bool IsInited => _presenter.IsInited;
         
-        public void Init()
+        public async UniTaskVoid Init()
         {
-            CreateModel();
+            await CreateModel();
             CreatePresenter();
             _presenter.Init();
         }
 
-        private void CreateModel()
+        private async UniTask CreateModel()
         {
-            var dto = _dtoReader.Read<DailyBonusDto>(DailyBonusInfo.Config);
+            var dto = await _dtoReader.Read<DailyBonusDto>(DailyBonusInfo.Config);
             _model = new DailyBonusModel(dto, _dailyBonusData, _mainDataManager);
         }
         

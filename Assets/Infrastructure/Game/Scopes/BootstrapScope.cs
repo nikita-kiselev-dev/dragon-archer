@@ -98,9 +98,15 @@ namespace Infrastructure.Game.Scopes
 
         private void RegisterDataManager(IContainerBuilder builder)
         {
-            builder.Register<ISaveLoadService, SaveLoadService>(Lifetime.Singleton).As<IDataSaver>();
+            #if UNITY_WEBGL
+                builder.Register<ISaveLoadService, PlayerPrefsSaveLoadService>(Lifetime.Singleton).As<IDataSaver>();
+                builder.Register<IDtoManager, PlayerPrefsDtoManager>(Lifetime.Singleton).As<IDtoReader>();
+            #else
+                builder.Register<ISaveLoadService, MainSaveLoadService>(Lifetime.Singleton).As<IDataSaver>();
+                builder.Register<IDtoManager, MainDtoManager>(Lifetime.Singleton).As<IDtoReader>();
+            #endif
+            
             builder.Register<IDataManager, DataManager>(Lifetime.Singleton);
-            builder.Register<IDtoManager, DtoManager>(Lifetime.Singleton).As<IDtoReader>();
         }
 
         private void RegisterAssetLoader(IContainerBuilder builder)

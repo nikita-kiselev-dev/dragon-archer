@@ -16,7 +16,7 @@ namespace Infrastructure.Service.SaveLoad
         [Inject] private readonly IMainDataManager _mainDataManager;
         
         private const bool IsAutoSaveEnabled = true;
-        private const int AutoSaveIntervalInSeconds = 60;
+        private const int AutoSaveIntervalInSeconds = 15;
         private const int AutoSaveDelayInSeconds = 5;
 
         private bool _isReadyForSave = true;
