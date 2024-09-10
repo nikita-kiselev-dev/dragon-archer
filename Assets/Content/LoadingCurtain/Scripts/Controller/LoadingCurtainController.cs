@@ -20,10 +20,8 @@ namespace Content.LoadingCurtain.Scripts.Controller
         
         private ILoadingCurtainView _view;
         private IViewInteractor _viewInteractor;
-
-        private bool _onBootstrap = true;
         
-        public async UniTaskVoid Init()
+        public async UniTask Init()
         {
             await RegisterAndInitView();
             ConfigureView().Forget();
@@ -39,26 +37,14 @@ namespace Content.LoadingCurtain.Scripts.Controller
 
         public async UniTaskVoid Hide()
         {
-            await WaitForOperationsCompletion();
+            await UniTask.WhenAll(_loadingOperations);
             _loadingOperations.Clear();
             _viewInteractor.Close();
         }
-        
-        public void AddLoadingOperation(UniTask loadingOperation)
+
+        private void AddLoadingOperation(UniTask loadingOperation)
         {
             _loadingOperations.Add(loadingOperation);
-        }
-        
-        public async UniTask WaitForOperationsCompletion()
-        {
-            if (_onBootstrap)
-            {
-                _onBootstrap = false;
-            }
-            else
-            {
-                await UniTask.WhenAll(_loadingOperations);
-            }
         }
         
         private async UniTask RegisterAndInitView()

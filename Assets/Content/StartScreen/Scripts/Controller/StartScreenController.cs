@@ -2,6 +2,8 @@
 using Cysharp.Threading.Tasks;
 using Infrastructure.Game;
 using Infrastructure.Service.Audio;
+using Infrastructure.Service.StateMachine;
+using Infrastructure.Service.StateMachine.SceneStates;
 using Infrastructure.Service.View.ViewFactory;
 using Infrastructure.Service.View.ViewManager;
 using Infrastructure.Service.View.ViewSignalManager;
@@ -12,23 +14,33 @@ namespace Content.StartScreen.Scripts.Controller
     {
         private readonly IViewFactory _viewFactory;
         private readonly IViewManager _viewManager;
+        private readonly IStateMachine _sceneStateMachine;
 
         private readonly Action _onStartButtonClicked;
+
+        private bool _isInited;
+        
+        public bool IsInited => _isInited;
         
         public StartScreenController(
             IViewFactory viewFactory,
             IViewManager viewManager,
-            Action onStartButtonClicked)
+            IStateMachine sceneStateMachine)
         {
             _viewFactory = viewFactory;
             _viewManager = viewManager;
-            _onStartButtonClicked = onStartButtonClicked;
+            
+            var isOnboardingCompleted = true;
+            _onStartButtonClicked = isOnboardingCompleted
+                ? sceneStateMachine.EnterState<MetaSceneState>
+                : sceneStateMachine.EnterState<CoreSceneState>;
         }
         
         public void Init()
         {
             RegisterAndInitView().Forget();
             AudioController.Instance.PlayMusic(MusicList.StartSceneMusic);
+            _isInited = true;
         }
 
         private void StartGame()

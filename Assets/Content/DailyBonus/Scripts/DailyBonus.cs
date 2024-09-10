@@ -28,6 +28,8 @@ namespace Content.DailyBonus.Scripts
         
         private IDailyBonusModel _model;
         private IDailyBonusPresenter _presenter;
+
+        public bool IsInited => _presenter.IsInited;
         
         public void Init()
         {

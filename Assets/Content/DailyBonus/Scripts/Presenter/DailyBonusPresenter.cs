@@ -25,6 +25,10 @@ namespace Content.DailyBonus.Scripts.Presenter
         private IDailyBonusView _view;
         private IViewInteractor _viewInteractor;
 
+        private bool _isInited;
+
+        public bool IsInited => _isInited;
+
         public DailyBonusPresenter(
             IDailyBonusAnalytics analytics,
             IDailyBonusModel model,
@@ -55,11 +59,13 @@ namespace Content.DailyBonus.Scripts.Presenter
 
             if (!needToShowPopup)
             {
+                _isInited = true;
                 return;
             }
             
             await RegisterAndInitView();
             await CreateDays();
+            _isInited = true;
             Open();
             _core.GiveReward();
         }

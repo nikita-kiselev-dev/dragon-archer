@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Infrastructure.Service.Asset;
@@ -13,7 +12,7 @@ using VContainer;
 
 namespace Infrastructure.Service.Dto
 {
-    public class DtoManager : IDtoManager, IDtoReader, IDisposable
+    public class DtoManager : IDtoManager, IDtoReader
     {
         [Inject] private readonly IAssetLoader _assetLoader;
         [Inject] private readonly ISignalBus _signalBus;
@@ -124,11 +123,6 @@ namespace Infrastructure.Service.Dto
         private void SetServerDto()
         {
             _serverDto = _dtoService.GetDto();
-        }
-
-        void IDisposable.Dispose()
-        {
-            _signalBus.Unsubscribe<GetLiveOpsDataCompletedSignal>(this);
         }
     }
 }

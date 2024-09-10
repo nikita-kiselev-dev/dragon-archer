@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Threading;
 using Content.LoadingCurtain.Scripts.Controller;
+using Cysharp.Threading.Tasks;
 using Infrastructure.Service.Dto;
 using Infrastructure.Service.LiveOps;
 using Infrastructure.Service.LiveOps.Signals;
@@ -11,7 +13,7 @@ using VContainer.Unity;
 
 namespace Infrastructure.Game
 {
-    public class GameBootstrapper : IStartable, IDisposable
+    public class GameBootstrapper : IAsyncStartable, IDisposable
     {
         [Inject] private readonly ISignalBus _signalBus;
         [Inject] private readonly ISaveLoadService _saveLoadService;
@@ -23,11 +25,11 @@ namespace Infrastructure.Game
         private bool _isLocalizationReady;
         private bool _isServerLoginCompleted;
         
-        void IStartable.Start()
+        async UniTask IAsyncStartable.StartAsync(CancellationToken cancellation)
         {
             _signalBus.Subscribe<SaveFileLoadCompletedSignal>(this, InitServer);
             _signalBus.Subscribe<ServerLoginCompletedSignal, bool>(this, InitGame);
-            _loadingCurtainController.Init();
+            await _loadingCurtainController.Init();
             _saveLoadService.Init();
             _dtoManager.Init();
         }
@@ -38,15 +40,8 @@ namespace Infrastructure.Game
             _signalBus.Unsubscribe<ServerLoginCompletedSignal>(this);
         }
 
-        private void InitServer()
-        {
-            _liveOpsController.Init();
-        }
+        private void InitServer() => _liveOpsController.Init();
 
-        private void InitGame(bool isLoggedIn)
-        {
-            _loadingCurtainController.Hide();
-            _game.Init();
-        }
+        private void InitGame(bool isLoggedIn) => _game.Init();
     }
 }

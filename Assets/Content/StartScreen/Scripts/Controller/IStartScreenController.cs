@@ -2,6 +2,7 @@
 {
     public interface IStartScreenController
     {
+        public bool IsInited { get; }
         public void Init();
     }
 }

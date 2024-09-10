@@ -8,11 +8,7 @@ namespace Infrastructure.Service.SaveLoad.Editor
         [MenuItem("Raycast Productions/Open Save Folder")]
         private static void OpenSaveFolder()
         {
-            if (!Directory.Exists(SaveLoadInfo.SaveFileDirectory))
-            {
-                return;
-            }
-            
+            CreateDirectory();
             EditorUtility.RevealInFinder(SaveLoadInfo.SaveFileDirectory);
         }
         
@@ -23,12 +19,20 @@ namespace Infrastructure.Service.SaveLoad.Editor
             {
                 return;
             }
-            
+
             var filePaths = Directory.GetFiles(SaveLoadInfo.SaveFileDirectory);
             
             foreach (var filePath in filePaths)
             {
                 System.IO.File.Delete(filePath);
+            }
+        }
+
+        private static void CreateDirectory()
+        {
+            if (!Directory.Exists(SaveLoadInfo.SaveFileDirectory))
+            {
+                Directory.CreateDirectory(SaveLoadInfo.SaveFileDirectory);
             }
         }
     }

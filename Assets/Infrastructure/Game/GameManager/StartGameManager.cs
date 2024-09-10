@@ -1,9 +1,10 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using Content.Settings.Scripts;
 using Content.StartScreen.Scripts.Controller;
+using Cysharp.Threading.Tasks;
 using Infrastructure.Game.Tutorials;
+using Infrastructure.Service.SignalBus;
 using Infrastructure.Service.StateMachine;
-using Infrastructure.Service.StateMachine.SceneStates;
 using Infrastructure.Service.View.ViewFactory;
 using Infrastructure.Service.View.ViewManager;
 using UnityEngine;
@@ -18,13 +19,17 @@ namespace Infrastructure.Game.GameManager
         [Inject] private readonly IViewManager _viewManager;
         [Inject] private readonly ITutorialService _tutorialService;
         [Inject] private readonly ISettingsPopup _settingsPopup;
+        [Inject] private readonly ISignalBus _signalBus;
         
         private IStartScreenController _startScreenController;
         
-        public void OnSceneStart()
+        public async void OnSceneStart()
         {
             _settingsPopup.Init();
-            SetupStartScreen();
+            ConfigureStartScreen();
+            await WaitForInit();
+            
+            _signalBus.Trigger<OnGameManagerStartedSignal>();
             
             Debug.Log($"{GetType().Name}: start");
         }
@@ -34,23 +39,25 @@ namespace Infrastructure.Game.GameManager
             Debug.Log($"{GetType().Name}: exit");
         }
         
-        private void SetupStartScreen()
+        private void ConfigureStartScreen()
         {
-            /*var onboardingCompleted = _tutorialService
-                .IsTutorialCompleted<OnboardingTutorialData>();*/
-
-            var isOnboardingCompleted = true;
-            
-            Action startAction = isOnboardingCompleted
-                ? () => _sceneStateMachine.EnterState<MetaSceneState>()
-                : () => _sceneStateMachine.EnterState<CoreSceneState>();
-            
             _startScreenController = new StartScreenController(
                 _viewFactory,
                 _viewManager,
-                startAction);
+                _sceneStateMachine);
             
             _startScreenController.Init();
+        }
+
+        private async UniTask WaitForInit()
+        {
+            var initOperations = new List<UniTask>
+            {
+                UniTask.WaitUntil(() => _settingsPopup.IsInited),
+                UniTask.WaitUntil(() => _startScreenController.IsInited)
+            };
+
+            await UniTask.WhenAll(initOperations);
         }
     }
 }

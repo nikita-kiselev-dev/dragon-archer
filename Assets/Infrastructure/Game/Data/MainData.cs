@@ -28,7 +28,10 @@ namespace Infrastructure.Game.Data
                 FirstSessionLocalTime = time;
             }
             
-            LastSessionLocalTime = time;
+            if (LastSessionLocalTime != time)
+            {
+                LastSessionLocalTime = time;
+            }
         }
 
         public void SetServerTime(DateTime time)
@@ -37,8 +40,11 @@ namespace Infrastructure.Game.Data
             {
                 FirstSessionServerTime = time;
             }
-            
-            LastSessionServerTime = time;
+
+            if (LastSessionServerTime != time)
+            {
+                LastSessionServerTime = time;
+            }
         }
     }
 }

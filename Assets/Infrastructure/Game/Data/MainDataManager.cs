@@ -7,12 +7,11 @@ using VContainer;
 
 namespace Infrastructure.Game.Data
 {
-    public class MainDataManager : IMainDataManager, IDisposable
+    public class MainDataManager : IMainDataManager
     {
         private readonly MainData _mainData;
         private readonly IServerTimeService _serverTimeService;
-        private readonly ISignalBus _signalBus;
-        
+
         public DateTime LastSessionServerTime => _mainData.LastSessionServerTime;
 
         [Inject]
@@ -20,14 +19,8 @@ namespace Infrastructure.Game.Data
         {
             _mainData = mainData;
             _serverTimeService = serverTimeService;
-            _signalBus = signalBus;
-            
-            _signalBus.Subscribe<GetServerTimeCompletedSignal, DateTime>(this, SetServerTime);
-        }
-        
-        void IDisposable.Dispose()
-        {
-            _signalBus.Unsubscribe<GetServerTimeCompletedSignal>(this);
+
+            signalBus.Subscribe<GetServerTimeCompletedSignal, DateTime>(this, SetServerTime);
         }
 
         public async UniTask<bool> IsFirstServerLaunch()
@@ -42,7 +35,7 @@ namespace Infrastructure.Game.Data
             _mainData.SetLocalTime(time);
         }
 
-        public void SetServerTime(DateTime time)
+        private void SetServerTime(DateTime time)
         {
             _mainData.SetServerTime(time);
         }

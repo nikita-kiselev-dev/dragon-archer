@@ -1,4 +1,5 @@
 using Content.DailyBonus.Scripts;
+using Cysharp.Threading.Tasks;
 using Infrastructure.Service.LiveOps;
 using Infrastructure.Service.SignalBus;
 using UnityEngine;
@@ -23,20 +24,27 @@ namespace Infrastructure.Game.GameManager
             _dailyBonus = dailyBonus;
         }
         
-        public void OnSceneStart()
+        public async void OnSceneStart()
         {
             if (_serverConnectionService.IsConnectedToServer)
             {
-                _dailyBonus.Init();
+                await StartWithServerConnection();
             }
             
             _signalBus.Trigger<OnGameManagerStartedSignal>();
+            
             Debug.Log($"{GetType().Name}: start");
         }
 
         public void OnSceneExit()
         {
             Debug.Log($"{GetType().Name}: exit");
+        }
+
+        private async UniTask StartWithServerConnection()
+        {
+            _dailyBonus.Init();
+            await UniTask.WaitUntil(() => _dailyBonus.IsInited);
         }
     }
 }

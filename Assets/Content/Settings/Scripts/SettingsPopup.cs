@@ -15,22 +15,14 @@ namespace Content.Settings.Scripts
         
         private ISettingsPopupModel _model;
         private ISettingsPopupPresenter _presenter;
+
+        public bool IsInited => _presenter.IsInited;
         
         public void Init()
         {
             CreateModel();
             CreatePresenter();
             _presenter.Init();
-        }
-        
-        public void Open()
-        {
-            _presenter.Open();
-        }
-
-        public void Close()
-        {
-            _presenter.Close();
         }
 
         private void CreateModel()
