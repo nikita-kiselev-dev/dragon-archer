@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using UnityEngine;
 using VContainer;
 
 namespace Infrastructure.Service.SaveLoad
@@ -37,13 +39,18 @@ namespace Infrastructure.Service.SaveLoad
                     loadedData => loadedData.Name(),
                     (injectedData, loadedData) => new { InjectedData = injectedData, LoadedData = loadedData });
 
+            var fullLoadedDataStringBuilder = new StringBuilder();
+
             foreach (var dataPair in dataPairs)
             {
-                FillWithLoadedData(dataPair.InjectedData, dataPair.LoadedData);
+                FillWithLoadedData(dataPair.InjectedData, dataPair.LoadedData, fullLoadedDataStringBuilder);
             }
+
+            Debug.Log($"{GetType().Name} - full save file:\n{fullLoadedDataStringBuilder}");
+            fullLoadedDataStringBuilder.Clear();
         }
         
-        private void FillWithLoadedData(Data injectedData, Data loadedData)
+        private void FillWithLoadedData(Data injectedData, Data loadedData, StringBuilder fullLoadedDataStringBuilder)
         {
             var type = loadedData.GetType();
             var parentCount = GetParentCount(type);
@@ -54,10 +61,18 @@ namespace Infrastructure.Service.SaveLoad
                     .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                     .Where(field => field.IsDefined(typeof(DataProperty), false));
 
-                foreach (var field in fields)
+                var propertyInfos = fields.ToList();
+                
+                foreach (var propertyInfo in propertyInfos)
                 {
-                    var value = field.GetValue(loadedData);
-                    field.SetValue(injectedData, value);
+                    var value = propertyInfo.GetValue(loadedData);
+                    propertyInfo.SetValue(injectedData, value);
+                    fullLoadedDataStringBuilder.Append($"{loadedData.Name()} : {propertyInfo.Name} : {value}\n");
+                }
+
+                if (propertyInfos.Any())
+                {
+                    break;
                 }
 
                 type = type.BaseType;
