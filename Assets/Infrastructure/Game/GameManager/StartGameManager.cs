@@ -26,7 +26,7 @@ namespace Infrastructure.Game.GameManager
         public async void OnSceneStart()
         {
             _settingsPopup.Init();
-            ConfigureStartScreen();
+            ConfigureAndInitStartScreen();
             await WaitForInit();
             
             _signalBus.Trigger<OnGameManagerStartedSignal>();
@@ -39,7 +39,7 @@ namespace Infrastructure.Game.GameManager
             Debug.Log($"{GetType().Name}: exit");
         }
         
-        private void ConfigureStartScreen()
+        private void ConfigureAndInitStartScreen()
         {
             _startScreenController = new StartScreenController(
                 _viewFactory,

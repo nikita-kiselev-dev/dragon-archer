@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Content.DailyBonus.Scripts;
 using Cysharp.Threading.Tasks;
 using Infrastructure.Service.LiveOps;
@@ -44,7 +45,17 @@ namespace Infrastructure.Game.GameManager
         private async UniTask StartWithServerConnection()
         {
             _dailyBonus.Init();
-            await UniTask.WaitUntil(() => _dailyBonus.IsInited);
+            await WaitForInit();
+        }
+
+        private async UniTask WaitForInit()
+        {
+            var initOperations = new List<UniTask>
+            {
+                UniTask.WaitUntil(() => _dailyBonus.IsInited)
+            };
+
+            await UniTask.WhenAll(initOperations);
         }
     }
 }

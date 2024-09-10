@@ -18,9 +18,7 @@ namespace Content.StartScreen.Scripts.Controller
 
         private readonly Action _onStartButtonClicked;
 
-        private bool _isInited;
-        
-        public bool IsInited => _isInited;
+        public bool IsInited { get; private set; }
         
         public StartScreenController(
             IViewFactory viewFactory,
@@ -40,7 +38,7 @@ namespace Content.StartScreen.Scripts.Controller
         {
             RegisterAndInitView().Forget();
             AudioController.Instance.PlayMusic(MusicList.StartSceneMusic);
-            _isInited = true;
+            IsInited = true;
         }
 
         private void StartGame()

@@ -16,10 +16,7 @@ namespace Content.Settings.Scripts.Presenter
 
         private ISettingsPopupView _view;
         private IViewInteractor _viewInteractor;
-
-        private bool _isInited;
-
-        public bool IsInited => _isInited;
+        public bool IsInited { get; private set;}
 
         public SettingsPopupPresenter(ISettingsPopupModel model, IViewFactory viewFactory, IViewManager viewManager)
         {
@@ -32,7 +29,7 @@ namespace Content.Settings.Scripts.Presenter
         {
             await RegisterAndInitView();
             ConfigureView();
-            _isInited = true;
+            IsInited = true;
         }
         
         public void Open()

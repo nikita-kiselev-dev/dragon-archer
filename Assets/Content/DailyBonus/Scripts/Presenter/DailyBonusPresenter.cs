@@ -24,10 +24,8 @@ namespace Content.DailyBonus.Scripts.Presenter
         private IDailyBonusCore _core;
         private IDailyBonusView _view;
         private IViewInteractor _viewInteractor;
-
-        private bool _isInited;
-
-        public bool IsInited => _isInited;
+        
+        public bool IsInited { get; private set; }
 
         public DailyBonusPresenter(
             IDailyBonusAnalytics analytics,
@@ -46,7 +44,7 @@ namespace Content.DailyBonus.Scripts.Presenter
             _serverTimeService = serverTimeService;
             _inventoryManager = inventoryManager;
         }
-        
+
         public async UniTaskVoid Init()
         {
             _core = new DailyBonusCore(
@@ -59,13 +57,13 @@ namespace Content.DailyBonus.Scripts.Presenter
 
             if (!needToShowPopup)
             {
-                _isInited = true;
+                IsInited = true;
                 return;
             }
             
             await RegisterAndInitView();
             await CreateDays();
-            _isInited = true;
+            IsInited = true;
             Open();
             _core.GiveReward();
         }
