@@ -14,7 +14,7 @@ using VContainer;
 
 namespace Infrastructure.Service.Dto
 {
-    public class MainDtoManager : IDtoManager, IDtoReader
+    public class FileDtoManager : IDtoManager, IDtoReader
     {
         [Inject] private readonly IAssetLoader _assetLoader;
         [Inject] private readonly ISignalBus _signalBus;

@@ -1,4 +1,5 @@
-﻿using Content.DailyBonus.Scripts;
+﻿using System;
+using Content.DailyBonus.Scripts;
 using Content.DailyBonus.Scripts.Data;
 using Content.Items.Gems;
 using Content.Items.Gems.Data;
@@ -14,20 +15,25 @@ using Infrastructure.Game.Data;
 using Infrastructure.Game.GameManager;
 using Infrastructure.Game.Tutorials;
 using Infrastructure.Game.Tutorials.Data;
+using Infrastructure.Service;
 using Infrastructure.Service.Analytics;
 using Infrastructure.Service.Analytics.Amplitude;
 using Infrastructure.Service.Asset;
 using Infrastructure.Service.Dto;
 using Infrastructure.Service.File;
+using Infrastructure.Service.LiveOps;
+using Infrastructure.Service.LiveOps.GamePush;
 using Infrastructure.Service.LiveOps.PlayFab;
 using Infrastructure.Service.SaveLoad;
 using Infrastructure.Service.Scene;
+using Infrastructure.Service.ScriptableObjects;
 using Infrastructure.Service.SignalBus;
 using Infrastructure.Service.StateMachine;
 using Infrastructure.Service.View.Canvas;
 using Infrastructure.Service.View.ViewFactory;
 using Infrastructure.Service.View.ViewManager;
 using Infrastructure.Service.View.ViewManager.ViewAnimation;
+using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
@@ -35,8 +41,15 @@ namespace Infrastructure.Game.Scopes
 {
     public sealed class BootstrapScope : LifetimeScope
     {
+        [SerializeField] private ServiceConfig m_ServiceConfig;
+        
         protected override void Configure(IContainerBuilder builder)
         {
+            if (!m_ServiceConfig)
+            {
+                throw new NullReferenceException($"No ServiceConfig in BootstrapScope!");
+            }
+            
             RegisterFileServices(builder);
             RegisterItemsData(builder);
             RegisterFeaturesData(builder);
@@ -98,14 +111,19 @@ namespace Infrastructure.Game.Scopes
 
         private void RegisterDataManager(IContainerBuilder builder)
         {
-            #if UNITY_WEBGL
+            var currentConfig = m_ServiceConfig.m_SaveLoadService;
+            
+            if (currentConfig == SaveLoadServices.PlayerPrefs)
+            {
                 builder.Register<ISaveLoadService, PlayerPrefsSaveLoadService>(Lifetime.Singleton).As<IDataSaver>();
                 builder.Register<IDtoManager, PlayerPrefsDtoManager>(Lifetime.Singleton).As<IDtoReader>();
-            #else
-                builder.Register<ISaveLoadService, MainSaveLoadService>(Lifetime.Singleton).As<IDataSaver>();
-                builder.Register<IDtoManager, MainDtoManager>(Lifetime.Singleton).As<IDtoReader>();
-            #endif
-            
+            }
+            else if (currentConfig == SaveLoadServices.File)
+            {
+                builder.Register<ISaveLoadService, FileSaveLoadService>(Lifetime.Singleton).As<IDataSaver>();
+                builder.Register<IDtoManager, FileDtoManager>(Lifetime.Singleton).As<IDtoReader>();
+            }
+
             builder.Register<IDataManager, DataManager>(Lifetime.Singleton);
         }
 
@@ -134,7 +152,26 @@ namespace Infrastructure.Game.Scopes
 
         private void RegisterLiveOps(IContainerBuilder builder)
         {
-            builder.Register<PlayFabService>(Lifetime.Singleton).AsImplementedInterfaces();
+            var currentConfig = m_ServiceConfig.m_LiveOpsService;
+            
+            if (currentConfig == LiveOpsServices.PlayFab)
+            {
+                builder.Register<PlayFabService>(Lifetime.Singleton)
+                    .As<ILiveOpsController>()
+                    .As<IDtoService>()
+                    .As<IServerConnectionService>()
+                    .As<IServerTimeService>();
+            }
+            else if (currentConfig == LiveOpsServices.GamePush)
+            {
+                builder.Register<PlayFabService>(Lifetime.Singleton)
+                    .As<ILiveOpsController>()
+                    .As<IDtoService>();
+
+                builder.Register<GamePushService>(Lifetime.Singleton)
+                    .As<IServerConnectionService>()
+                    .As<IServerTimeService>();
+            }
         }
     }
 }

@@ -25,10 +25,7 @@ namespace Infrastructure.Service.LiveOps.PlayFab
             _loginService.Login();
         }
 
-        public Dictionary<string, string> GetDto()
-        {
-            return _dtoService.TitleData;
-        }
+        public Dictionary<string, string> GetDto() => _dtoService.TitleData;
 
         public async UniTask<DateTime> GetServerTime()
         {
@@ -44,7 +41,7 @@ namespace Infrastructure.Service.LiveOps.PlayFab
                 return;
             }
             
-            _timeService.GetServerTimeAsync().Forget();
+            //_timeService.GetServerTimeAsync().Forget();
             _dtoService.GetTitleDataFromServer();
         }
     }

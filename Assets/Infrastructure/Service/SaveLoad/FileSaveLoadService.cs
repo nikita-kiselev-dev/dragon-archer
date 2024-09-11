@@ -9,7 +9,7 @@ using MemoryPackSerializer = MemoryPack.MemoryPackSerializer;
 
 namespace Infrastructure.Service.SaveLoad
 {
-    public class MainSaveLoadService : ISaveLoadService, IDataSaver
+    public class FileSaveLoadService : ISaveLoadService, IDataSaver
     {
         [Inject] private readonly IDataManager _dataManager;
         [Inject] private readonly IFileService _fileService;
@@ -35,7 +35,7 @@ namespace Infrastructure.Service.SaveLoad
             var serializedSave = MemoryPackSerializer.Serialize(_dataManager.DataRepository);
             _fileService.Save<byte[]>(SaveLoadInfo.SaveFilePath, serializedSave);
             
-            Debug.Log($"{GetType().Name}: save data saved, path: {SaveLoadInfo.SaveFilePath}");
+            Debug.Log($"<color=cyan>{GetType().Name}</color>: save data saved, path: {SaveLoadInfo.SaveFilePath}");
         }
 
         private void CreateDirectory()
@@ -53,14 +53,14 @@ namespace Infrastructure.Service.SaveLoad
             
             if (saveFile.IsNullOrEmpty())
             {
-                Debug.Log($"{GetType().Name}: save data is empty, nothing to load.");
+                Debug.Log($"<color=cyan>{GetType().Name}</color>: save data is empty, nothing to load.");
                 return;
             }
 
             var deserializedSave = MemoryPackSerializer.Deserialize<IDataRepository>(saveFile);
             _dataManager.SetDataRepository(deserializedSave);
             
-            Debug.Log($"{GetType().Name}: save data loaded, path: {SaveLoadInfo.SaveFilePath}.");
+            Debug.Log($"<color=cyan>{GetType().Name}</color>: save data loaded, path: {SaveLoadInfo.SaveFilePath}.");
         }
     }
 }
