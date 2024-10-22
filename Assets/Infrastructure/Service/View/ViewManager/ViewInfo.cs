@@ -3,6 +3,8 @@
     public static class ViewInfo
     {
         public const string MainCanvasKey = "MainCanvas";
+        public const string WindowCanvasKey = "WindowCanvas";
+        public const string PopupCanvasKey = "PopupCanvas";
 
         public const string LoadingCurtain = "LoadingCurtain";
         public const string StartScreen = "StartScreen";

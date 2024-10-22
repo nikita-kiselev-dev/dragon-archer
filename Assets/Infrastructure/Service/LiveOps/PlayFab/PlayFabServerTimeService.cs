@@ -27,7 +27,7 @@ namespace Infrastructure.Service.LiveOps.PlayFab
             _cachedServerTime = await RequestServerTimeAsync();
             _isRequestingServerTime = false;
 
-            if (!_isRequestDelayEnabled)
+            if (_isRequestDelayEnabled)
             {
                 await WaitRequestDelay();
             }

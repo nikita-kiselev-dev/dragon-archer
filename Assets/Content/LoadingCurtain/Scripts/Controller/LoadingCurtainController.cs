@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using Content.LoadingCurtain.Scripts.View;
 using Cysharp.Threading.Tasks;
-using Infrastructure.Game.GameManager;
+using Infrastructure.Service.Initialization;
 using Infrastructure.Service.Localization;
+using Infrastructure.Service.Scopes;
 using Infrastructure.Service.SignalBus;
 using Infrastructure.Service.View.ViewFactory;
 using Infrastructure.Service.View.ViewManager;
@@ -11,51 +11,42 @@ using VContainer;
 
 namespace Content.LoadingCurtain.Scripts.Controller
 {
-    public class LoadingCurtainController : ILoadingCurtainController
+    [ControlEntityOrder(nameof(BootstrapScope), (int)BootstrapSceneInitOrder.LoadingCurtain)]
+    public class LoadingCurtainController : ControlEntity, ILoadingCurtainController, IDisposable
     {
+        [Inject] private readonly ISignalBus _signalBus;
+        [Inject] private readonly ILoadingCurtainView _view;
         [Inject] private readonly IViewFactory _viewFactory;
         [Inject] private readonly IViewManager _viewManager;
-        [Inject] private readonly ISignalBus _signalBus;
-
-        private readonly List<UniTask> _loadingOperations = new();
         
-        private ILoadingCurtainView _view;
         private IViewInteractor _viewInteractor;
         
-        public async UniTask Init()
+        protected override UniTask Init()
         {
-            await RegisterAndInitView();
+            RegisterAndInitView();
             ConfigureView().Forget();
-            _signalBus.Subscribe<AddLoadingOperationSignal, UniTask>(this, AddLoadingOperation);
-            _signalBus.Subscribe<OnGameManagerStartedSignal>(this, () => _ = Hide());
+            _signalBus.Subscribe<OnInitPhaseCompletedSignal>(this, Hide);
+            
+            return UniTask.CompletedTask;
         }
         
         public void Show()
         {
-            _loadingOperations.Clear();
             _viewInteractor.Open();
         }
 
-        public async UniTaskVoid Hide()
+        public void Hide()
         {
-            await UniTask
-                .WhenAll(_loadingOperations)
-                .TimeoutWithoutException(TimeSpan.FromSeconds(LoadingCurtainInfo.LoadingTimeoutInSeconds));
-            
-            _loadingOperations.Clear();
             _viewInteractor.Close();
         }
 
-        private void AddLoadingOperation(UniTask loadingOperation)
+        void IDisposable.Dispose()
         {
-            _loadingOperations.Add(loadingOperation);
+            _signalBus?.Unsubscribe<OnInitPhaseCompletedSignal>(this);
         }
         
-        private async UniTask RegisterAndInitView()
+        private void RegisterAndInitView()
         {
-            _view = await _viewFactory
-                .CreateView<ILoadingCurtainView>(ViewInfo.LoadingCurtain, ViewType.Service);
-            
             var animator = new LoadingCurtainGradientColorAnimator(_view as LoadingCurtainView);
             
             _viewInteractor = new ViewRegistrar(_viewManager)

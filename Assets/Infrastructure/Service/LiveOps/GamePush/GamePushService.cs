@@ -1,23 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Infrastructure.Service.LiveOps.Signals;
+using Infrastructure.Service.Logger;
 using Infrastructure.Service.SignalBus;
-using UnityEngine;
 using VContainer;
 
 namespace Infrastructure.Service.LiveOps.GamePush
 {
-    public class GamePushService : IServerConnectionService, IServerTimeService
+    public class GamePushService : IServerConnectionService, IServerTimeService, IDtoService
     {
         [Inject] private ISignalBus _signalBus;
 
         private readonly GamePushServerTimeService _timeService = new();
+        private readonly ILogManager _logger = new LogManager(nameof(GamePushService));
+
+        public Dictionary<string, string> GetDto() => null;
 
         public bool IsConnectedToServer
         {
             get
             {
-                Debug.LogWarning($"{GetType().Name}: no method for server connection check! Return true by default.");
+                _logger.LogError("No method for server connection check! Return true by default.");
                 return true;
             }
         }

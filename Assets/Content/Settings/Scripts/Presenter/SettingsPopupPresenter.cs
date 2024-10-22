@@ -1,8 +1,6 @@
 ﻿using Content.Settings.Scripts.Model;
 using Content.Settings.Scripts.View;
-using Cysharp.Threading.Tasks;
 using Infrastructure.Service.Audio;
-using Infrastructure.Service.View.ViewFactory;
 using Infrastructure.Service.View.ViewManager;
 using Infrastructure.Service.View.ViewSignalManager;
 
@@ -11,23 +9,23 @@ namespace Content.Settings.Scripts.Presenter
     public class SettingsPopupPresenter : ISettingsPopupPresenter
     {
         private readonly ISettingsPopupModel _model;
-        private readonly IViewFactory _viewFactory;
+        private readonly ISettingsPopupView _view;
         private readonly IViewManager _viewManager;
-
-        private ISettingsPopupView _view;
+        
         private IViewInteractor _viewInteractor;
+        
         public bool IsInited { get; private set;}
 
-        public SettingsPopupPresenter(ISettingsPopupModel model, IViewFactory viewFactory, IViewManager viewManager)
+        public SettingsPopupPresenter(ISettingsPopupModel model, ISettingsPopupView view, IViewManager viewManager)
         {
             _model = model;
-            _viewFactory = viewFactory;
+            _view = view;
             _viewManager = viewManager;
         }
         
-        public async UniTaskVoid Init()
+        public void Init()
         {
-            await RegisterAndInitView();
+            RegisterAndInitView();
             ConfigureView();
             IsInited = true;
         }
@@ -42,10 +40,8 @@ namespace Content.Settings.Scripts.Presenter
             _viewInteractor.Close();
         }
 
-        private async UniTask RegisterAndInitView()
+        private void RegisterAndInitView()
         {
-            _view = await _viewFactory.CreateView<ISettingsPopupView>(ViewInfo.SettingsPopup, ViewType.Popup);
-            
             var viewSignalManager = new ViewSignalManager()
                 .AddSignal<float>(SettingsPopupSignals.SoundsVolumeChangedSignal, SetSoundsVolume)
                 .AddSignal<float>(SettingsPopupSignals.MusicVolumeChangedSignal, SetMusicVolume)

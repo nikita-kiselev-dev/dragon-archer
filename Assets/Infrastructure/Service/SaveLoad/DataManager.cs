@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using UnityEngine;
+using Infrastructure.Service.Logger;
 using VContainer;
 
 namespace Infrastructure.Service.SaveLoad
 {
     public class DataManager : IDataManager
     {
-        [Inject] private IEnumerable<Data> _injectedDatas;
+        [Inject] private readonly IEnumerable<Data> _injectedDatas;
+
+        private readonly ILogManager _logger = new LogManager(nameof(DataManager));
 
         private IDataRepository _loadedDataRepository;
 
@@ -45,8 +47,8 @@ namespace Infrastructure.Service.SaveLoad
             {
                 FillWithLoadedData(dataPair.InjectedData, dataPair.LoadedData, fullLoadedDataStringBuilder);
             }
-
-            Debug.Log($"<color=cyan>{GetType().Name}</color> - loaded save file:\n{fullLoadedDataStringBuilder}");
+            
+            _logger.Log($"Loaded save file:\n{fullLoadedDataStringBuilder}");
             fullLoadedDataStringBuilder.Clear();
         }
         
@@ -67,7 +69,9 @@ namespace Infrastructure.Service.SaveLoad
                 {
                     var value = propertyInfo.GetValue(loadedData);
                     propertyInfo.SetValue(injectedData, value);
-                    fullLoadedDataStringBuilder.Append($"{loadedData.Name()} - {propertyInfo.Name}: <color=cyan>{value}</color>\n");
+                    fullLoadedDataStringBuilder
+                        .Append($"{loadedData.Name()} - {propertyInfo.Name}: " +
+                                $"<color={LoggerEnvironment.DefaultLogColor}>{value}</color>\n");
                 }
 
                 if (propertyInfos.Any())

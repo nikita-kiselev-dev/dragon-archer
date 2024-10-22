@@ -2,43 +2,47 @@
 using Cysharp.Threading.Tasks;
 using Infrastructure.Game;
 using Infrastructure.Service.Audio;
+using Infrastructure.Service.Initialization;
+using Infrastructure.Service.Scopes;
 using Infrastructure.Service.StateMachine;
 using Infrastructure.Service.StateMachine.SceneStates;
 using Infrastructure.Service.View.ViewFactory;
 using Infrastructure.Service.View.ViewManager;
 using Infrastructure.Service.View.ViewSignalManager;
+using VContainer;
 
 namespace Content.StartScreen.Scripts.Controller
 {
-    public class StartScreenController : IStartScreenController
+    [ControlEntityOrder(nameof(BootstrapScope), (int)StartSceneInitOrder.StartScreen)]
+    public class StartScreenController : ControlEntity, IStartScreenController
     {
-        private readonly IViewFactory _viewFactory;
-        private readonly IViewManager _viewManager;
-        private readonly IStateMachine _sceneStateMachine;
+        [Inject] private readonly IViewFactory _viewFactory;
+        [Inject] private readonly IViewManager _viewManager;
+        [Inject] private readonly IStateMachine _sceneStateMachine;
 
-        private readonly Action _onStartButtonClicked;
+        private IView _view;
+        private Action _onStartButtonClicked;
 
         public bool IsInited { get; private set; }
-        
-        public StartScreenController(
-            IViewFactory viewFactory,
-            IViewManager viewManager,
-            IStateMachine sceneStateMachine)
+
+        protected override async UniTask Load()
         {
-            _viewFactory = viewFactory;
-            _viewManager = viewManager;
-            
-            var isOnboardingCompleted = true;
-            _onStartButtonClicked = isOnboardingCompleted
-                ? sceneStateMachine.EnterState<MetaSceneState>
-                : sceneStateMachine.EnterState<CoreSceneState>;
+            _view = await _viewFactory.CreateView<IView>(ViewInfo.StartScreen, ViewType.Window);
         }
         
-        public void Init()
+        protected override UniTask Init()
         {
-            RegisterAndInitView().Forget();
+            var isOnboardingCompleted = true;
+            
+            _onStartButtonClicked = isOnboardingCompleted
+                ? _sceneStateMachine.EnterState<MetaSceneState>
+                : _sceneStateMachine.EnterState<CoreSceneState>;
+
+            RegisterAndInitView();
             AudioController.Instance.PlayMusic(MusicList.StartSceneMusic);
             IsInited = true;
+
+            return UniTask.CompletedTask;
         }
 
         private void StartGame()
@@ -56,10 +60,8 @@ namespace Content.StartScreen.Scripts.Controller
             ExternalSourcesController.Instance.OpenPrivacyPolicy();
         }
 
-        private async UniTaskVoid RegisterAndInitView()
+        private void RegisterAndInitView()
         {
-            var view = await _viewFactory.CreateView<IView>(ViewInfo.StartScreen, ViewType.Window);
-            
             var viewSignalManager = new ViewSignalManager()
                 .AddSignal(StartScreenInfo.StartGameSignal, StartGame)
                 .AddSignal(StartScreenInfo.OpenSettingsSignal, OpenSettings)
@@ -68,7 +70,7 @@ namespace Content.StartScreen.Scripts.Controller
             new ViewRegistrar(_viewManager)
                 .SetViewKey(ViewInfo.StartScreen)
                 .SetViewType(ViewType.Window)
-                .SetView(view)
+                .SetView(_view)
                 .SetViewSignalManager(viewSignalManager)
                 .EnableFromStart()
                 .RegisterAndInit();

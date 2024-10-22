@@ -130,6 +130,12 @@ namespace Infrastructure.Service.Dto
         private void SetServerDto()
         {
             _serverDto = _dtoService.GetDto();
+
+            if (_serverDto is null)
+            {
+                return;
+            }
+            
             var stringDto = BuildString(_serverDto);
             Debug.Log($"{GetType().Name} - server config file:\n{stringDto}");
         }

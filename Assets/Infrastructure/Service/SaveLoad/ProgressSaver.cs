@@ -2,14 +2,15 @@ using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Infrastructure.Game.Data;
+using Infrastructure.Service.Initialization;
 using Infrastructure.Service.Scene.Signals;
 using Infrastructure.Service.SignalBus;
-using UnityEngine;
+using Infrastructure.Service.SignalBus.Monobehavior;
 using VContainer;
 
 namespace Infrastructure.Service.SaveLoad
 {
-    public class ProgressSaver : MonoBehaviour
+    public class ProgressSaver : ControlEntity, IProgressSaver, IDisposable
     {
         [Inject] private readonly ISignalBus _signalBus;
         [Inject] private readonly IDataSaver _dataSaver;
@@ -24,14 +25,19 @@ namespace Infrastructure.Service.SaveLoad
         private CancellationTokenSource _autoSaveCancellationTokenSource;
         private CancellationTokenSource _saveDelayCancellationTokenSource;
 
-        private void Awake()
+        protected override async UniTask Init()
         {
-            DontDestroyOnLoad(gameObject);
+            _signalBus.Subscribe<OnAwakeSignal>(this, OnAwake);
+            _signalBus.Subscribe<OnApplicationPauseSignal, bool>(this, OnApplicationPause);
+            _signalBus.Subscribe<OnApplicationQuitSignal>(this, OnApplicationQuit);
+            _signalBus.Subscribe<SceneChangedSignal>(this, Save);
+            await UniTask.CompletedTask;
+        }
 
+        private void OnAwake()
+        {
             _autoSaveCancellationTokenSource = new CancellationTokenSource();
             AutoSave(_autoSaveCancellationTokenSource.Token).Forget();
-            
-            _signalBus.Subscribe<SceneChangedSignal>(this, Save);
         }
 
         private void OnApplicationPause(bool pauseStatus)
@@ -45,13 +51,6 @@ namespace Infrastructure.Service.SaveLoad
         private void OnApplicationQuit()
         {
             Save();
-        }
-
-        private void OnDestroy()
-        {
-            _autoSaveCancellationTokenSource?.Cancel();
-            _saveDelayCancellationTokenSource?.Cancel();
-            _signalBus.Unsubscribe<SceneChangedSignal>(this);
         }
 
         private async UniTask AutoSave(CancellationToken cancellationTokenSource)
@@ -94,6 +93,16 @@ namespace Infrastructure.Service.SaveLoad
         {
             _mainDataManager.SetLocalTime(DateTime.Now.ToUniversalTime());
             _dataSaver.Save();
+        }
+        
+        void IDisposable.Dispose()
+        {
+            _autoSaveCancellationTokenSource?.Cancel();
+            _saveDelayCancellationTokenSource?.Cancel();
+            _signalBus?.Unsubscribe<OnAwakeSignal>(this);
+            _signalBus?.Unsubscribe<OnApplicationPauseSignal>(this);
+            _signalBus?.Unsubscribe<OnApplicationQuitSignal>(this);
+            _signalBus?.Unsubscribe<SceneChangedSignal>(this);
         }
     }
 }

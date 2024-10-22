@@ -3,7 +3,6 @@ using System.Threading;
 using Content.LoadingCurtain.Scripts.Controller;
 using Cysharp.Threading.Tasks;
 using Infrastructure.Service.Dto;
-using Infrastructure.Service.LiveOps;
 using Infrastructure.Service.LiveOps.Signals;
 using Infrastructure.Service.SaveLoad;
 using Infrastructure.Service.SaveLoad.Signals;
@@ -19,7 +18,7 @@ namespace Infrastructure.Game
         [Inject] private readonly ISaveLoadService _saveLoadService;
         [Inject] private readonly IDtoManager _dtoManager;
         [Inject] private readonly ILoadingCurtainController _loadingCurtainController;
-        [Inject] private readonly ILiveOpsController _liveOpsController;
+        //[Inject] private readonly ILiveOpsController _liveOpsController;
         [Inject] private readonly IGame _game;
 
         private bool _isLocalizationReady;
@@ -28,8 +27,7 @@ namespace Infrastructure.Game
         async UniTask IAsyncStartable.StartAsync(CancellationToken cancellation)
         {
             _signalBus.Subscribe<SaveFileLoadCompletedSignal>(this, InitServer);
-            _signalBus.Subscribe<ServerLoginCompletedSignal, bool>(this, InitGame);
-            await _loadingCurtainController.Init();
+           // _signalBus.Subscribe<ServerLoginCompletedSignal, bool>(this, InitGame);
             _saveLoadService.Init();
             _dtoManager.Init();
         }
@@ -40,7 +38,7 @@ namespace Infrastructure.Game
             _signalBus.Unsubscribe<ServerLoginCompletedSignal>(this);
         }
 
-        private void InitServer() => _liveOpsController.Init();
+        private void InitServer() =>  _game.Init();//_liveOpsController.Init();
 
         private void InitGame(bool isLoggedIn) => _game.Init();
     }

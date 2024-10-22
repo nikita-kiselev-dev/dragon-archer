@@ -22,8 +22,8 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 74e57f9c7e39b5543a2734b626e1187b
-    m_Address: SettingsPopup
+  - m_GUID: 3a3aef6f2491d244eabc4497586fc072
+    m_Address: PopupCanvas
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -32,8 +32,13 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 9451da182651cbf4791550b90b2f4ba1
-    m_Address: MainCanvas
+  - m_GUID: 74e57f9c7e39b5543a2734b626e1187b
+    m_Address: SettingsPopup
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b49f0a6917458794a93ade6f94f56e64
+    m_Address: WindowCanvas
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -41,5 +46,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: e31c21e61c17ab148a2cd5df277a3421, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 48f5d93aa63b12c4d95d2d71d09bed36, type: 2}
     - {fileID: 11400000, guid: fc11b88bd2793c34cbc7e3f25b4ab8fe, type: 2}
+    - {fileID: 11400000, guid: 48f5d93aa63b12c4d95d2d71d09bed36, type: 2}

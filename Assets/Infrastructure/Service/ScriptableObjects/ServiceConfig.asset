@@ -12,3 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91cbe32bc4da45069aaa9f698d0c85a7, type: 3}
   m_Name: ServiceConfig
   m_EditorClassIdentifier: 
+  m_SaveLoadService: 0
+  m_LiveOpsService: 1

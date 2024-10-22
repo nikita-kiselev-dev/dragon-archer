@@ -2644,7 +2644,7 @@ namespace PlayFab.AdminModels
         MultipleLinkedStatisticsNotAllowed,
         DuplicateLinkedStatisticColumnNameFound,
         AggregationTypeNotAllowedForMultiColumnStatistic,
-        MaxQueryableVerionsValueNotAllowedForTier,
+        MaxQueryableVersionsValueNotAllowedForTier,
         StatisticDefinitionHasNullOrEmptyVersionConfiguration,
         StatisticColumnLengthMismatch,
         MatchmakingEntityInvalid,
@@ -2913,6 +2913,8 @@ namespace PlayFab.AdminModels
         TrueSkillInvalidPlayerId,
         TrueSkillInvalidSquadSize,
         TrueSkillConditionSetNotInModel,
+        TrueSkillModelStateInvalidForOperation,
+        TrueSkillScenarioContainsActiveModel,
         GameSaveManifestNotFound,
         GameSaveManifestVersionAlreadyExists,
         GameSaveConflictUpdatingManifest,
@@ -2922,6 +2924,8 @@ namespace PlayFab.AdminModels
         GameSaveUnknownFileInManifest,
         GameSaveFileExceededReportedSize,
         GameSaveFileNotUploaded,
+        GameSaveBadRequest,
+        GameSaveOperationNotAllowed,
         StateShareForbidden,
         StateShareTitleNotInFlight,
         StateShareStateNotFound,
@@ -4333,7 +4337,8 @@ namespace PlayFab.AdminModels
         Apple,
         NintendoSwitchAccount,
         GooglePlayGames,
-        XboxMobileStore
+        XboxMobileStore,
+        King
     }
 
     [Serializable]
@@ -7560,7 +7565,8 @@ namespace PlayFab.AdminModels
         Apple,
         NintendoSwitchAccount,
         GooglePlayGames,
-        XboxMobileStore
+        XboxMobileStore,
+        King
     }
 
     [Serializable]

@@ -1,5 +1,6 @@
 ﻿using System;
 using Infrastructure.Service.File;
+using Infrastructure.Service.Logger;
 using Infrastructure.Service.SaveLoad.Signals;
 using Infrastructure.Service.SignalBus;
 using MemoryPack;
@@ -13,6 +14,8 @@ namespace Infrastructure.Service.SaveLoad
         [Inject] private readonly IDataManager _dataManager;
         [Inject] private readonly IFileService _fileService;
         [Inject] private readonly ISignalBus _signalBus;
+
+        private readonly ILogManager _logger = new LogManager(nameof(PlayerPrefsSaveLoadService));
         
         private bool _isInited;      
         
@@ -35,7 +38,7 @@ namespace Infrastructure.Service.SaveLoad
             PlayerPrefs.SetString(SaveLoadInfo.SaveFileName, serializedStringSave);
             PlayerPrefs.Save();
             
-            Debug.Log($"<color=cyan>{GetType().Name}</color>: save data saved in PlayerPrefs.");
+            _logger.Log("Save data saved in PlayerPrefs.");
         }
         
         private void Load()
@@ -45,7 +48,7 @@ namespace Infrastructure.Service.SaveLoad
             
             if (string.IsNullOrEmpty(saveFile))
             {
-                Debug.Log($"<color=cyan>{GetType().Name}</color>: save data is empty, nothing to load.");
+                _logger.Log("Save data is empty, nothing to load.");
                 return;
             }
 
@@ -53,7 +56,7 @@ namespace Infrastructure.Service.SaveLoad
             var deserializedSave = MemoryPackSerializer.Deserialize<IDataRepository>(byteArraySave);
             _dataManager.SetDataRepository(deserializedSave);
             
-            Debug.Log($"<color=cyan>{GetType().Name}</color>: save data loaded from PlayerPrefs.");
+            _logger.Log("Save data loaded from PlayerPrefs.");
         }
     }
 }

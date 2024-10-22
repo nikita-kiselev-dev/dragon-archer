@@ -6,6 +6,7 @@ using Infrastructure.Service.Asset;
 using Infrastructure.Service.File;
 using Infrastructure.Service.LiveOps;
 using Infrastructure.Service.LiveOps.Signals;
+using Infrastructure.Service.Logger;
 using Infrastructure.Service.SignalBus;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -19,6 +20,8 @@ namespace Infrastructure.Service.Dto
         [Inject] private readonly ISignalBus _signalBus;
         [Inject] private readonly IDtoService _dtoService;
         [Inject] private readonly IFileService _fileService;
+
+        private readonly ILogManager _logger = new LogManager(nameof(PlayerPrefsDtoManager));
         
         private Dictionary<string, string> _serverDto;
         private Dictionary<string, string> _dataDto;
@@ -73,7 +76,7 @@ namespace Infrastructure.Service.Dto
             PlayerPrefs.SetString(DtoManagerInfo.ConfigName, stringDto);
             PlayerPrefs.Save();
 
-            Debug.Log($"{GetType().Name}: dto config saved in PlayerPrefs.");
+            _logger.Log("Dto config saved in PlayerPrefs.");
         }
 
         private void TryGetDataDto()
@@ -87,7 +90,7 @@ namespace Infrastructure.Service.Dto
             
             _dataDto = JsonConvert.DeserializeObject<Dictionary<string, string>>(config);
             var stringDto = BuildString(_dataDto);
-            Debug.Log($"{GetType().Name} - data config file:\n{stringDto}");
+            _logger.Log($"Data config file:\n{stringDto}.");
         }
 
         private bool IsConfigExists(string configName, IReadOnlyDictionary<string, string> dto)
@@ -99,7 +102,7 @@ namespace Infrastructure.Service.Dto
         private async UniTask<string> GetDummyDto(string configName)
         {
             var config = await _assetLoader.LoadAssetAsync<TextAsset>(configName);
-            Debug.Log($"{GetType().Name} - dummy config file:\n{config}");
+            _logger.Log($"Dummy config file:\n{config}.");
             return config.ToString();
         }
 
@@ -120,8 +123,14 @@ namespace Infrastructure.Service.Dto
         private void SetServerDto()
         {
             _serverDto = _dtoService.GetDto();
+            
+            if (_serverDto is null)
+            {
+                return;
+            }
+            
             var stringDto = BuildString(_serverDto);
-            Debug.Log($"{GetType().Name} - server config file:\n{stringDto}");
+            _logger.Log($"Server config file:\n{stringDto}.");
         }
 
         private string BuildString(Dictionary<string, string> dto)

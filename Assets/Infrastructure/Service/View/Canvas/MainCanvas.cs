@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace Infrastructure.Service.View.Canvas
 {
-    public class MainCanvas : MonoBehaviour, ICanvas
+    public class MainCanvas : MonoBehaviour
     {
         [SerializeField] private UnityEngine.Canvas m_Canvas;
         [SerializeField] private Transform m_WindowParent;

@@ -18,6 +18,7 @@ namespace Infrastructure.Game.GameManager
         [Inject] private readonly IViewFactory _viewFactory;
         [Inject] private readonly IViewManager _viewManager;
         [Inject] private readonly ITutorialService _tutorialService;
+        [Inject] private readonly IStartScreenController _StartScreen;
         [Inject] private readonly ISettingsPopup _settingsPopup;
         [Inject] private readonly ISignalBus _signalBus;
         
@@ -25,9 +26,9 @@ namespace Infrastructure.Game.GameManager
         
         public async void OnSceneStart()
         {
-            _settingsPopup.Init();
-            ConfigureAndInitStartScreen();
-            await WaitForInit();
+           //_settingsPopup.Init();
+           
+            //await WaitForInit();
             
             _signalBus.Trigger<OnGameManagerStartedSignal>();
             
@@ -37,16 +38,6 @@ namespace Infrastructure.Game.GameManager
         public void OnSceneExit()
         {
             Debug.Log($"{GetType().Name}: exit");
-        }
-        
-        private void ConfigureAndInitStartScreen()
-        {
-            _startScreenController = new StartScreenController(
-                _viewFactory,
-                _viewManager,
-                _sceneStateMachine);
-            
-            _startScreenController.Init();
         }
 
         private async UniTask WaitForInit()
