@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Infrastructure.Service.Logger;
 using UnityEditor;
 using UnityEngine;
 
@@ -6,11 +7,14 @@ namespace Infrastructure.Service.SaveLoad.Editor
 {
     public class SaveLoadMenu
     {
+        private static readonly ILogManager _logger = new LogManager(nameof(SaveLoadMenu));
+        
         [MenuItem("Raycast Productions/Open Save Folder")]
         private static void OpenSaveFolder()
         {
             CreateDirectory();
             EditorUtility.RevealInFinder(SaveLoadInfo.SaveFileDirectory);
+            _logger.Log("Save Folder Opened.");
         }
         
         [MenuItem("Raycast Productions/Delete Save and Configs")]
@@ -29,6 +33,8 @@ namespace Infrastructure.Service.SaveLoad.Editor
             }
             
             PlayerPrefs.DeleteAll();
+            
+            _logger.Log("Save and Configs are deleted.");
         }
 
         private static void CreateDirectory()
