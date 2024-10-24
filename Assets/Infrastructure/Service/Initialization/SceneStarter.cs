@@ -22,13 +22,13 @@ namespace Infrastructure.Service.Initialization
 
         private readonly ILogManager _logger = new LogManager(nameof(SceneStarter));
 
-        private IReadOnlyList<ControlEntity> _orderedControlEntities; 
-        
+        private IReadOnlyList<ControlEntity> _orderedControlEntities;
+
         public async UniTask StartAsync(CancellationToken cancellation = new())
         {
             var sceneName = SceneManager.GetActiveScene().name;
             var scopeName = GetScopeName(sceneName);
-            
+
             _orderedControlEntities = _controlEntities
                 .Select(entity => new
                 {
@@ -39,19 +39,20 @@ namespace Infrastructure.Service.Initialization
                 .OrderBy(x => x.Order.InitOrder)
                 .Select(x => x.Entity)
                 .ToList();
-            
+
             await ExecutePhase(entity => entity.LoadPhase());
             _signalBus.Trigger<OnLoadPhaseCompletedSignal>();
             _logger.Log($"{sceneName} load phase completed.");
-        
+
             await ExecutePhase(entity => entity.InitPhase());
             _signalBus.Trigger<OnInitPhaseCompletedSignal>();
             _logger.Log($"{sceneName} init phase completed.");
 
             await ExecutePhase(entity => entity.PostInitPhase());
+            _signalBus.Trigger<OnPostInitPhaseCompletedSignal>();
             _logger.Log($"{sceneName} post-init phase completed.");
         }
-        
+
         private async UniTask ExecutePhase(Func<ControlEntity, UniTask> phaseFunc)
         {
             foreach (var controlEntity in _orderedControlEntities)

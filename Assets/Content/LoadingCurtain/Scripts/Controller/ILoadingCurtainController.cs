@@ -2,7 +2,5 @@
 {
     public interface ILoadingCurtainController
     {
-        public void Show();
-        public void Hide();
     }
 }

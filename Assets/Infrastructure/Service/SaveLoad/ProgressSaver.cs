@@ -10,28 +10,30 @@ using VContainer;
 
 namespace Infrastructure.Service.SaveLoad
 {
-    public class ProgressSaver : ControlEntity, IProgressSaver, IDisposable
+    public class ProgressSaver : IProgressSaver, IDisposable
     {
-        [Inject] private readonly ISignalBus _signalBus;
-        [Inject] private readonly IDataSaver _dataSaver;
-        [Inject] private readonly IMainDataManager _mainDataManager;
-        
         private const bool IsAutoSaveEnabled = true;
         private const int AutoSaveIntervalInSeconds = 15;
         private const int AutoSaveDelayInSeconds = 5;
+
+        private readonly IDataSaver _dataSaver;
+        private readonly IMainDataManager _mainDataManager;
 
         private bool _isReadyForSave = true;
         
         private CancellationTokenSource _autoSaveCancellationTokenSource;
         private CancellationTokenSource _saveDelayCancellationTokenSource;
 
-        protected override async UniTask Init()
+        [Inject] 
+        public ProgressSaver(ISignalBus signalBus, IDataSaver dataSaver, IMainDataManager mainDataManager)
         {
-            _signalBus.Subscribe<OnAwakeSignal>(this, OnAwake);
-            _signalBus.Subscribe<OnApplicationPauseSignal, bool>(this, OnApplicationPause);
-            _signalBus.Subscribe<OnApplicationQuitSignal>(this, OnApplicationQuit);
-            _signalBus.Subscribe<SceneChangedSignal>(this, Save);
-            await UniTask.CompletedTask;
+            _dataSaver = dataSaver;
+            _mainDataManager = mainDataManager;
+            
+            signalBus.Subscribe<OnAwakeSignal>(this, OnAwake);
+            signalBus.Subscribe<OnApplicationPauseSignal, bool>(this, OnApplicationPause);
+            signalBus.Subscribe<OnApplicationQuitSignal>(this, OnApplicationQuit);
+            signalBus.Subscribe<SceneChangedSignal>(this, Save);
         }
 
         private void OnAwake()
@@ -99,10 +101,6 @@ namespace Infrastructure.Service.SaveLoad
         {
             _autoSaveCancellationTokenSource?.Cancel();
             _saveDelayCancellationTokenSource?.Cancel();
-            _signalBus?.Unsubscribe<OnAwakeSignal>(this);
-            _signalBus?.Unsubscribe<OnApplicationPauseSignal>(this);
-            _signalBus?.Unsubscribe<OnApplicationQuitSignal>(this);
-            _signalBus?.Unsubscribe<SceneChangedSignal>(this);
         }
     }
 }

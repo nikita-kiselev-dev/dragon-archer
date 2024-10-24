@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using Infrastructure.Game;
 using Infrastructure.Service.Audio;
 using Infrastructure.Service.Initialization;
+using Infrastructure.Service.Logger;
 using Infrastructure.Service.Scopes;
 using Infrastructure.Service.StateMachine;
 using Infrastructure.Service.StateMachine.SceneStates;
@@ -13,12 +14,14 @@ using VContainer;
 
 namespace Content.StartScreen.Scripts.Controller
 {
-    [ControlEntityOrder(nameof(BootstrapScope), (int)StartSceneInitOrder.StartScreen)]
+    [ControlEntityOrder(nameof(StartScope), (int)StartSceneInitOrder.StartScreen)]
     public class StartScreenController : ControlEntity, IStartScreenController
     {
         [Inject] private readonly IViewFactory _viewFactory;
         [Inject] private readonly IViewManager _viewManager;
         [Inject] private readonly IStateMachine _sceneStateMachine;
+        
+        private readonly ILogManager _logger = new LogManager(nameof(StartScreenController));
 
         private IView _view;
         private Action _onStartButtonClicked;
@@ -32,6 +35,12 @@ namespace Content.StartScreen.Scripts.Controller
         
         protected override UniTask Init()
         {
+            if (!IsLoadSucceed())
+            {
+                _logger.LogError($"{ViewInfo.StartScreen} load failed.");
+                return UniTask.CompletedTask;
+            }
+            
             var isOnboardingCompleted = true;
             
             _onStartButtonClicked = isOnboardingCompleted
@@ -43,6 +52,12 @@ namespace Content.StartScreen.Scripts.Controller
             IsInited = true;
 
             return UniTask.CompletedTask;
+        }
+
+        private bool IsLoadSucceed()
+        {
+            var result = _view is not null;
+            return result;
         }
 
         private void StartGame()

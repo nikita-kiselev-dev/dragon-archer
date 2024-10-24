@@ -1,44 +1,40 @@
 ﻿using System;
-using System.Collections.Generic;
-using Infrastructure.Game.GameManager;
+using Infrastructure.Service.Initialization;
+using Infrastructure.Service.SignalBus;
 using Infrastructure.Service.StateMachine;
 using Infrastructure.Service.StateMachine.SceneStates;
 using VContainer;
 
 namespace Infrastructure.Game
 {
-    public class Game: IGame
+    public class Game: IGame, IDisposable
     {
-        [Inject] private readonly IStateMachine _sceneStateMachine;
-        [Inject] private readonly IStartGameManager _startGameManager;
-        [Inject] private readonly IMetaGameManager _metaGameManager;
-        [Inject] private readonly ICoreGameManager _coreGameManager;
-        
-        private IGameManager _currentGameManager;
-        private Dictionary<Type, IGameManager> _gameManagers;
+        private readonly IStateMachine _sceneStateMachine;
+        private readonly ISignalBus _signalBus;
+
+        [Inject]
+        private Game(IStateMachine sceneStateMachine, ISignalBus signalBus)
+        {
+            _sceneStateMachine = sceneStateMachine;
+            _signalBus = signalBus;
+            
+            Init();
+        }
 
         public void Init()
         {
-            SetupGameManagers();
-            SetupSceneStateMachine();
-            
+            _sceneStateMachine.Init();
+            _signalBus.Subscribe<OnPostInitPhaseCompletedSignal>(this, EnterStartSceneState);
+        }
+
+        private void EnterStartSceneState()
+        {
             _sceneStateMachine.EnterState<StartSceneState>();
         }
 
-        private void SetupGameManagers()
+        void IDisposable.Dispose()
         {
-            _gameManagers = new Dictionary<Type, IGameManager>
-            {
-                { typeof(StartGameManager), _startGameManager },
-                { typeof(MetaGameManager), _metaGameManager },
-                { typeof(CoreGameManager), _coreGameManager }
-            };
-        }
-
-
-        private void SetupSceneStateMachine()
-        {
-            _sceneStateMachine.Init(_gameManagers);
+            _signalBus.Unsubscribe<OnPostInitPhaseCompletedSignal>(this);
         }
     }
 }

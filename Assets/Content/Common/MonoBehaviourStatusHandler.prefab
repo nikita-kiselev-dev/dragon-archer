@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 506298516957780101}
   - component: {fileID: 3378872622249519998}
   m_Layer: 0
-  m_Name: MonoBehaviourHandler
+  m_Name: MonoBehaviourStatusHandler
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

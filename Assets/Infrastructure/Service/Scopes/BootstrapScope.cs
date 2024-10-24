@@ -1,5 +1,4 @@
 ﻿using System;
-using Content.DailyBonus.Scripts;
 using Content.DailyBonus.Scripts.Data;
 using Content.Items.Gems;
 using Content.Items.Gems.Data;
@@ -7,14 +6,10 @@ using Content.Items.Gold;
 using Content.Items.Gold.Data;
 using Content.Items.Scripts;
 using Content.Items.Scripts.Data;
-using Content.LoadingCurtain.Scripts.Controller;
 using Content.LoadingCurtain.Scripts.View;
-using Content.Settings.Scripts;
 using Content.Settings.Scripts.Data;
-using Content.StartScreen.Scripts.Controller;
 using Infrastructure.Game;
 using Infrastructure.Game.Data;
-using Infrastructure.Game.GameManager;
 using Infrastructure.Game.Tutorials;
 using Infrastructure.Game.Tutorials.Data;
 using Infrastructure.Service.Analytics;
@@ -31,8 +26,6 @@ using Infrastructure.Service.Scene;
 using Infrastructure.Service.ScriptableObjects;
 using Infrastructure.Service.SignalBus;
 using Infrastructure.Service.StateMachine;
-using Infrastructure.Service.View.Canvas;
-using Infrastructure.Service.View.ViewFactory;
 using Infrastructure.Service.View.ViewManager;
 using Infrastructure.Service.View.ViewManager.ViewAnimation;
 using UnityEngine;
@@ -52,7 +45,7 @@ namespace Infrastructure.Service.Scopes
             {
                 throw new NullReferenceException($"No ServiceConfig in BootstrapScope!");
             }
-
+            
             builder.RegisterComponent(m_LoadingCurtainView).AsImplementedInterfaces();
             
             RegisterFileServices(builder);
@@ -62,27 +55,19 @@ namespace Infrastructure.Service.Scopes
             RegisterDataManager(builder);
             RegisterAssetLoader(builder);
             
-            builder.RegisterEntryPoint<GameBootstrapper>();
-            builder.RegisterEntryPoint<SceneStarter>();
-            builder.Register<ITutorialService, TutorialService>(Lifetime.Singleton);
-            builder.Register<ViewFactory>(Lifetime.Singleton).As<ControlEntity>().AsImplementedInterfaces();
-            builder.Register<IMainCanvasController, MainCanvasController>(Lifetime.Singleton);
-            builder.Register<IViewAnimator, BackgroundAnimator>(Lifetime.Singleton);
-            builder.Register<ISceneService, SceneService>(Lifetime.Singleton);
-            builder.Register<IStateMachine, SceneStateMachine>(Lifetime.Singleton);
+            builder.Register<TutorialService>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<SceneService>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<SceneStateMachine>(Lifetime.Singleton).AsImplementedInterfaces();
             
             RegisterAnalytics(builder);
             RegisterLiveOps(builder);
             
-            builder.Register<LoadingCurtainController>(Lifetime.Singleton).As<ControlEntity>().AsImplementedInterfaces();
-            builder.Register<StartScreenController>(Lifetime.Singleton).As<ControlEntity>().AsImplementedInterfaces();
-            builder.Register<SettingsPopup>(Lifetime.Singleton).As<ControlEntity>().AsImplementedInterfaces();
             builder.Register<ViewManager>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<BackgroundAnimator>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<ISignalBus, EventSignalBus>(Lifetime.Singleton);
-            builder.Register<IGame, Game.Game>(Lifetime.Singleton);
+            builder.Register<Game.Game>(Lifetime.Singleton).AsImplementedInterfaces();
             
-            RegisterFeatures(builder);
-            RegisterGameManagers(builder);
+            builder.RegisterEntryPoint<SceneStarter>();
         }
 
         private void RegisterFileServices(IContainerBuilder builder)
@@ -135,18 +120,6 @@ namespace Infrastructure.Service.Scopes
         private void RegisterAssetLoader(IContainerBuilder builder)
         {
             builder.Register<MainAddressableAssetLoader>(Lifetime.Singleton).AsImplementedInterfaces();
-        }
-
-        private void RegisterFeatures(IContainerBuilder builder)
-        {
-            builder.Register<IDailyBonus, DailyBonus>(Lifetime.Singleton);
-        }
-        
-        private void RegisterGameManagers(IContainerBuilder builder)
-        {
-            builder.Register<IStartGameManager, StartGameManager>(Lifetime.Singleton);
-            builder.Register<IMetaGameManager, MetaGameManager>(Lifetime.Singleton);
-            builder.Register<ICoreGameManager, CoreGameManager>(Lifetime.Singleton);
         }
 
         private void RegisterAnalytics(IContainerBuilder builder)

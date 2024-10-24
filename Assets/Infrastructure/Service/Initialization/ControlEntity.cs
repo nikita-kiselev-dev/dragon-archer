@@ -29,7 +29,7 @@ namespace Infrastructure.Service.Initialization
             return UniTask.CompletedTask;
         }
 
-        protected virtual UniTask  PostInit()
+        protected virtual UniTask PostInit()
         {
             return UniTask.CompletedTask;
         }

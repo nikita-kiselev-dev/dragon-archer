@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Infrastructure.Game.GameManager;
 using Infrastructure.Service.Scene;
 using Infrastructure.Service.StateMachine.SceneStates;
 using VContainer;
@@ -14,14 +13,14 @@ namespace Infrastructure.Service.StateMachine
         private Dictionary<Type, ISceneState> _states;
         private IState _activeState;
         
-        public void Init(Dictionary<Type, IGameManager> gameManagers)
+        public void Init()
         {
             _states = new Dictionary<Type, ISceneState>
             {
                 { typeof(BootstrapSceneState), new BootstrapSceneState(_sceneService, EnterState<StartSceneState>) },
-                { typeof(StartSceneState), new StartSceneState(_sceneService, gameManagers[typeof(StartGameManager)]) },
-                { typeof(CoreSceneState), new CoreSceneState(_sceneService, gameManagers[typeof(CoreGameManager)]) },
-                { typeof(MetaSceneState), new MetaSceneState(_sceneService, gameManagers[typeof(MetaGameManager)]) }
+                { typeof(StartSceneState), new StartSceneState(_sceneService) },
+                { typeof(CoreSceneState), new CoreSceneState(_sceneService) },
+                { typeof(MetaSceneState), new MetaSceneState(_sceneService) }
             };
         }
 

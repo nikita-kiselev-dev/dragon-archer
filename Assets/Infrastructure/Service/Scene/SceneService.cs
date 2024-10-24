@@ -1,5 +1,4 @@
 using System;
-using Content.LoadingCurtain.Scripts.Controller;
 using Cysharp.Threading.Tasks;
 using Infrastructure.Service.Scene.Signals;
 using Infrastructure.Service.SignalBus;
@@ -14,10 +13,10 @@ namespace Infrastructure.Service.Scene
         private readonly ISceneLoader _sceneLoader;
         
         [Inject]
-        public SceneService(ISignalBus signalBus, ILoadingCurtainController loadingCurtainController)
+        public SceneService(ISignalBus signalBus)
         {
             _signalBus = signalBus;
-            _sceneLoader = new SceneLoader(loadingCurtainController);
+            _sceneLoader = new SceneLoader(_signalBus);
             SceneManager.activeSceneChanged += OnSceneChanged; 
         }
         

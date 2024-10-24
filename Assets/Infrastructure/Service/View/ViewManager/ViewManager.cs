@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Infrastructure.Service.SignalBus;
 using Infrastructure.Service.View.ViewManager.ViewAnimation;
 using UnityEngine;
 using VContainer;
 
 namespace Infrastructure.Service.View.ViewManager
 {
-    public class ViewManager : IViewManager, IBackgroundViewActionHandler
+    public class ViewManager : IViewManager, IDisposable
     {
         private readonly Dictionary<string, IViewWrapper> _viewWrappers = new();
         private readonly Dictionary<string, IViewTypeManager> _viewTypeManagers;
@@ -15,11 +16,11 @@ namespace Infrastructure.Service.View.ViewManager
 
         private bool _viewIsOpen;
 
-        public Action BackgroundViewAction => CloseLast;
-
         [Inject]
-        private ViewManager(IViewAnimator backgroundAnimator)
+        private ViewManager(ISignalBus signalBus, IViewAnimator backgroundAnimator)
         {
+            signalBus.Subscribe<OnPopupBackgroundClickSignal>(this, CloseLast);
+            
             _viewTypeManagers = new Dictionary<string, IViewTypeManager>
             {
                 { ViewType.Popup, new PopupViewTypeManager(_viewQueue, backgroundAnimator) },
@@ -115,6 +116,12 @@ namespace Infrastructure.Service.View.ViewManager
         {
             var view = viewWrapper.View;
             view.SetActive(viewWrapper.IsEnabledOnStart);
+        }
+
+        void IDisposable.Dispose()
+        {
+            _viewWrappers.Clear();
+            _viewQueue.Clear();
         }
     }
 }

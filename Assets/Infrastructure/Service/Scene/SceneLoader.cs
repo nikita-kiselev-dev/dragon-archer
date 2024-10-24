@@ -1,18 +1,19 @@
 ﻿using System;
 using Content.LoadingCurtain.Scripts;
-using Content.LoadingCurtain.Scripts.Controller;
 using Cysharp.Threading.Tasks;
+using Infrastructure.Service.Scene.Signals;
+using Infrastructure.Service.SignalBus;
 using UnityEngine.SceneManagement;
 
 namespace Infrastructure.Service.Scene
 {
     public class SceneLoader : ISceneLoader
     {
-        private readonly ILoadingCurtainController _loadingCurtainController;
+        private readonly ISignalBus _signalBus;
         
-        public SceneLoader(ILoadingCurtainController loadingCurtainController)
+        public SceneLoader(ISignalBus signalBus)
         {
-            _loadingCurtainController = loadingCurtainController;
+            _signalBus = signalBus;
         }
         
         public async UniTask LoadAsync(string sceneName, Action onLoaded = null)
@@ -29,7 +30,7 @@ namespace Infrastructure.Service.Scene
 
             if (!isStartScene)
             {
-                _loadingCurtainController.Show();
+                _signalBus.Trigger<OnChangeSceneRequestSignal>();
                 await UniTask.WaitForSeconds(LoadingCurtainInfo.ShowAnimationDuration);
             }
             

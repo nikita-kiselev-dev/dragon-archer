@@ -13,6 +13,7 @@ namespace Infrastructure.Service.SignalBus.Monobehaviour
 
         private void Awake()
         {
+            DontDestroyOnLoad(gameObject);
             _signalBus.Trigger<OnAwakeSignal>();
             _logger.Log("Awake.");
         }
