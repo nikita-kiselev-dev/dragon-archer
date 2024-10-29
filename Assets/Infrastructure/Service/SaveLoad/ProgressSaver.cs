@@ -2,7 +2,6 @@ using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Infrastructure.Game.Data;
-using Infrastructure.Service.Initialization;
 using Infrastructure.Service.Scene.Signals;
 using Infrastructure.Service.SignalBus;
 using Infrastructure.Service.SignalBus.MonoBehaviour;

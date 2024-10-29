@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Service.StateMachine
+﻿namespace Infrastructure.Service.SceneStateMachine
 {
     public interface ISceneState : IState
     {

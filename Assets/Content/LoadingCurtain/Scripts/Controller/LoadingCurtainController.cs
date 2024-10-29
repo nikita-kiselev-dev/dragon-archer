@@ -1,6 +1,6 @@
 ﻿using Content.LoadingCurtain.Scripts.View;
 using Cysharp.Threading.Tasks;
-using Infrastructure.Service.Initialization;
+using Infrastructure.Service.Initialization.Signals;
 using Infrastructure.Service.Localization;
 using Infrastructure.Service.Scene.Signals;
 using Infrastructure.Service.SignalBus;

@@ -1,9 +1,8 @@
 ﻿using System;
-using Infrastructure.Service.Initialization;
+using Infrastructure.Service.Initialization.Signals;
+using Infrastructure.Service.SceneStateMachine;
+using Infrastructure.Service.SceneStateMachine.SceneStates;
 using Infrastructure.Service.SignalBus;
-using Infrastructure.Service.StateMachine;
-using Infrastructure.Service.StateMachine.SceneStates;
-using UnityEngine;
 using VContainer;
 
 namespace Infrastructure.Game
@@ -24,7 +23,8 @@ namespace Infrastructure.Game
 
         public void Init()
         {
-            _sceneStateMachine.Init();
+            //_sceneStateMachine.Init();
+            return;
             _signalBus.Subscribe<OnPostInitPhaseCompletedSignal>(this, EnterStartSceneState);
         }
 

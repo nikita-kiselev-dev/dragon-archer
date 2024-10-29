@@ -2,5 +2,6 @@
 {
     public interface IGame
     {
+        public void Init();
     }
 }

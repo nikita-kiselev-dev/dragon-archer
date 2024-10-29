@@ -2,7 +2,7 @@
 using Infrastructure.Service.Logger;
 using Infrastructure.Service.Scene;
 
-namespace Infrastructure.Service.StateMachine.SceneStates
+namespace Infrastructure.Service.SceneStateMachine.SceneStates
 {
     public class CoreSceneState : ISceneState
     {

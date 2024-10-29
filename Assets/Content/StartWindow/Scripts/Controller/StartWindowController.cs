@@ -6,8 +6,8 @@ using Infrastructure.Service.Initialization;
 using Infrastructure.Service.Initialization.InitOrder;
 using Infrastructure.Service.Initialization.Scopes;
 using Infrastructure.Service.Logger;
-using Infrastructure.Service.StateMachine;
-using Infrastructure.Service.StateMachine.SceneStates;
+using Infrastructure.Service.SceneStateMachine;
+using Infrastructure.Service.SceneStateMachine.SceneStates;
 using Infrastructure.Service.View.ViewFactory;
 using Infrastructure.Service.View.ViewManager;
 using Infrastructure.Service.View.ViewSignalManager;
@@ -20,7 +20,7 @@ namespace Content.StartWindow.Scripts.Controller
     {
         [Inject] private readonly IViewFactory _viewFactory;
         [Inject] private readonly IViewManager _viewManager;
-        [Inject] private readonly IStateMachine _sceneStateMachine;
+        [Inject] private readonly ISceneStateMachine _sceneStateMachine;
         
         private readonly ILogManager _logger = new LogManager(nameof(StartWindowController));
 

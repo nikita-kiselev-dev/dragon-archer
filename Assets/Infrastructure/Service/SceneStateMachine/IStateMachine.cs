@@ -1,8 +1,7 @@
-﻿namespace Infrastructure.Service.StateMachine
+﻿namespace Infrastructure.Service.SceneStateMachine
 {
     public interface IStateMachine
     {
-        public void Init();
         public void EnterState<TState>() where TState : IState;
     }
 }

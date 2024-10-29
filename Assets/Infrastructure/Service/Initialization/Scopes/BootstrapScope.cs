@@ -25,7 +25,6 @@ using Infrastructure.Service.SaveLoad;
 using Infrastructure.Service.Scene;
 using Infrastructure.Service.ScriptableObjects;
 using Infrastructure.Service.SignalBus;
-using Infrastructure.Service.StateMachine;
 using Infrastructure.Service.View.ViewManager;
 using Infrastructure.Service.View.ViewManager.ViewAnimation;
 using UnityEngine;
@@ -60,7 +59,7 @@ namespace Infrastructure.Service.Initialization.Scopes
             
             builder.Register<TutorialService>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<SceneService>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<SceneStateMachine>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<SceneStateMachine.SceneStateMachine>(Lifetime.Singleton).AsImplementedInterfaces();
             
             RegisterAnalytics(builder);
             RegisterLiveOps(builder);
@@ -69,6 +68,7 @@ namespace Infrastructure.Service.Initialization.Scopes
             builder.Register<BackgroundAnimator>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<ISignalBus, EventSignalBus>(Lifetime.Singleton);
             builder.Register<Game.Game>(Lifetime.Singleton).As<IGame>();
+            builder.Register<GameBootstrapper>(Lifetime.Singleton).AsImplementedInterfaces();
             
             builder.RegisterEntryPoint<SceneStarter>();
         }
