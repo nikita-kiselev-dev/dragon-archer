@@ -2,7 +2,8 @@
 using Cysharp.Threading.Tasks;
 using Infrastructure.Service.Asset;
 using Infrastructure.Service.Initialization;
-using Infrastructure.Service.Scopes;
+using Infrastructure.Service.Initialization.InitOrder;
+using Infrastructure.Service.Initialization.Scopes;
 using Infrastructure.Service.SignalBus;
 using Infrastructure.Service.View.Canvas;
 using Infrastructure.Service.View.ViewManager;

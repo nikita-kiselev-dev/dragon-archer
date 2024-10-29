@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Service.SignalBus.Monobehavior
+﻿namespace Infrastructure.Service.SignalBus.MonoBehaviour
 {
     public class OnAwakeSignal : ISignal
     {

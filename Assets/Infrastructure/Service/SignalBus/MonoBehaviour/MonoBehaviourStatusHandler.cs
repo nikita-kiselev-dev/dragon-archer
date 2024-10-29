@@ -1,11 +1,9 @@
 ﻿using Infrastructure.Service.Logger;
-using Infrastructure.Service.SignalBus.Monobehavior;
-using UnityEngine;
 using VContainer;
 
-namespace Infrastructure.Service.SignalBus.Monobehaviour
+namespace Infrastructure.Service.SignalBus.MonoBehaviour
 {
-    public class MonoBehaviourStatusHandler : MonoBehaviour
+    public class MonoBehaviourStatusHandler : UnityEngine.MonoBehaviour
     {
         [Inject] private readonly ISignalBus _signalBus;
 

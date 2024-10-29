@@ -18,7 +18,7 @@ MonoBehaviour:
   m_GUID: 93635d8def5f9ed4f93f8f3fe87d64f7
   m_SerializeEntries:
   - m_GUID: 0545f1be6cb6d5f41a5dd17faefc0190
-    m_Address: StartScreen
+    m_Address: StartWindow
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

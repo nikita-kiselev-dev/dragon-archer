@@ -5,7 +5,7 @@ using Infrastructure.Game.Data;
 using Infrastructure.Service.Initialization;
 using Infrastructure.Service.Scene.Signals;
 using Infrastructure.Service.SignalBus;
-using Infrastructure.Service.SignalBus.Monobehavior;
+using Infrastructure.Service.SignalBus.MonoBehaviour;
 using VContainer;
 
 namespace Infrastructure.Service.SaveLoad

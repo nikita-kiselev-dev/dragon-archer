@@ -2,7 +2,7 @@ using Content.DailyBonus.Scripts.Data;
 using Content.Items.Gems.Data;
 using Content.Items.Gold.Data;
 using Content.Items.Scripts.Data;
-using Content.Settings.Scripts.Data;
+using Content.SettingsPopup.Scripts.Data;
 using Infrastructure.Game.Data;
 using Infrastructure.Game.Tutorials.Data;
 using MemoryPack;

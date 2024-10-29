@@ -3,6 +3,7 @@ using Infrastructure.Service.Initialization;
 using Infrastructure.Service.SignalBus;
 using Infrastructure.Service.StateMachine;
 using Infrastructure.Service.StateMachine.SceneStates;
+using UnityEngine;
 using VContainer;
 
 namespace Infrastructure.Game

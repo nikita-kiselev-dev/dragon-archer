@@ -7,7 +7,7 @@
         public const string PopupCanvasKey = "PopupCanvas";
 
         public const string LoadingCurtain = "LoadingCurtain";
-        public const string StartScreen = "StartScreen";
+        public const string StartWindow = "StartWindow";
         public const string SettingsPopup = "SettingsPopup";
         public const string DailyBonus = "DailyBonusPopup";
 

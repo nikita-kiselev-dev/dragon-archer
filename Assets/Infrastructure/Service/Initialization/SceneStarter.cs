@@ -4,9 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Infrastructure.Service.Initialization.Scopes;
 using Infrastructure.Service.Logger;
 using Infrastructure.Service.Scene;
-using Infrastructure.Service.Scopes;
 using Infrastructure.Service.SignalBus;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -40,17 +40,28 @@ namespace Infrastructure.Service.Initialization
                 .Select(x => x.Entity)
                 .ToList();
 
+            if (!_orderedControlEntities.Any())
+            {
+                _logger.Log($"{sceneName} - no control entities on scene, skip.");
+                return;
+            }
+
+            _logger.Log($"{sceneName} - start executing phases.");
+
+            _logger.Log($"{sceneName} - load phase execution.");
             await ExecutePhase(entity => entity.LoadPhase());
             _signalBus.Trigger<OnLoadPhaseCompletedSignal>();
-            _logger.Log($"{sceneName} load phase completed.");
+            _logger.Log($"{sceneName} - load phase completed.");
 
+            _logger.Log($"{sceneName} - init phase execution.");
             await ExecutePhase(entity => entity.InitPhase());
             _signalBus.Trigger<OnInitPhaseCompletedSignal>();
-            _logger.Log($"{sceneName} init phase completed.");
+            _logger.Log($"{sceneName} - init phase completed.");
 
+            _logger.Log($"{sceneName} - post-init phase execution.");
             await ExecutePhase(entity => entity.PostInitPhase());
             _signalBus.Trigger<OnPostInitPhaseCompletedSignal>();
-            _logger.Log($"{sceneName} post-init phase completed.");
+            _logger.Log($"{sceneName} - post-init phase completed.");
         }
 
         private async UniTask ExecutePhase(Func<ControlEntity, UniTask> phaseFunc)
