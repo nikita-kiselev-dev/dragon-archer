@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Infrastructure.Service.Logger;
 using Infrastructure.Service.SignalBus;
 using Infrastructure.Service.View.ViewManager.ViewAnimation;
-using UnityEngine;
 using VContainer;
 
 namespace Infrastructure.Service.View.ViewManager
@@ -13,6 +13,7 @@ namespace Infrastructure.Service.View.ViewManager
         private readonly Dictionary<string, IViewWrapper> _viewWrappers = new();
         private readonly Dictionary<string, IViewTypeManager> _viewTypeManagers;
         private readonly Queue<IViewWrapper> _viewQueue = new();
+        private readonly ILogManager _logger = new LogManager(nameof(ViewManager));
 
         private bool _viewIsOpen;
 
@@ -35,7 +36,7 @@ namespace Infrastructure.Service.View.ViewManager
 
             if (viewWrapper?.View == null)
             {
-                Debug.LogError($"{GetType().Name}: {viewKey} - view wrapper or view is null!");
+                _logger.LogError($"{viewKey} - view wrapper or view is null.");
                 return;
             }
             
@@ -55,7 +56,7 @@ namespace Infrastructure.Service.View.ViewManager
             
             if (viewWrapper?.View == null)
             {
-                Debug.LogError($"{GetType().Name}: {viewKey} - view wrapper or view is null!");
+                _logger.LogError($"{viewKey} - view wrapper or view is null.");
                 return;
             }
 

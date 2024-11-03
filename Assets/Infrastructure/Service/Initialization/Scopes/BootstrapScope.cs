@@ -6,7 +6,7 @@ using Content.Items.Gold;
 using Content.Items.Gold.Data;
 using Content.Items.Scripts;
 using Content.Items.Scripts.Data;
-using Content.LoadingCurtain.Scripts.View;
+using Content.LoadingCurtain.Scripts.Controller;
 using Content.SettingsPopup.Scripts.Data;
 using Infrastructure.Game;
 using Infrastructure.Game.Data;
@@ -25,6 +25,8 @@ using Infrastructure.Service.SaveLoad;
 using Infrastructure.Service.Scene;
 using Infrastructure.Service.ScriptableObjects;
 using Infrastructure.Service.SignalBus;
+using Infrastructure.Service.View.Canvas;
+using Infrastructure.Service.View.ViewFactory;
 using Infrastructure.Service.View.ViewManager;
 using Infrastructure.Service.View.ViewManager.ViewAnimation;
 using UnityEngine;
@@ -35,8 +37,9 @@ namespace Infrastructure.Service.Initialization.Scopes
 {
     public sealed class BootstrapScope : LifetimeScope
     {
-        [SerializeField] private LoadingCurtainView m_LoadingCurtainView;
         [SerializeField] private ServiceConfig m_ServiceConfig;
+        [SerializeField] private ServiceCanvas m_ServiceCanvas;
+        [SerializeField] private LoadingCurtainController m_LoadingCurtainController;
 
         private readonly ILogManager _logger = new LogManager(nameof(BootstrapScope));
         
@@ -48,14 +51,15 @@ namespace Infrastructure.Service.Initialization.Scopes
                 throw new NullReferenceException();
             }
             
-            builder.RegisterComponent(m_LoadingCurtainView).AsImplementedInterfaces();
-            
             RegisterFileServices(builder);
             RegisterItemsData(builder);
             RegisterFeaturesData(builder);
             RegisterTutorialData(builder);
             RegisterDataManager(builder);
             RegisterAssetLoader(builder);
+
+            builder.RegisterComponent(m_ServiceCanvas).AsImplementedInterfaces();
+            builder.RegisterComponent(m_LoadingCurtainController).AsImplementedInterfaces();
             
             builder.Register<TutorialService>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<SceneService>(Lifetime.Singleton).AsImplementedInterfaces();
@@ -65,8 +69,9 @@ namespace Infrastructure.Service.Initialization.Scopes
             RegisterLiveOps(builder);
             
             builder.Register<ViewManager>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<ViewFactory>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<BackgroundAnimator>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<ISignalBus, EventSignalBus>(Lifetime.Singleton);
+            builder.Register<EventSignalBus>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<Game.Game>(Lifetime.Singleton).As<IGame>();
             builder.Register<GameBootstrapper>(Lifetime.Singleton).AsImplementedInterfaces();
             

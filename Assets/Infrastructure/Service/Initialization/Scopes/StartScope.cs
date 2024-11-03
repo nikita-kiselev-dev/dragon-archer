@@ -17,6 +17,9 @@ namespace Infrastructure.Service.Initialization.Scopes
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterEntryPoint<SceneStarter>();
+
+            var loadingCurtainController = FindFirstObjectByType<LoadingCurtainController>();
+            builder.RegisterComponent(loadingCurtainController);
             
             builder.Register<MainAddressableAssetLoader>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<LoadingCurtainController>(Lifetime.Singleton).AsImplementedInterfaces();

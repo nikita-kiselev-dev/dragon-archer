@@ -4,67 +4,75 @@ using Infrastructure.Service.Initialization.Signals;
 using Infrastructure.Service.Localization;
 using Infrastructure.Service.Scene.Signals;
 using Infrastructure.Service.SignalBus;
-using Infrastructure.Service.View.ViewManager;
+using Infrastructure.Service.View.ViewManager.ViewAnimation;
+using UnityEngine;
 using VContainer;
 
 namespace Content.LoadingCurtain.Scripts.Controller
 {
-    public class LoadingCurtainController : ILoadingCurtainController
+    public class LoadingCurtainController : MonoBehaviour, ILoadingCurtainController
     {
-        private readonly ISignalBus _signalBus;
-        private readonly ILoadingCurtainView _view;
-        private readonly IViewManager _viewManager;
+        [SerializeField] private LoadingCurtainView m_View;
         
-        private IViewInteractor _viewInteractor;
+        private ISignalBus _signalBus;
+        private IViewAnimator _animator;
 
+        private bool _isInited;
+        
         [Inject]
-        public LoadingCurtainController(
-            ISignalBus signalBus, 
-            ILoadingCurtainView view, 
-            IViewManager viewManager)
+        private void Init(ISignalBus signalBus)
         {
             _signalBus = signalBus;
-            _view = view;
-            _viewManager = viewManager;
             
-            Init();
-        }
-        
-        private void Init()
-        {
-            RegisterAndInitView();
-            ConfigureView().Forget();
+            _signalBus.Unsubscribe<OnChangeSceneRequestSignal>(this);
             _signalBus.Subscribe<OnChangeSceneRequestSignal>(this, Show);
-            _signalBus.Subscribe<OnPostInitPhaseCompletedSignal>(this, Hide);
+            
+            _signalBus.Unsubscribe<OnSceneInitCompletedSignal>(this);
+            _signalBus.Subscribe<OnSceneInitCompletedSignal>(this, Hide);
+
+            if (_isInited)
+            {
+                return;
+            }
+
+            _animator = new LoadingCurtainGradientColorAnimator(m_View);
+            _signalBus = signalBus;
+            ConfigureView().Forget();
+
+            _isInited = true;
         }
         
         private void Show()
         {
-            _viewInteractor.Open();
+            if (!m_View.gameObject.activeSelf)
+            {
+                _animator.Show();
+            }
         }
 
         private void Hide()
         {
-            _viewInteractor.Close();
-        }
-        
-        private void RegisterAndInitView()
-        {
-            var animator = new LoadingCurtainGradientColorAnimator(_view as LoadingCurtainView);
-            
-            _viewInteractor = new ViewRegistrar(_viewManager)
-                .SetViewKey(ViewInfo.LoadingCurtain)
-                .SetViewType(ViewType.Service)
-                .SetView(_view)
-                .SetCustomAnimator(animator)
-                .EnableFromStart()
-                .RegisterAndInit();
+            if (m_View.gameObject.activeSelf)
+            {
+                _animator.Hide();
+            }
         }
 
         private async UniTaskVoid ConfigureView()
         {
             var loadingLocalizedString = await "loading".LocalizeAsync();
-            _view.SetLoadingText(loadingLocalizedString);
+            m_View.SetLoadingText(loadingLocalizedString);
+        }
+
+        private void OnDestroy()
+        {
+            if (_signalBus is null)
+            {
+                return;
+            }
+            
+            _signalBus.Unsubscribe<OnChangeSceneRequestSignal>(this);
+            _signalBus.Unsubscribe<OnSceneInitCompletedSignal>(this);
         }
     }
 }

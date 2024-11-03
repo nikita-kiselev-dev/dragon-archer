@@ -16,7 +16,7 @@ namespace Infrastructure.Service.Scene
             _signalBus = signalBus;
         }
         
-        public async UniTask LoadAsync(string sceneName, Action onLoaded = null)
+        public async UniTaskVoid LoadAsync(string sceneName, Action onLoaded = null)
         {
             var activeSceneName = SceneManager.GetActiveScene().name;
             

@@ -8,7 +8,7 @@ namespace Infrastructure.Service.SignalBus
 {
     public class EventSignalBus : ISignalBus
     {
-        private readonly Dictionary<Type, Dictionary<object, IActionWrapper>> _events = new();
+        private Dictionary<Type, Dictionary<object, IActionWrapper>> _events;
 
         public void Subscribe<T>(object listener, UnityAction action)
         {
@@ -32,16 +32,26 @@ namespace Infrastructure.Service.SignalBus
 
         public void Unsubscribe<T>(object listener)
         {
+            if (_events is null || _events.Count == 0)
+            {
+                return;
+            }
+            
             var type = typeof(T);
 
-            if (_events.ContainsKey(type))
+            if (_events.TryGetValue(type, out var @event))
             {
-                _events[type].Remove(listener);
+                @event.Remove(listener);
             }
         }
 
         public void Trigger<T>()
         {
+            if (_events is null || _events.Count == 0)
+            {
+                return;
+            }
+            
             var type = typeof(T);
 
             if (!_events.TryGetValue(type, out var events))
@@ -49,8 +59,7 @@ namespace Infrastructure.Service.SignalBus
                 return;
             }
 
-            foreach (var wrapper in 
-                     events.Select(actionWrapper => actionWrapper.Value))
+            foreach (var wrapper in events.Select(actionWrapper => actionWrapper.Value))
             {
                 var convertedWrapper = wrapper as ActionWrapperWithZeroArgument;
                 convertedWrapper?.Invoke();
@@ -59,6 +68,11 @@ namespace Infrastructure.Service.SignalBus
 
         public void Trigger<T, U>(U arg)
         {
+            if (_events is null || _events.Count == 0)
+            {
+                return;
+            }
+            
             var type = typeof(T);
 
             if (!_events.TryGetValue(type, out var events))
@@ -76,6 +90,8 @@ namespace Infrastructure.Service.SignalBus
 
         private bool AddSubscriber<T>(object listener)
         {
+            _events ??= new Dictionary<Type, Dictionary<object, IActionWrapper>>();
+            
             var type = typeof(T);
             
             if (!_events.ContainsKey(type))

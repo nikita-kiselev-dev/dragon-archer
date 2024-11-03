@@ -5,6 +5,6 @@ namespace Infrastructure.Service.Scene
 {
     public interface ISceneLoader
     {
-        public UniTask LoadAsync(string sceneName, Action onLoaded = null);
+        public UniTaskVoid LoadAsync(string sceneName, Action onLoaded = null);
     }
 }

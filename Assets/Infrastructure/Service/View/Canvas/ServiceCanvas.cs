@@ -11,7 +11,7 @@ namespace Infrastructure.Service.View.Canvas
         private void Init()
         {
             Instance = this;
-            DontDestroyOnLoad(this);
+            DontDestroyOnLoad(Instance);
         }
     }
 }

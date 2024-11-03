@@ -2,6 +2,5 @@
 {
     public interface IGameBootstrapper
     {
-        public void EnterGame();
     }
 }

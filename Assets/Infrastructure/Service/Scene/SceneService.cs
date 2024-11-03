@@ -1,5 +1,4 @@
 using System;
-using Cysharp.Threading.Tasks;
 using Infrastructure.Service.Scene.Signals;
 using Infrastructure.Service.SignalBus;
 using UnityEngine.SceneManagement;

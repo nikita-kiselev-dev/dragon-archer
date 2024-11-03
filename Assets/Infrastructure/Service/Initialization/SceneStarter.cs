@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Infrastructure.Game;
 using Infrastructure.Service.Initialization.Scopes;
 using Infrastructure.Service.Initialization.Signals;
 using Infrastructure.Service.Logger;
@@ -20,7 +19,6 @@ namespace Infrastructure.Service.Initialization
     public class SceneStarter : MonoBehaviour, IAsyncStartable
     {
         [Inject] private readonly ISignalBus _signalBus;
-        [Inject] private readonly IGameBootstrapper _gameBootstrapper;
         [Inject] private readonly IReadOnlyList<ControlEntity> _controlEntities;
 
         private readonly ILogManager _logger = new LogManager(nameof(SceneStarter));
@@ -62,7 +60,6 @@ namespace Infrastructure.Service.Initialization
             }
 
             _signalBus.Trigger<OnSceneInitCompletedSignal>();
-            _gameBootstrapper.EnterGame();
         }
 
         private List<ControlEntityPhase> CreatePhases()
