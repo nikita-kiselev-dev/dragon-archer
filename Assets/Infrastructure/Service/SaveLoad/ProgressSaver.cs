@@ -1,38 +1,51 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Infrastructure.Game.Data;
 using Infrastructure.Service.Scene.Signals;
 using Infrastructure.Service.SignalBus;
 using Infrastructure.Service.SignalBus.MonoBehaviour;
 using VContainer;
+using VContainer.Unity;
 
 namespace Infrastructure.Service.SaveLoad
 {
-    public class ProgressSaver : IProgressSaver, IDisposable
+    public class ProgressSaver : IProgressSaver, IStartable, IDisposable
     {
         private const bool IsAutoSaveEnabled = true;
         private const int AutoSaveIntervalInSeconds = 15;
         private const int AutoSaveDelayInSeconds = 5;
 
-        private readonly IDataSaver _dataSaver;
-        private readonly IMainDataManager _mainDataManager;
+        [Inject] private readonly ISignalBus _signalBus;
+        [Inject] private readonly IDataSaver _dataSaver;
+        //[Inject] private readonly IMainDataManager _mainDataManager;
 
         private bool _isReadyForSave = true;
         
         private CancellationTokenSource _autoSaveCancellationTokenSource;
         private CancellationTokenSource _saveDelayCancellationTokenSource;
-
-        [Inject] 
-        public ProgressSaver(ISignalBus signalBus, IDataSaver dataSaver, IMainDataManager mainDataManager)
+        
+        void IStartable.Start()
         {
-            _dataSaver = dataSaver;
-            _mainDataManager = mainDataManager;
+            _signalBus.Subscribe<OnAwakeSignal>(this, OnAwake);
+            _signalBus.Subscribe<OnApplicationPauseSignal, bool>(this, OnApplicationPause);
+            _signalBus.Subscribe<OnApplicationQuitSignal>(this, OnApplicationQuit);
+            _signalBus.Subscribe<SceneChangedSignal>(this, Save);
+        }
+        
+        void IDisposable.Dispose()
+        {
+            _autoSaveCancellationTokenSource?.Cancel();
+            _saveDelayCancellationTokenSource?.Cancel();
+
+            if (_signalBus is null)
+            {
+                return;
+            }
             
-            signalBus.Subscribe<OnAwakeSignal>(this, OnAwake);
-            signalBus.Subscribe<OnApplicationPauseSignal, bool>(this, OnApplicationPause);
-            signalBus.Subscribe<OnApplicationQuitSignal>(this, OnApplicationQuit);
-            signalBus.Subscribe<SceneChangedSignal>(this, Save);
+            _signalBus.Unsubscribe<OnAwakeSignal>(this);
+            _signalBus.Unsubscribe<OnApplicationPauseSignal>(this);
+            _signalBus.Unsubscribe<OnApplicationQuitSignal>(this);
+            _signalBus.Unsubscribe<SceneChangedSignal>(this);
         }
 
         private void OnAwake()
@@ -92,14 +105,8 @@ namespace Infrastructure.Service.SaveLoad
 
         private void Save()
         {
-            _mainDataManager.SetLocalTime(DateTime.Now.ToUniversalTime());
-            _dataSaver.Save();
-        }
-        
-        void IDisposable.Dispose()
-        {
-            _autoSaveCancellationTokenSource?.Cancel();
-            _saveDelayCancellationTokenSource?.Cancel();
+            //_mainDataManager.SetLocalTime(DateTime.Now.ToUniversalTime());
+            _dataSaver.SaveData();
         }
     }
 }

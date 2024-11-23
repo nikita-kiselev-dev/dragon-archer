@@ -2,6 +2,6 @@
 {
     public interface IDataSaver
     {
-        public void Save();
+        public void SaveData();
     }
 }

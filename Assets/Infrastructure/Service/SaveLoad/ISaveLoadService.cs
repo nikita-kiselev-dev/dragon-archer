@@ -2,6 +2,5 @@
 {
     public interface ISaveLoadService
     {
-        public void Init();
     }
 }

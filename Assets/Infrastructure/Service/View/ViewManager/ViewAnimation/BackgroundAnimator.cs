@@ -1,50 +1,46 @@
 ﻿using DG.Tweening;
-using Infrastructure.Service.View.ViewFactory;
+using Infrastructure.Service.View.Canvas;
 using UnityEngine;
-using VContainer;
 
 namespace Infrastructure.Service.View.ViewManager.ViewAnimation
 {
     public class BackgroundAnimator : IViewAnimator
     {
-        [Inject] private readonly ICanvasHandler _canvasHandler;
+        private ICanvasHandler _canvasHandler;
         
         private const float ShowViewBackgroundDuration = 0.2f;
         private const float HideViewBackgroundDuration = 0.2f;
         private const float ShowColorAlphaValue = 0.8f;
         
+        public void SetCanvasManager(ICanvasHandler canvasHandler)
+        {
+            _canvasHandler = canvasHandler;
+        }
+        
         public void Show()
         {
-            var backgroundImage = _canvasHandler.PopupCanvasBackground;
+            if (_canvasHandler.PopupCanvas is null || _canvasHandler.PopupCanvas.BackgroundImage.gameObject.activeSelf) return;
+            var popupBackground = _canvasHandler.PopupCanvas.BackgroundImage;
             
-            if (_canvasHandler.PopupCanvasBackground.gameObject.activeSelf)
-            {
-                return;
-            }
-            
-            var sequence = DOTween.Sequence();
-            sequence
+            DOTween
+                .Sequence()
                 .PrependCallback(() =>
                 {
-                    var backgroundColor = backgroundImage.color;
-                    backgroundImage.color = new Color(backgroundColor.r, backgroundColor.g, backgroundColor.b, 0);
-                    backgroundImage.gameObject.SetActive(true);
+                    var backgroundColor = popupBackground.color;
+                    popupBackground.color = new Color(backgroundColor.r, backgroundColor.g, backgroundColor.b, 0);
+                    popupBackground.gameObject.SetActive(true);
                 })
-                .Append(backgroundImage.DOFade(ShowColorAlphaValue, ShowViewBackgroundDuration));
+                .Append(popupBackground.DOFade(ShowColorAlphaValue, ShowViewBackgroundDuration));
         }
 
         public void Hide()
         {
-            var backgroundImage = _canvasHandler.PopupCanvasBackground;
+            if (_canvasHandler.PopupCanvas is null || !_canvasHandler.PopupCanvas.BackgroundImage.gameObject.activeSelf) return;
+            var popupBackground = _canvasHandler.PopupCanvas.BackgroundImage;
             
-            if (!backgroundImage.gameObject.activeSelf)
-            {
-                return;
-            }
-            
-            backgroundImage
+            popupBackground
                 .DOFade(0f, HideViewBackgroundDuration)
-                .OnComplete(() => backgroundImage.gameObject.SetActive(false));
+                .OnComplete(() => popupBackground.gameObject.SetActive(false));
         }
     }
 }

@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 namespace Infrastructure.Service.SignalBus
 {
-    public class EventSignalBus : ISignalBus
+    public class EventSignalBus : ISignalBus, IDisposable
     {
         private Dictionary<Type, Dictionary<object, IActionWrapper>> _events;
 
@@ -108,6 +108,11 @@ namespace Infrastructure.Service.SignalBus
                            $"{listener} type: {listener.GetType()}");
             
             return false;
+        }
+
+        void IDisposable.Dispose()
+        {
+            _events = null;
         }
     }
 }

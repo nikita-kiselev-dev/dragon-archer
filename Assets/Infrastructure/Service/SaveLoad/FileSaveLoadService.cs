@@ -1,7 +1,9 @@
 using System.IO;
+using Cysharp.Threading.Tasks;
 using Infrastructure.Service.File;
-using Infrastructure.Service.SaveLoad.Signals;
-using Infrastructure.Service.SignalBus;
+using Infrastructure.Service.Initialization;
+using Infrastructure.Service.Initialization.InitOrder;
+using Infrastructure.Service.Initialization.Scopes;
 using Sirenix.Utilities;
 using UnityEngine;
 using VContainer;
@@ -9,23 +11,23 @@ using MemoryPackSerializer = MemoryPack.MemoryPackSerializer;
 
 namespace Infrastructure.Service.SaveLoad
 {
-    public class FileSaveLoadService : ISaveLoadService, IDataSaver
+    [ControlEntityOrder(nameof(BootstrapScope), (int)BootstrapSceneInitOrder.SaveLoadService)]
+    public class FileSaveLoadService : ControlEntity, ISaveLoadService, IDataSaver
     {
         [Inject] private readonly IDataManager _dataManager;
         [Inject] private readonly IFileService _fileService;
-        [Inject] private readonly ISignalBus _signalBus;
         
         private bool _isInited;
 
-        public void Init()
+        protected override UniTask Init()
         {
             CreateDirectory();
-            Load();
+            LoadData();
             _isInited = true;
-            _signalBus.Trigger<SaveFileLoadCompletedSignal>();
+            return UniTask.CompletedTask;
         }
 
-        public void Save()
+        public void SaveData()
         {
             if (!_isInited)
             {
@@ -46,7 +48,7 @@ namespace Infrastructure.Service.SaveLoad
             }
         }
         
-        private void Load()
+        private void LoadData()
         {
             _dataManager.PrepareNewData();
             var saveFile = _fileService.Load<byte[]>(SaveLoadInfo.SaveFilePath);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Infrastructure.Service.Logger;
 using Infrastructure.Service.SignalBus;
+using Infrastructure.Service.View.Canvas;
 using Infrastructure.Service.View.ViewManager.ViewAnimation;
 using VContainer;
 
@@ -13,21 +14,30 @@ namespace Infrastructure.Service.View.ViewManager
         private readonly Dictionary<string, IViewWrapper> _viewWrappers = new();
         private readonly Dictionary<string, IViewTypeManager> _viewTypeManagers;
         private readonly Queue<IViewWrapper> _viewQueue = new();
+        private readonly BackgroundAnimator _backgroundAnimator = new();
         private readonly ILogManager _logger = new LogManager(nameof(ViewManager));
-
+        private readonly bool _isInited;
+        
         private bool _viewIsOpen;
 
         [Inject]
-        private ViewManager(ISignalBus signalBus, IViewAnimator backgroundAnimator)
+        private ViewManager(ISignalBus signalBus, ICanvasHandler canvasHandler)
         {
+            _backgroundAnimator.SetCanvasManager(canvasHandler);
+            
+            signalBus.Unsubscribe<OnPopupBackgroundClickSignal>(this);
             signalBus.Subscribe<OnPopupBackgroundClickSignal>(this, CloseLast);
+            
+            if (_isInited) return;
             
             _viewTypeManagers = new Dictionary<string, IViewTypeManager>
             {
-                { ViewType.Popup, new PopupViewTypeManager(_viewQueue, backgroundAnimator) },
+                { ViewType.Popup, new PopupViewTypeManager(_viewQueue, _backgroundAnimator) },
                 { ViewType.Window, new WindowViewTypeManager() },
                 { ViewType.Service, new ServiceViewTypeManager() }
             };
+
+            _isInited = true;
         }
 
         public void Open(string viewKey)
@@ -95,6 +105,12 @@ namespace Infrastructure.Service.View.ViewManager
             _viewWrappers.Add(viewWrapper.ViewKey, viewWrapper);
             ConfigureAfterRegistration(viewWrapper);
         }
+        
+        void IDisposable.Dispose()
+        {
+            _viewWrappers.Clear();
+            _viewQueue.Clear();
+        }
 
         private void OpenNext()
         {
@@ -117,12 +133,6 @@ namespace Infrastructure.Service.View.ViewManager
         {
             var view = viewWrapper.View;
             view.SetActive(viewWrapper.IsEnabledOnStart);
-        }
-
-        void IDisposable.Dispose()
-        {
-            _viewWrappers.Clear();
-            _viewQueue.Clear();
         }
     }
 }

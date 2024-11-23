@@ -2,7 +2,7 @@
 {
     public enum StartSceneInitOrder
     {
-        ViewFactory,
+        CanvasManager,
         StartWindow,
         SettingsPopup
     }

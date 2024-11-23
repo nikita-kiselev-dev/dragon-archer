@@ -2,6 +2,6 @@
 {
     public enum MetaSceneInitOrder
     {
-        ViewFactory
+        CanvasManager
     }
 }

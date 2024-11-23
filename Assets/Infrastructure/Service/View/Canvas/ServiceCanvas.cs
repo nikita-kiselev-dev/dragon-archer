@@ -1,14 +1,13 @@
 ﻿using UnityEngine;
-using VContainer;
+using VContainer.Unity;
 
 namespace Infrastructure.Service.View.Canvas
 {
-    public class ServiceCanvas : MonoBehaviour
+    public class ServiceCanvas : MonoBehaviour, IStartable
     {
         public static ServiceCanvas Instance;
-        
-        [Inject]
-        private void Init()
+
+        public void Start()
         {
             Instance = this;
             DontDestroyOnLoad(Instance);

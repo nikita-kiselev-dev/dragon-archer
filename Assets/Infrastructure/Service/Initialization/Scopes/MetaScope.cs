@@ -1,6 +1,4 @@
-﻿using Content.LoadingCurtain.Scripts.Controller;
-using Infrastructure.Service.SignalBus;
-using Infrastructure.Service.View.ViewManager;
+﻿using Infrastructure.Service.View.Canvas;
 using VContainer;
 using VContainer.Unity;
 
@@ -12,11 +10,7 @@ namespace Infrastructure.Service.Initialization.Scopes
         {
             builder.RegisterEntryPoint<SceneStarter>();
             
-            var loadingCurtainController = FindFirstObjectByType<LoadingCurtainController>();
-            builder.RegisterComponent(loadingCurtainController);
-            
-            builder.Register<ViewManager>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<EventSignalBus>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<CanvasManager>(Lifetime.Singleton).As<ControlEntity>().AsImplementedInterfaces();
         }
     }
 }

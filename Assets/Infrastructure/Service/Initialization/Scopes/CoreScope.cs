@@ -1,5 +1,4 @@
-﻿using Infrastructure.Service.View.ViewManager;
-using VContainer;
+﻿using VContainer;
 using VContainer.Unity;
 
 namespace Infrastructure.Service.Initialization.Scopes
@@ -8,7 +7,6 @@ namespace Infrastructure.Service.Initialization.Scopes
     {
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.Register<ViewManager>(Lifetime.Singleton).AsImplementedInterfaces();
         }
     }
 }

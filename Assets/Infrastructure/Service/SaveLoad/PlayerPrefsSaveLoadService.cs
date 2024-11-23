@@ -1,32 +1,34 @@
 ﻿using System;
+using Cysharp.Threading.Tasks;
 using Infrastructure.Service.File;
+using Infrastructure.Service.Initialization;
+using Infrastructure.Service.Initialization.InitOrder;
+using Infrastructure.Service.Initialization.Scopes;
 using Infrastructure.Service.Logger;
-using Infrastructure.Service.SaveLoad.Signals;
-using Infrastructure.Service.SignalBus;
 using MemoryPack;
 using UnityEngine;
 using VContainer;
 
 namespace Infrastructure.Service.SaveLoad
 {
-    public class PlayerPrefsSaveLoadService : ISaveLoadService, IDataSaver
+    [ControlEntityOrder(nameof(BootstrapScope), (int)BootstrapSceneInitOrder.SaveLoadService)]
+    public class PlayerPrefsSaveLoadService : ControlEntity, ISaveLoadService, IDataSaver
     {
         [Inject] private readonly IDataManager _dataManager;
         [Inject] private readonly IFileService _fileService;
-        [Inject] private readonly ISignalBus _signalBus;
 
         private readonly ILogManager _logger = new LogManager(nameof(PlayerPrefsSaveLoadService));
         
         private bool _isInited;      
         
-        public void Init()
+        protected override UniTask Init()
         {
-            Load();
+            LoadData();
             _isInited = true;
-            _signalBus.Trigger<SaveFileLoadCompletedSignal>();
+            return UniTask.CompletedTask;
         }
 
-        public void Save()
+        public void SaveData()
         {
             if (!_isInited)
             {
@@ -41,7 +43,7 @@ namespace Infrastructure.Service.SaveLoad
             _logger.Log("Save data saved in PlayerPrefs.");
         }
         
-        private void Load()
+        private void LoadData()
         {
             _dataManager.PrepareNewData();
             var saveFile = PlayerPrefs.GetString(SaveLoadInfo.SaveFileName);
