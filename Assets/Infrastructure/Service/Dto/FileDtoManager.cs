@@ -109,7 +109,7 @@ namespace Infrastructure.Service.Dto
         
         private async UniTask<string> GetDummyDto(string configName)
         {
-            var config = await _assetLoader.LoadAssetAsync<TextAsset>(configName);
+            var config = await _assetLoader.LoadAsync<TextAsset>(configName);
             return config.ToString();
         }
 

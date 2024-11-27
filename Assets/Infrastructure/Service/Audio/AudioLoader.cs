@@ -18,7 +18,7 @@ namespace Infrastructure.Service.Audio
         public async UniTask<AudioClip> LoadAudio(string audioClipName, string audioType)
         {
             var audioClipAddressPath = audioType + "/" + audioClipName + AudioFileFormat;
-            var audioClip = await _assetLoader.LoadAssetAsync<AudioClip>(audioClipAddressPath);
+            var audioClip = await _assetLoader.LoadAsync<AudioClip>(audioClipAddressPath);
 
             if (audioClip)
             {

@@ -9,14 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 5d0199c11aa6f514784c5c69cd8378d8, type: 3}
   m_Name: PlayFabEditorPrefsSO
-  m_EditorClassIdentifier: PlayFabEditorExtensions:PlayFab.PfEditor:PlayFabEditorPrefsSO
-  DevAccountEmail: 
-  DevAccountToken: 
+  m_EditorClassIdentifier: 
+  DevAccountEmail: kiselev.nikita.e@gmail.com
+  DevAccountToken: qzdb4rpi41rsz38crrwjw9ro5cjmwrzhcyqihufc1k6a5jujkearjh95otnioqz95utedmbdu7n9tajw4n4jffwqejdqdyxjdqzumjmj13mbiy1otxn6jjqibkeepfxibb3c838dfpg8p3kumgezfe8b8esy3khwxo8cezgbp61w5e11ok89j83ckjccu6nq3365bkut
   AadAuthorization: 
-  SelectedStudio: 
-  SdkPath: 
+  SelectedStudio: Raycast Production
+  SdkPath: Assets/PlayFabSDK
   EdExPath: 
   LocalCloudScriptPath: 
   PanelIsShown: 0

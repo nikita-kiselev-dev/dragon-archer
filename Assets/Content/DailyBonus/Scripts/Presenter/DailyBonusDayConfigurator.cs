@@ -70,7 +70,7 @@ namespace Content.DailyBonus.Scripts.Presenter
                 _rewardRowsManager.GetRewardParent(index, configCount - 1);
             
             var dayType = GetDayType(dayDto.StreakDay, currentStreakDay, isLastDay);
-            var itemSprite = await _assetLoader.LoadAssetAsync<Sprite>(dayDto.ItemSprite);
+            var itemSprite = await _assetLoader.LoadAsync<Sprite>(dayDto.ItemSprite);
                 
             var dayConfig = new DailyBonusDayConfig(
                 dayType,
