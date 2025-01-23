@@ -28,11 +28,6 @@ namespace Infrastructure.Service.SceneStateMachine.SceneStates
         private void OnLoaded()
         {
             _logger.Log("Load scene completed.");
-
-            if (false)
-            {
-                _dailyBonus.Init();
-            }
         }
     }
 }

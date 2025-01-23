@@ -2,6 +2,7 @@
 {
     public enum MetaSceneInitOrder
     {
-        CanvasManager
+        CanvasManager,
+        DailyBonus
     }
 }

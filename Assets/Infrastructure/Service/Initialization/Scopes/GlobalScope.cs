@@ -105,8 +105,8 @@ namespace Infrastructure.Service.Initialization.Scopes
                 builder.Register<PlayerPrefsSaveLoadService>(Lifetime.Singleton)
                     .As<ControlEntity>()
                     .AsImplementedInterfaces();
-                
-                builder.Register<IDtoManager, PlayerPrefsDtoManager>(Lifetime.Singleton).As<IDtoReader>();
+
+                builder.Register<PlayerPrefsDtoManager>(Lifetime.Singleton).AsImplementedInterfaces();
             }
             else if (currentConfig == SaveLoadServices.File)
             {

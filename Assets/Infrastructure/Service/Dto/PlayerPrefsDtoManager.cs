@@ -11,10 +11,11 @@ using Infrastructure.Service.SignalBus;
 using Newtonsoft.Json;
 using UnityEngine;
 using VContainer;
+using VContainer.Unity;
 
 namespace Infrastructure.Service.Dto
 {
-    public class PlayerPrefsDtoManager : IDtoManager, IDtoReader
+    public class PlayerPrefsDtoManager : IDtoManager, IDtoReader, IStartable
     {
         [Inject] private readonly IAssetLoader _assetLoader;
         [Inject] private readonly ISignalBus _signalBus;
@@ -27,13 +28,6 @@ namespace Infrastructure.Service.Dto
         private Dictionary<string, string> _dataDto;
 
         private bool _isInited;
-        
-        public void Init()
-        {
-            TryGetDataDto();
-            _signalBus.Subscribe<GetLiveOpsDataCompletedSignal>(this, SetServerDto);
-            _isInited = true;
-        }
         
         public async UniTask<T> Read<T>(string configName)
         {
@@ -63,6 +57,13 @@ namespace Infrastructure.Service.Dto
             
             var result = (T)JsonConvert.DeserializeObject(config, typeof(T));
             return result;
+        }
+
+        private void Init()
+        {
+            TryGetDataDto();
+            _signalBus.Subscribe<GetLiveOpsDataCompletedSignal>(this, SetServerDto);
+            _isInited = true;
         }
         
         private void Save()
@@ -145,6 +146,11 @@ namespace Infrastructure.Service.Dto
             var resultString = stringBuilder.ToString();
             stringBuilder.Clear();
             return resultString;
+        }
+
+        void IStartable.Start()
+        {
+            Init();
         }
     }
 }

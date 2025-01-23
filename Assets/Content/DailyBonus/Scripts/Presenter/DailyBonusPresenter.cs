@@ -5,7 +5,6 @@ using Content.Items.Scripts;
 using Cysharp.Threading.Tasks;
 using Infrastructure.Service.Asset;
 using Infrastructure.Service.LiveOps;
-using Infrastructure.Service.View.ViewFactory;
 using Infrastructure.Service.View.ViewManager;
 using Infrastructure.Service.View.ViewSignalManager;
 
@@ -14,31 +13,30 @@ namespace Content.DailyBonus.Scripts.Presenter
     public class DailyBonusPresenter : IDailyBonusPresenter
     {
         private readonly IDailyBonusAnalytics _analytics;
+        private readonly IDailyBonusView _view;
         private readonly IDailyBonusModel _model;
-        private readonly IViewFactory _viewFactory;
         private readonly IViewManager _viewManager;
         private readonly IAssetLoader _assetLoader;
         private readonly IServerTimeService _serverTimeService;
         private readonly IInventoryManager _inventoryManager;
         
         private IDailyBonusCore _core;
-        private IDailyBonusView _view;
         private IViewInteractor _viewInteractor;
         
         public bool IsInited { get; private set; }
 
         public DailyBonusPresenter(
             IDailyBonusAnalytics analytics,
+            IDailyBonusView view,
             IDailyBonusModel model,
-            IViewFactory viewFactory,
             IViewManager viewManager,
             IAssetLoader assetLoader,
             IServerTimeService serverTimeService,
             IInventoryManager inventoryManager)
         {
             _analytics = analytics;
+            _view = view;
             _model = model;
-            _viewFactory = viewFactory;
             _viewManager = viewManager;
             _assetLoader = assetLoader;
             _serverTimeService = serverTimeService;
@@ -61,7 +59,7 @@ namespace Content.DailyBonus.Scripts.Presenter
                 return;
             }
             
-            await RegisterAndInitView();
+            RegisterAndInitView();
             await CreateDays();
             IsInited = true;
             Open();
@@ -80,10 +78,8 @@ namespace Content.DailyBonus.Scripts.Presenter
             _viewInteractor.Close();
         }
         
-        private async UniTask RegisterAndInitView()
+        private void RegisterAndInitView()
         {
-            _view = await _viewFactory.CreateView<IDailyBonusView>(DailyBonusInfo.Popup, ViewType.Popup);
-            
             var viewSignalManager = new ViewSignalManager()
                 .AddCloseSignal(Close);
             
