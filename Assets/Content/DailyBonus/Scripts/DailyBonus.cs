@@ -47,8 +47,8 @@ namespace Content.DailyBonus.Scripts
         {
             if (!_serverConnectionService.IsConnectedToServer) return;
             
-            _view = await _viewFactory.CreateView<IDailyBonusView>(DailyBonusInfo.Popup, ViewType.Popup);
-            _dto = await _dtoReader.Read<DailyBonusDto>(DailyBonusInfo.Config);
+            _view = await _viewFactory.CreateView<IDailyBonusView>(DailyBonusConstants.Popup, ViewType.Popup);
+            _dto = await _dtoReader.Read<DailyBonusDto>(DailyBonusConstants.Config);
         }
 
         protected override UniTask Init()

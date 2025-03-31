@@ -31,7 +31,7 @@ namespace Content.DailyBonus.Scripts.Presenter
             var dayConfigs = await CreateDayConfigs();
             
             var dayFactory = new DailyBonusDayFactory(_assetLoader);
-            var dayControllers = new List<IDailyBonusDayController>();
+            var dayControllers = new List<IDailyBonusDayController>(dayConfigs.Count);
             
             foreach (var dayConfig in dayConfigs)
             {
@@ -44,7 +44,7 @@ namespace Content.DailyBonus.Scripts.Presenter
         
         private async UniTask<List<IDailyBonusDayConfig>> CreateDayConfigs()
         {
-            var dayConfigs = new List<IDailyBonusDayConfig>();
+            var dayConfigs = new List<IDailyBonusDayConfig>(_model.DayConfigs.Count);
             var currentStreakDay = _model.StreakDay;
             var config = _model.DayConfigs;
             
@@ -87,23 +87,23 @@ namespace Content.DailyBonus.Scripts.Presenter
         {
             if (currentStreakDay > streakDay)
             {
-                return DailyBonusInfo.PreviousDay;
+                return DailyBonusConstants.PreviousDay;
             }
             else if (currentStreakDay < streakDay && isLastDay)
             {
-                return DailyBonusInfo.LastDay;
+                return DailyBonusConstants.LastDay;
             }
             else if (currentStreakDay < streakDay)
             {
-                return DailyBonusInfo.NextDay;
+                return DailyBonusConstants.NextDay;
             }
             else if (isLastDay)
             {
-                return DailyBonusInfo.TodayLastDay;
+                return DailyBonusConstants.TodayLastDay;
             }
             else
             {
-                return DailyBonusInfo.Today;
+                return DailyBonusConstants.Today;
             }
         }
     }

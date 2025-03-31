@@ -67,17 +67,17 @@ namespace Infrastructure.Service.Initialization
             var phases = new List<ControlEntityPhase>
             {
                 new ControlEntityPhase()
-                    .SetName(ControlEntityEnvironment.LoadPhaseName)
+                    .SetName(ControlEntityConstants.LoadPhaseName)
                     .SetFunction(entity => entity.LoadPhase())
                     .SetCompletionAction(_signalBus.Trigger<OnLoadPhaseCompletedSignal>),
                 
                 new ControlEntityPhase()
-                    .SetName(ControlEntityEnvironment.InitPhaseName)
+                    .SetName(ControlEntityConstants.InitPhaseName)
                     .SetFunction(entity => entity.InitPhase())
                     .SetCompletionAction(_signalBus.Trigger<OnInitPhaseCompletedSignal>),
                 
                 new ControlEntityPhase()
-                    .SetName(ControlEntityEnvironment.PostInitPhaseName)
+                    .SetName(ControlEntityConstants.PostInitPhaseName)
                     .SetFunction(entity => entity.PostInitPhase())
                     .SetCompletionAction(_signalBus.Trigger<OnPostInitPhaseCompletedSignal>)
             };

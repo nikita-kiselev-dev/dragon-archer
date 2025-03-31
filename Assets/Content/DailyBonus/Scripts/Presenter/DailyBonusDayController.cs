@@ -23,9 +23,9 @@ namespace Content.DailyBonus.Scripts.Presenter
         
         private async UniTaskVoid ConfigureView()
         {
-            var dayText = _config.DayType == DailyBonusInfo.TodayLastDay
+            var dayText = _config.DayType == DailyBonusConstants.TodayLastDay
                 ? await "congratulations".LocalizeAsync() + "!"
-                : _config.DayType != DailyBonusInfo.Today
+                : _config.DayType != DailyBonusConstants.Today
                     ? await "time/day".LocalizeAsync() + $" {_config.DayNumber}"
                     : await "time/today".LocalizeAsync();
 

@@ -22,7 +22,6 @@ namespace Content.DailyBonus.Scripts.View
             
             m_CloseButton.onClick.RemoveAllListeners();
             m_CloseButton.onClick.AddListener(OnCloseButtonClicked);
-            
         }
         
         public void SetActive(bool isActive)

@@ -1,6 +1,6 @@
 ﻿namespace Infrastructure.Service.Initialization
 {
-    public class ControlEntityEnvironment
+    public class ControlEntityConstants
     {
         public const string LoadPhaseName = "load";
         public const string InitPhaseName = "init";

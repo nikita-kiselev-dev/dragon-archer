@@ -84,7 +84,7 @@ namespace Content.DailyBonus.Scripts.Presenter
                 .AddCloseSignal(Close);
             
             _viewInteractor = new ViewRegistrar(_viewManager)
-                .SetViewKey(ViewInfo.DailyBonus)
+                .SetViewKey(DailyBonusConstants.Popup)
                 .SetViewType(ViewType.Popup)
                 .SetView(_view)
                 .SetViewSignalManager(viewSignalManager)
@@ -95,7 +95,7 @@ namespace Content.DailyBonus.Scripts.Presenter
         private async UniTask CreateDays()
         {
             var dayConfigurator = new DailyBonusDayConfigurator(_model, _view.RewardRowsManager, _assetLoader);
-            var dayControllers = await dayConfigurator.GetConfiguredDayControllers();
+            var dayControllers = await dayConfigurator. GetConfiguredDayControllers();
 
             foreach (var dayController in dayControllers)
             {
