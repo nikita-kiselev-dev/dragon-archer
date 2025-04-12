@@ -28,11 +28,6 @@ namespace Content.DailyBonus.Scripts.View
         {
             gameObject.SetActive(isActive);
         }
-
-        public void Destroy()
-        {
-            Destroy(gameObject);
-        }
         
         private void OnCloseButtonClicked()
         {

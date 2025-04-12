@@ -21,15 +21,15 @@ namespace Infrastructure.Service.Initialization
         [Inject] private readonly ISignalBus _signalBus;
         [Inject] private readonly IReadOnlyList<ControlEntity> _controlEntities;
 
-        private readonly ILogManager _logger = new LogManager(nameof(SceneStarter));
-
+        private ILogManager _logger;
         private IReadOnlyList<ControlEntity> _orderedControlEntities;
 
         public async UniTask StartAsync(CancellationToken cancellation = new())
         {
+            _logger = new LogManager(nameof(SceneStarter));
             var sceneName = SceneManager.GetActiveScene().name;
             var scopeName = GetScopeName(sceneName);
-
+  
             _orderedControlEntities = _controlEntities
                 .Select(entity => new
                 {

@@ -14,6 +14,7 @@ using Infrastructure.Service.Initialization.InitOrder;
 using Infrastructure.Service.Initialization.Scopes;
 using Infrastructure.Service.LiveOps;
 using Infrastructure.Service.Logger;
+using Infrastructure.Service.SignalBus;
 using Infrastructure.Service.View.ViewFactory;
 using Infrastructure.Service.View.ViewManager;
 using VContainer;
@@ -23,6 +24,7 @@ namespace Content.DailyBonus.Scripts
     [ControlEntityOrder(nameof(MetaScope), (int)MetaSceneInitOrder.DailyBonus)]
     public class DailyBonus : ControlEntity, IDailyBonus
     {
+        [Inject] private readonly ISignalBus _signalBus;
         [Inject] private readonly IDtoReader _dtoReader;
         [Inject] private readonly IViewFactory _viewFactory;
         [Inject] private readonly IViewManager _viewManager;
@@ -42,30 +44,30 @@ namespace Content.DailyBonus.Scripts
         private IDailyBonusPresenter _presenter;
 
         public bool IsInited => _presenter.IsInited;
+        public bool IsActive => _presenter.IsActive;
 
         protected override async UniTask Load()
         {
             if (!_serverConnectionService.IsConnectedToServer) return;
             
-            _view = await _viewFactory.CreateView<IDailyBonusView>(DailyBonusConstants.Popup, ViewType.Popup);
+            _view = await _viewFactory.CreateView<IDailyBonusView>(DailyBonusConstants.Popup, ViewType.Popup );
             _dto = await _dtoReader.Read<DailyBonusDto>(DailyBonusConstants.Config);
         }
 
-        protected override UniTask Init()
+        protected override async UniTask Init()
         {
-            if (!IsLoadSucceed()) return UniTask.CompletedTask;
+            if (!IsLoadSucceed()) return;
             
             CreateModel();
             CreatePresenter();
-            _presenter.Init();
-            _logger.Log("Init completed.");
-            
-            return UniTask.CompletedTask;
+            await _presenter.Init();
+            if (!_presenter.IsActive) Unload();
+            _logger.Log($"Init completed. Status: {_presenter.IsActive} ");
         }
 
         private bool IsLoadSucceed()
         {
-            if (_view is not null && _dto is not null)
+            if (_view != null && _dto != null)
             {
                 return true;
             }
@@ -90,7 +92,14 @@ namespace Content.DailyBonus.Scripts
                     _viewManager,
                     _assetLoader,
                     _serverTimeService,
-                    _inventoryManager);
+                    _inventoryManager,
+                    Unload);
+        }
+
+        private void Unload()
+        {
+            _view.MonoBehaviour.gameObject.SetActive(false);
+            _assetLoader.Release(DailyBonusConstants.Popup);
         }
     }
 }

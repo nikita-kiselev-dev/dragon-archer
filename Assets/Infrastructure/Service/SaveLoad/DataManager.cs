@@ -71,7 +71,7 @@ namespace Infrastructure.Service.SaveLoad
                     propertyInfo.SetValue(injectedData, value);
                     fullLoadedDataStringBuilder
                         .Append($"{loadedData.Name()} - {propertyInfo.Name}: " +
-                                $"<color={LoggerEnvironment.DefaultLogColor}>{value}</color>\n");
+                                $"<color={LoggerConstants.DefaultLogColor}>{value}</color>\n");
                 }
 
                 if (propertyInfos.Any())

@@ -1,10 +1,10 @@
 using Cysharp.Threading.Tasks;
+using Infrastructure.Service.Controller;
 
 namespace Content.DailyBonus.Scripts.Presenter
 {
-    public interface IDailyBonusPresenter
+    public interface IDailyBonusPresenter : IController
     {
-        public bool IsInited { get; }
-        public UniTaskVoid Init();
+        UniTask Init();
     }
 }

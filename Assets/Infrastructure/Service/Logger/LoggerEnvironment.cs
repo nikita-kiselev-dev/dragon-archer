@@ -1,6 +1,6 @@
 ﻿namespace Infrastructure.Service.Logger
 {
-    public class LoggerEnvironment
+    public class LoggerConstants
     {
         public const string DefaultLogColor = "#4CA57D";
         public const string ErrorLogColor = "#CE342A";

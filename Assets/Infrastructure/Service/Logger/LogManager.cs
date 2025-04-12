@@ -14,8 +14,8 @@ namespace Infrastructure.Service.Logger
         public void Log(string message)
         {
             var log = string.Format(
-                LoggerEnvironment.LogFormat, 
-                LoggerEnvironment.DefaultLogColor, 
+                LoggerConstants.LogFormat, 
+                LoggerConstants.DefaultLogColor, 
                 _entityName, 
                 message);
             
@@ -25,8 +25,8 @@ namespace Infrastructure.Service.Logger
         public void LogError(string message)
         {
             var log = string.Format(
-                LoggerEnvironment.LogFormat, 
-                LoggerEnvironment.ErrorLogColor, 
+                LoggerConstants.LogFormat, 
+                LoggerConstants.ErrorLogColor, 
                 _entityName, 
                 message);
             

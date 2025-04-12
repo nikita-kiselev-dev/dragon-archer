@@ -1,7 +1,8 @@
+using Infrastructure.Service.Controller;
+
 namespace Content.DailyBonus.Scripts
 {
-    public interface IDailyBonus
+    public interface IDailyBonus : IController
     {
-        public bool IsInited { get; }
     }
 }

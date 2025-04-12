@@ -1,4 +1,5 @@
-﻿using Content.DailyBonus.Scripts.Core;
+﻿using System;
+using Content.DailyBonus.Scripts.Core;
 using Content.DailyBonus.Scripts.Model;
 using Content.DailyBonus.Scripts.View;
 using Content.Items.Scripts;
@@ -19,11 +20,13 @@ namespace Content.DailyBonus.Scripts.Presenter
         private readonly IAssetLoader _assetLoader;
         private readonly IServerTimeService _serverTimeService;
         private readonly IInventoryManager _inventoryManager;
+        private readonly Action _onCloseAction;
         
         private IDailyBonusCore _core;
         private IViewInteractor _viewInteractor;
         
         public bool IsInited { get; private set; }
+        public bool IsActive { get; private set; }
 
         public DailyBonusPresenter(
             IDailyBonusAnalytics analytics,
@@ -32,7 +35,8 @@ namespace Content.DailyBonus.Scripts.Presenter
             IViewManager viewManager,
             IAssetLoader assetLoader,
             IServerTimeService serverTimeService,
-            IInventoryManager inventoryManager)
+            IInventoryManager inventoryManager,
+            Action onCloseAction)
         {
             _analytics = analytics;
             _view = view;
@@ -41,9 +45,10 @@ namespace Content.DailyBonus.Scripts.Presenter
             _assetLoader = assetLoader;
             _serverTimeService = serverTimeService;
             _inventoryManager = inventoryManager;
+            _onCloseAction = onCloseAction;
         }
 
-        public async UniTaskVoid Init()
+        public async UniTask Init()
         {
             _core = new DailyBonusCore(
                 _model,
@@ -56,12 +61,14 @@ namespace Content.DailyBonus.Scripts.Presenter
             if (!needToShowPopup)
             {
                 IsInited = true;
+                IsActive = false;
                 return;
             }
             
             RegisterAndInitView();
             await CreateDays();
             IsInited = true;
+            IsActive = true;
             Open();
             _core.GiveReward();
         }
@@ -105,7 +112,8 @@ namespace Content.DailyBonus.Scripts.Presenter
 
         private void AfterCloseAction()
         {
-            _view.Destroy();
+            IsActive = false;
+            _onCloseAction?.Invoke();
         }
     }
 }
