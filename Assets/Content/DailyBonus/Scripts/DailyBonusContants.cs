@@ -16,6 +16,7 @@
         // Analytics
         public const string PopupOpenEventName = "daily_bonus_popup_open";
         public const string PopupOpenEventParameterCurrentDay = "current_day";
+        
         public const string StreakLoseEventName = "daily_bonus_streak_lose";
         public const string StreakLoseEventParameterStreakLoseDay = "streak_lose_day";
     }

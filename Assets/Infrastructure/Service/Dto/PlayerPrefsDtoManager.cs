@@ -104,6 +104,7 @@ namespace Infrastructure.Service.Dto
         {
             var config = await _assetLoader.LoadAsync<TextAsset>(configName);
             _logger.Log($"Dummy config file:\n{config}.");
+            _assetLoader.Release(configName);
             return config.ToString();
         }
 

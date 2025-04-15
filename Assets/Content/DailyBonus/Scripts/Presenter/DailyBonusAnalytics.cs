@@ -16,11 +16,14 @@ namespace Content.DailyBonus.Scripts.Presenter
         {
             var eventParameters = new Dictionary<string, object>
             {
-                { "current_day", currentDay },
+                {
+                    DailyBonusConstants.PopupOpenEventParameterCurrentDay, 
+                    currentDay
+                },
             };
 
             var analyticsEvent = new AnalyticsEvent(
-                "daily_bonus_popup_open", 
+                DailyBonusConstants.PopupOpenEventName, 
                 eventParameters);
             
             _analyticsManager.LogEvent(analyticsEvent);
@@ -30,11 +33,12 @@ namespace Content.DailyBonus.Scripts.Presenter
         {
             var eventParameters = new Dictionary<string, object>
             {
-                { "streak_lose_day", streakDay },
+                { DailyBonusConstants.StreakLoseEventParameterStreakLoseDay, 
+                    streakDay },
             };
 
             var analyticsEvent = new AnalyticsEvent(
-                "daily_bonus_streak_lose", 
+                DailyBonusConstants.StreakLoseEventName, 
                 eventParameters);
             
             _analyticsManager.LogEvent(analyticsEvent);

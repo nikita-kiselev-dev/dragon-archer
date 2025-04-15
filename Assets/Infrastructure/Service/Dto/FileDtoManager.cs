@@ -7,6 +7,7 @@ using Infrastructure.Service.Asset;
 using Infrastructure.Service.File;
 using Infrastructure.Service.LiveOps;
 using Infrastructure.Service.LiveOps.Signals;
+using Infrastructure.Service.Logger;
 using Infrastructure.Service.SignalBus;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -20,6 +21,8 @@ namespace Infrastructure.Service.Dto
         [Inject] private readonly ISignalBus _signalBus;
         [Inject] private readonly IDtoService _dtoService;
         [Inject] private readonly IFileService _fileService;
+        
+        private readonly ILogManager _logger = new LogManager(nameof(FileDtoManager));
         
         private Dictionary<string, string> _serverDto;
         private Dictionary<string, string> _dataDto;
@@ -110,6 +113,8 @@ namespace Infrastructure.Service.Dto
         private async UniTask<string> GetDummyDto(string configName)
         {
             var config = await _assetLoader.LoadAsync<TextAsset>(configName);
+            _logger.Log($"Dummy config file:\n{config}.");
+            _assetLoader.Release(configName);
             return config.ToString();
         }
 

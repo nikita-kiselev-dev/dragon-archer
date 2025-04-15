@@ -100,6 +100,11 @@ namespace Content.DailyBonus.Scripts
         {
             _view.MonoBehaviour.gameObject.SetActive(false);
             _assetLoader.Release(DailyBonusConstants.Popup);
+            _assetLoader.Release(DailyBonusConstants.PreviousDay);
+            _assetLoader.Release(DailyBonusConstants.Today);
+            _assetLoader.Release(DailyBonusConstants.NextDay);
+            _assetLoader.Release(DailyBonusConstants.LastDay);
+            _assetLoader.Release(DailyBonusConstants.TodayLastDay);
         }
     }
 }

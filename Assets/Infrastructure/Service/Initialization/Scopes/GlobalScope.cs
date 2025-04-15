@@ -42,7 +42,7 @@ namespace Infrastructure.Service.Initialization.Scopes
         {
             if (!m_ServiceConfig)
             {
-                _logger.LogError($"No ServiceConfig in {nameof(BootstrapScope)}.");
+                _logger.LogError($"No ServiceConfig in {nameof(GlobalScope)}.");
                 throw new NullReferenceException();
             }
             

@@ -102,7 +102,7 @@ namespace Content.DailyBonus.Scripts.Presenter
         private async UniTask CreateDays()
         {
             var dayConfigurator = new DailyBonusDayConfigurator(_model, _view.RewardRowsManager, _assetLoader);
-            var dayControllers = await dayConfigurator. GetConfiguredDayControllers();
+            var dayControllers = await dayConfigurator.GetConfiguredDayControllers();
 
             foreach (var dayController in dayControllers)
             {
