@@ -381,6 +381,18 @@ PrefabInstance:
       propertyPath: m_fontSize
       value: 60
       objectReference: {fileID: 0}
+    - target: {fileID: 3900624027831877327, guid: b207a871f47819c4782498753cc74adf, type: 3}
+      propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
+      value: 1801810542
+      objectReference: {fileID: 0}
+    - target: {fileID: 3900624029072399785, guid: b207a871f47819c4782498753cc74adf, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7960756054026631260, guid: b207a871f47819c4782498753cc74adf, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
