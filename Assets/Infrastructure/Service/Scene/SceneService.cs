@@ -26,6 +26,7 @@ namespace Infrastructure.Service.Scene
 
         void IDisposable.Dispose()
         {
+            SceneManager.activeSceneChanged -= OnSceneChanged; 
             _signalBus.Unsubscribe<StartSceneChangeSignal>(this);
         }
 
