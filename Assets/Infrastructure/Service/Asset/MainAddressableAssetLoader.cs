@@ -60,7 +60,7 @@ namespace Infrastructure.Service.Asset
             Addressables.Release(asset);
         }
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             _signalBus.Unsubscribe<StartSceneChangeSignal>(this);
         }
