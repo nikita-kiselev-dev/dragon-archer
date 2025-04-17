@@ -7,7 +7,6 @@ using Infrastructure.Service.SignalBus;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using VContainer;
-using Object = UnityEngine.Object;
 
 namespace Infrastructure.Service.Asset
 {
@@ -15,7 +14,7 @@ namespace Infrastructure.Service.Asset
     {
         private readonly ISignalBus _signalBus;
         private readonly Dictionary<string, object> _cachedAssets = new();
-        private readonly Dictionary<string, HashSet<GameObject>> _cachedGameObjects = new();
+        private readonly Dictionary<string, HashSet<GameObject>> _cachedInstances = new();
 
         [Inject]
         private MainAddressableAssetLoader(ISignalBus signalBus)
@@ -23,107 +22,73 @@ namespace Infrastructure.Service.Asset
             _signalBus = signalBus;
             _signalBus.Subscribe<StartSceneChangeSignal>(this, ReleaseAllAssets);
         }
-        
+
         public async UniTask<T> LoadAsync<T>(string key)
         {
-            if (_cachedAssets.TryGetValue(key, out var cachedObject))
-            {
-                return (T)cachedObject;
-            }
-            
-            var asyncOperationHandle = Addressables.LoadAssetAsync<T>(key);
-            var task = asyncOperationHandle.ToUniTask();
-            var loadedObject = await task;
-            _cachedAssets.TryAdd(key, loadedObject);
-            
-            return loadedObject;
+            if (_cachedAssets.TryGetValue(key, out var cached)) return (T)cached;
+            var handle = Addressables.LoadAssetAsync<T>(key);
+            var result = await handle.ToUniTask();
+            _cachedAssets[key] = result;
+            return result;
         }
 
         public async UniTask<T> InstantiateAsync<T>(string key, Transform parent = null)
         {
             await LoadAsync<GameObject>(key);
-            
-            var asyncOperationHandle = parent ? 
-                Addressables.InstantiateAsync(key, parent) : 
-                Addressables.InstantiateAsync(key);
-
-            var task = asyncOperationHandle.ToUniTask();
-            var loadedGameObject = await task;
-            ConfigureCachedGameObject(key, loadedGameObject);
-                
-            return loadedGameObject.GetComponent<T>();
+            var handle = Addressables.InstantiateAsync(key, parent);
+            var instance = await handle.ToUniTask();
+            CacheInstance(key, instance);
+            return instance.GetComponent<T>();
         }
-        
+
         public void Release(string key, bool removeFromCache = true)
         {
-            if (!_cachedAssets.TryGetValue(key, out var cachedAsset))
+            if (!_cachedAssets.TryGetValue(key, out var asset)) return;
+            var assetIsGameObject = asset is GameObject;
+            var instances = new HashSet<GameObject>();
+
+            if (assetIsGameObject && _cachedInstances.TryGetValue(key, out instances))
             {
-                return;
+                var instance = (GameObject)asset;
+                Addressables.ReleaseInstance(instance);
+                instances.Remove(instance);
             }
 
-            var cachedGameObjects = new HashSet<GameObject>();
-            
-            if (cachedAsset is GameObject cachedGameObject &&
-                _cachedGameObjects.TryGetValue(key, out cachedGameObjects))
-            {
-                cachedGameObjects.Remove(cachedGameObject);
-                Addressables.ReleaseInstance(cachedGameObject);
-            }
-
-            if (cachedGameObjects != null && cachedGameObjects.Any())
-            {
-                return;
-            }
-            
-            if (!removeFromCache)
-            {
-                return;
-            }
-            
+            if (instances != null && instances.Any()) return;
+            if (!removeFromCache) return;
             _cachedAssets.Remove(key);
-
-            if (cachedAsset is not GameObject)
-            {
-                Addressables.Release(cachedAsset);
-            }
+            Addressables.Release(asset);
         }
 
-        void IDisposable.Dispose()
+        public void Dispose()
         {
             _signalBus.Unsubscribe<StartSceneChangeSignal>(this);
         }
 
-        private void ConfigureCachedGameObject(string key, GameObject gameObject)
+        private void CacheInstance(string key, GameObject instance)
         {
-            if (!_cachedGameObjects.ContainsKey(key))
+            if (!_cachedInstances.TryGetValue(key, out var list))
             {
-                _cachedGameObjects.Add(key, new HashSet<GameObject>());
+                list = new HashSet<GameObject>();
+                _cachedInstances[key] = list;
             }
-            
-            _cachedGameObjects[key].Add(gameObject);
+
+            list.Add(instance);
         }
 
         private void ReleaseAllAssets()
         {
-            foreach (var cachedGameObjectType in _cachedGameObjects)
+            foreach (var instanceSet in _cachedInstances.Values.SelectMany(set => set))
             {
-                foreach (var gameObject in cachedGameObjectType.Value)
-                {
-                    gameObject.SetActive(false);
-                    Addressables.ReleaseInstance(gameObject);
-                }
+                instanceSet.SetActive(false);
+                Addressables.ReleaseInstance(instanceSet);
             }
-            
-            _cachedGameObjects.Clear();
-            
-            foreach (var cachedAsset in _cachedAssets)
-            {
-                Release(cachedAsset.Key, false);
 
-                if (cachedAsset.Value is not GameObject)
-                {
-                    Addressables.Release(cachedAsset.Value);
-                }
+            _cachedInstances.Clear();
+
+            foreach (var cachedAsset in _cachedAssets.Values)
+            {
+                Addressables.Release(cachedAsset);
             }
 
             _cachedAssets.Clear();
