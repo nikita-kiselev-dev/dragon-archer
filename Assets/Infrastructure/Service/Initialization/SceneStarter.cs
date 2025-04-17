@@ -105,10 +105,10 @@ namespace Infrastructure.Service.Initialization
         {
             return sceneName switch
             {
-                SceneInfo.BootstrapScene => nameof(BootstrapScope),
-                SceneInfo.StartScene => nameof(StartScope),
-                SceneInfo.CoreScene => nameof(CoreScope),
-                SceneInfo.MetaScene => nameof(MetaScope),
+                SceneConstants.BootstrapScene => nameof(BootstrapScope),
+                SceneConstants.StartScene => nameof(StartScope),
+                SceneConstants.CoreScene => nameof(CoreScope),
+                SceneConstants.MetaScene => nameof(MetaScope),
                 _ => string.Empty
             };
         }

@@ -32,14 +32,19 @@ namespace Infrastructure.Service.Scene
         private void Init()
         {
             SceneManager.activeSceneChanged += OnSceneChanged; 
-            _signalBus.Subscribe<StartSceneChangeSignal>(this, () => _sceneLoader.LoadAsync());
+            _signalBus.Subscribe<StartSceneChangeSignal>(this, LoadScene);
+        }
+
+        private void LoadScene()
+        {
+            _sceneLoader.LoadAsync().Forget();
         }
 
         private void OnSceneChanged(
             UnityEngine.SceneManagement.Scene previousScene, 
             UnityEngine.SceneManagement.Scene currentScene)
         {
-            if (currentScene.name != SceneInfo.BootstrapScene && currentScene.name != SceneInfo.StartScene)
+            if (currentScene.name != SceneConstants.BootstrapScene && currentScene.name != SceneConstants.StartScene)
             {
                 _signalBus.Trigger<SceneChangedSignal>();
             }

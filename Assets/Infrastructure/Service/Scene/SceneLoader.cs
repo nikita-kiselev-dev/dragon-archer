@@ -30,7 +30,7 @@ namespace Infrastructure.Service.Scene
                 return;
             }
 
-            var isStartScene = _sceneNameToOpen == SceneInfo.StartScene;
+            var isStartScene = _sceneNameToOpen == SceneConstants.StartScene;
 
             if (!isStartScene)
             {
@@ -44,8 +44,8 @@ namespace Infrastructure.Service.Scene
 
         public async UniTaskVoid LoadAsync()
         {
-            var isStartScene = _sceneNameToOpen == SceneInfo.StartScene;
-            var secondsToWait = isStartScene ? 0 : 1.0f;
+            var isStartScene = _sceneNameToOpen == SceneConstants.StartScene;
+            var secondsToWait = isStartScene ? 0 : SceneConstants.SceneLoadDelay;
             await UniTask.WaitForSeconds(secondsToWait);
             var loadSceneAsync = SceneManager.LoadSceneAsync(_sceneNameToOpen).ToUniTask();
             await loadSceneAsync;

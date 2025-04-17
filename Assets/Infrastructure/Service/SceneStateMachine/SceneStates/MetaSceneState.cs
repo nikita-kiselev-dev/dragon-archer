@@ -17,7 +17,7 @@ namespace Infrastructure.Service.SceneStateMachine.SceneStates
 
         public void Enter()
         {
-            _sceneService.LoadScene(SceneInfo.MetaScene, OnLoaded);
+            _sceneService.LoadScene(SceneConstants.MetaScene, OnLoaded);
             _logger.Log("Load scene started.");
         }
 

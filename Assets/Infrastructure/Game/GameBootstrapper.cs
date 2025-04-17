@@ -25,7 +25,7 @@ namespace Infrastructure.Game
 
         private void EnterGame()
         {
-            if (SceneManager.GetActiveScene().name == SceneInfo.BootstrapScene)
+            if (SceneManager.GetActiveScene().name == SceneConstants.BootstrapScene)
             {
                 _sceneStateMachine.EnterState<StartSceneState>();
             }

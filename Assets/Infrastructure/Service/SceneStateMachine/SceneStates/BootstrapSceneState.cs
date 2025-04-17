@@ -16,7 +16,7 @@ namespace Infrastructure.Service.SceneStateMachine.SceneStates
 
         public void Enter()
         {
-            _sceneService.LoadScene(SceneInfo.BootstrapScene, OnLoaded);
+            _sceneService.LoadScene(SceneConstants.BootstrapScene, OnLoaded);
         }
 
         public void Exit()
