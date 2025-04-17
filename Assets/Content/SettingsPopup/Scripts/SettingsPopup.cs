@@ -10,6 +10,7 @@ using Infrastructure.Service.Initialization.Scopes;
 using Infrastructure.Service.Logger;
 using Infrastructure.Service.View.ViewFactory;
 using Infrastructure.Service.View.ViewManager;
+using UnityEngine;
 using VContainer;
 
 namespace Content.SettingsPopup.Scripts
@@ -32,22 +33,27 @@ namespace Content.SettingsPopup.Scripts
 
         protected override async UniTask Load()
         {
-            _view = await _viewFactory.CreateView<ISettingsPopupView>(ViewInfo.SettingsPopup, ViewType.Popup);
+            await _assetLoader.LoadAsync<GameObject>(ViewInfo.SettingsPopup);
         }
         
-        protected override UniTask Init()
+        protected override async UniTask Init()
         {
+            await CreateView();
+            
             if (!IsLoadSucceed())
             {
                 _logger.LogError($"{ViewInfo.SettingsPopup} load failed.");
-                return UniTask.CompletedTask;
+                return;
             }
             
             CreateModel();
             CreatePresenter();
             _presenter.Init();
+        }
 
-            return UniTask.CompletedTask;
+        private async UniTask CreateView()
+        {
+            _view = await _viewFactory.CreateView<ISettingsPopupView>(ViewInfo.SettingsPopup, ViewType.Popup);
         }
         
         private bool IsLoadSucceed()

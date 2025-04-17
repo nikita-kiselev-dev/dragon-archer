@@ -1,5 +1,4 @@
 ﻿using System;
-using Content.LoadingCurtain.Scripts;
 using Cysharp.Threading.Tasks;
 using Infrastructure.Service.Scene.Signals;
 using Infrastructure.Service.SignalBus;
@@ -10,33 +9,47 @@ namespace Infrastructure.Service.Scene
     public class SceneLoader : ISceneLoader
     {
         private readonly ISignalBus _signalBus;
+
+        private string _sceneNameToOpen;
+        private Action _onSceneLoadedCallback;
         
         public SceneLoader(ISignalBus signalBus)
         {
             _signalBus = signalBus;
         }
         
-        public async UniTaskVoid LoadAsync(string sceneName, Action onLoaded = null)
+        public void PrepareSceneLoad(string sceneName, Action onSceneLoadedCallback = null)
         {
+            _sceneNameToOpen = sceneName;
+            _onSceneLoadedCallback = onSceneLoadedCallback;
             var activeSceneName = SceneManager.GetActiveScene().name;
             
-            if (activeSceneName == sceneName)
+            if (activeSceneName == _sceneNameToOpen)
             {
-                onLoaded?.Invoke();
+                onSceneLoadedCallback?.Invoke();
                 return;
             }
 
-            var isStartScene = sceneName == SceneInfo.StartScene;
+            var isStartScene = _sceneNameToOpen == SceneInfo.StartScene;
 
             if (!isStartScene)
             {
                 _signalBus.Trigger<OnChangeSceneRequestSignal>();
-                await UniTask.WaitForSeconds(LoadingCurtainInfo.ShowAnimationDuration);
             }
-            
-            var loadSceneAsync = SceneManager.LoadSceneAsync(sceneName).ToUniTask();
+            else
+            {
+                LoadAsync().Forget();
+            }
+        }
+
+        public async UniTaskVoid LoadAsync()
+        {
+            var isStartScene = _sceneNameToOpen == SceneInfo.StartScene;
+            var secondsToWait = isStartScene ? 0 : 1.0f;
+            await UniTask.WaitForSeconds(secondsToWait);
+            var loadSceneAsync = SceneManager.LoadSceneAsync(_sceneNameToOpen).ToUniTask();
             await loadSceneAsync;
-            onLoaded?.Invoke();
+            _onSceneLoadedCallback?.Invoke();
         }
     }
 }

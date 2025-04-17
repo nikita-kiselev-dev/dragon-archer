@@ -60,8 +60,8 @@ namespace Content.DailyBonus.Scripts.Core
         public void GiveReward()
         {
             var currentDayConfig = _model.GetDayConfig();
-            _inventoryManager.AddItem(currentDayConfig.ItemName, currentDayConfig.ItemCount);
-            _model.SetTodayRewardStatus(true);
+            var rewardResult = _inventoryManager.AddItem(currentDayConfig.ItemName, currentDayConfig.ItemCount);
+            _model.SetTodayRewardStatus(rewardResult);
         }
         
         private bool StreakIsLoosed(DateTime serverTime)

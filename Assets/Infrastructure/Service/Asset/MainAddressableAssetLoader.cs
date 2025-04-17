@@ -1,27 +1,32 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Infrastructure.Service.Scene.Signals;
 using Infrastructure.Service.SignalBus;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using VContainer;
 using Object = UnityEngine.Object;
 
 namespace Infrastructure.Service.Asset
 {
-    public class MainAddressableAssetLoader : IAssetLoader
+    public class MainAddressableAssetLoader : IAssetLoader, IDisposable
     {
-        private readonly Dictionary<string, object> _loadedAssets = new();
-        private readonly Dictionary<string, GameObject> _loadedGameObjects = new();
+        private readonly ISignalBus _signalBus;
+        private readonly Dictionary<string, object> _cachedAssets = new();
+        private readonly Dictionary<string, HashSet<GameObject>> _cachedGameObjects = new();
 
+        [Inject]
         private MainAddressableAssetLoader(ISignalBus signalBus)
         {
-            signalBus.Subscribe<SceneChangedSignal>(this, Dispose);
+            _signalBus = signalBus;
+            _signalBus.Subscribe<StartSceneChangeSignal>(this, ReleaseAllAssets);
         }
         
         public async UniTask<T> LoadAsync<T>(string key)
         {
-            if (_loadedAssets.TryGetValue(key, out var cachedObject))
+            if (_cachedAssets.TryGetValue(key, out var cachedObject))
             {
                 return (T)cachedObject;
             }
@@ -29,18 +34,14 @@ namespace Infrastructure.Service.Asset
             var asyncOperationHandle = Addressables.LoadAssetAsync<T>(key);
             var task = asyncOperationHandle.ToUniTask();
             var loadedObject = await task;
-            
-            _loadedAssets.TryAdd(key, loadedObject);
+            _cachedAssets.TryAdd(key, loadedObject);
             
             return loadedObject;
         }
 
         public async UniTask<T> InstantiateAsync<T>(string key, Transform parent = null)
         {
-            if (_loadedGameObjects.TryGetValue(key, out var cachedGameObject))
-            {
-                return cachedGameObject.GetComponent<T>();
-            }
+            await LoadAsync<GameObject>(key);
             
             var asyncOperationHandle = parent ? 
                 Addressables.InstantiateAsync(key, parent) : 
@@ -48,46 +49,84 @@ namespace Infrastructure.Service.Asset
 
             var task = asyncOperationHandle.ToUniTask();
             var loadedGameObject = await task;
-            var loadedObject = loadedGameObject.GetComponent<T>();
-            
-            _loadedGameObjects.TryAdd(key, loadedGameObject);
-            
-            return loadedObject;
+            ConfigureCachedGameObject(key, loadedGameObject);
+                
+            return loadedGameObject.GetComponent<T>();
         }
         
-        public void Release(string key)
+        public void Release(string key, bool removeFromCache = true)
         {
-            if (_loadedAssets.TryGetValue(key, out var loadedAsset))
+            if (!_cachedAssets.TryGetValue(key, out var cachedAsset))
             {
-                Addressables.Release(loadedAsset);
-                _loadedAssets.Remove(key);
+                return;
+            }
+
+            var cachedGameObjects = new HashSet<GameObject>();
+            
+            if (cachedAsset is GameObject cachedGameObject &&
+                _cachedGameObjects.TryGetValue(key, out cachedGameObjects))
+            {
+                cachedGameObjects.Remove(cachedGameObject);
+                Addressables.ReleaseInstance(cachedGameObject);
+            }
+
+            if (cachedGameObjects != null && cachedGameObjects.Any())
+            {
+                return;
             }
             
-            if (_loadedGameObjects.TryGetValue(key, out var loadedGameObject))
+            if (!removeFromCache)
             {
-                Addressables.ReleaseInstance(loadedGameObject);
-                Object.Destroy(loadedGameObject);
-                _loadedGameObjects.Remove(key);
+                return;
+            }
+            
+            _cachedAssets.Remove(key);
+
+            if (cachedAsset is not GameObject)
+            {
+                Addressables.Release(cachedAsset);
             }
         }
 
-        private void Dispose()
+        void IDisposable.Dispose()
         {
-            foreach (var loadedAsset in _loadedAssets
-                         .Where(loadedAsset => loadedAsset.Value is not null))
+            _signalBus.Unsubscribe<StartSceneChangeSignal>(this);
+        }
+
+        private void ConfigureCachedGameObject(string key, GameObject gameObject)
+        {
+            if (!_cachedGameObjects.ContainsKey(key))
             {
-                Addressables.Release(loadedAsset.Value);
+                _cachedGameObjects.Add(key, new HashSet<GameObject>());
             }
             
-            _loadedAssets.Clear();
-            
-            foreach (var loadedGameObject in _loadedGameObjects
-                         .Where(loadedGameObject => loadedGameObject.Value is not null))
+            _cachedGameObjects[key].Add(gameObject);
+        }
+
+        private void ReleaseAllAssets()
+        {
+            foreach (var cachedGameObjectType in _cachedGameObjects)
             {
-                Object.Destroy(loadedGameObject.Value);
+                foreach (var gameObject in cachedGameObjectType.Value)
+                {
+                    gameObject.SetActive(false);
+                    Addressables.ReleaseInstance(gameObject);
+                }
             }
             
-            _loadedGameObjects.Clear();
+            _cachedGameObjects.Clear();
+            
+            foreach (var cachedAsset in _cachedAssets)
+            {
+                Release(cachedAsset.Key, false);
+
+                if (cachedAsset.Value is not GameObject)
+                {
+                    Addressables.Release(cachedAsset.Value);
+                }
+            }
+
+            _cachedAssets.Clear();
         }
     }
 }

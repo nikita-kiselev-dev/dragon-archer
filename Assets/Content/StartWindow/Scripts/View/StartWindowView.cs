@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Content.StartWindow.Scripts.View
 {
-    public class StartWindowView : MonoBehaviour, IView
+    public class StartWindowView : IView
     {
         [SerializeField] private Button m_PlayButton;
         [SerializeField] private Button m_SettingsButton;
@@ -15,21 +15,14 @@ namespace Content.StartWindow.Scripts.View
         private UnityAction _onPlayButtonClicked;
         private UnityAction _onSettingsButtonClicked;
         private UnityAction _onWebSiteButtonClicked;
-
-        public MonoBehaviour MonoBehaviour => this;
         
-        public void Init(IViewSignalManager viewSignalManager)
+        public override void Init(IViewSignalManager viewSignalManager)
         {
             _onPlayButtonClicked = viewSignalManager.GetSignal(StartWindowInfo.StartGameSignal);
             _onSettingsButtonClicked = viewSignalManager.GetSignal(StartWindowInfo.OpenSettingsSignal);
             _onWebSiteButtonClicked = viewSignalManager.GetSignal(StartWindowInfo.OpenWebSiteSignal);
             
             SetupButtons();
-        }
-
-        public void SetActive(bool isActive)
-        {
-            gameObject.SetActive(isActive);
         }
 
         private void SetupButtons()

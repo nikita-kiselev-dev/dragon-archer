@@ -28,7 +28,7 @@ namespace Infrastructure.Service.View.ViewManager
             return this;
         }
 
-        public IViewBuilder SetView(IMonoBehaviour view)
+        public IViewBuilder SetView(View view)
         {
             _viewWrapper.View = view;
             return this;
@@ -96,14 +96,14 @@ namespace Infrastructure.Service.View.ViewManager
             if (_viewWrapper.ViewType == ViewType.Popup)
             {
                 _viewWrapper.ViewAnimator = new PopupAnimator(
-                    _viewWrapper.View.MonoBehaviour.transform,
+                    _viewWrapper.View.gameObject.transform,
                     _viewWrapper.AfterOpenAction,
                     _viewWrapper.AfterCloseAction);
             }
             else
             {
                 _viewWrapper.ViewAnimator = new WindowAnimator(
-                    _viewWrapper.View.MonoBehaviour.transform,
+                    _viewWrapper.View.gameObject.transform,
                     _viewWrapper.AfterOpenAction,
                     _viewWrapper.AfterCloseAction);
             }

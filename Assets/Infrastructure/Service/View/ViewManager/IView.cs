@@ -3,8 +3,8 @@
 namespace Infrastructure.Service.View.ViewManager
 
 {
-    public interface IView : IMonoBehaviour
+    public abstract class IView : View
     {
-        public void Init(IViewSignalManager viewSignalManager);
+        public abstract void Init(IViewSignalManager viewSignalManager);
     }
 }

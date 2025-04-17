@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Content.SettingsPopup.Scripts.View
 {
-    public class SettingsPopupView : MonoBehaviour, ISettingsPopupView
+    public class SettingsPopupView : ISettingsPopupView
     {
         [SerializeField] private Button m_CloseButton;
         
@@ -14,9 +14,7 @@ namespace Content.SettingsPopup.Scripts.View
  
         private UnityAction _onCloseButtonClicked;
         
-        public MonoBehaviour MonoBehaviour => this;
-        
-        public void Init(IViewSignalManager viewSignalManager)
+        public override void Init(IViewSignalManager viewSignalManager)
         {
             _onCloseButtonClicked = viewSignalManager.GetCloseSignal();
             
@@ -34,19 +32,14 @@ namespace Content.SettingsPopup.Scripts.View
             m_MusicVolumeSlider.onValueChanged.AddListener(changeMusicVolumeSignal);
         }
 
-        public void SetSoundsSliderValue(float value)
+        public override void SetSoundsSliderValue(float value)
         {
             m_SoundsVolumeSlider.value = value;
         }
 
-        public void SetMusicSliderValue(float value)
+        public override void SetMusicSliderValue(float value)
         {
             m_MusicVolumeSlider.value = value;
-        }
-        
-        public void SetActive(bool isActive)
-        {
-            gameObject.SetActive(isActive);
         }
 
         private void OnCloseButtonClicked()

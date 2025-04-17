@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Content.LoadingCurtain.Scripts.View
 {
-    public class LoadingCurtainView : MonoBehaviour, ILoadingCurtainView
+    public class LoadingCurtainView : ILoadingCurtainView
     {
         [SerializeField] private CanvasGroup m_CanvasGroup;
         [SerializeField] private TextMeshProUGUI m_LoadingText;
@@ -15,16 +15,10 @@ namespace Content.LoadingCurtain.Scripts.View
         private string _loadingLocalizedString;
         private CancellationTokenSource _cancellationTokenSource;
         
-        public MonoBehaviour MonoBehaviour => this;
         public CanvasGroup CanvasGroup => m_CanvasGroup;
         public GradientColor GradientColor => m_GradientColor;
         
-        public void SetActive(bool isActive)
-        {
-            gameObject.SetActive(isActive);
-        }
-
-        public void SetLoadingText(string text)
+        public override void SetLoadingText(string text)
         {
             _loadingLocalizedString = text;
         }

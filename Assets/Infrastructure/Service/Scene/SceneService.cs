@@ -6,7 +6,7 @@ using VContainer;
 
 namespace Infrastructure.Service.Scene
 {
-    public class SceneService : ISceneService
+    public class SceneService : ISceneService, IDisposable
     {
         private readonly ISignalBus _signalBus;
         private readonly ISceneLoader _sceneLoader;
@@ -16,12 +16,23 @@ namespace Infrastructure.Service.Scene
         {
             _signalBus = signalBus;
             _sceneLoader = new SceneLoader(_signalBus);
-            SceneManager.activeSceneChanged += OnSceneChanged; 
+            Init();
         }
         
         public void LoadScene(string sceneName, Action onLoaded = null)
         {
-            _sceneLoader.LoadAsync(sceneName, onLoaded).Forget();
+            _sceneLoader.PrepareSceneLoad(sceneName, onLoaded);
+        }
+
+        void IDisposable.Dispose()
+        {
+            _signalBus.Unsubscribe<StartSceneChangeSignal>(this);
+        }
+
+        private void Init()
+        {
+            SceneManager.activeSceneChanged += OnSceneChanged; 
+            _signalBus.Subscribe<StartSceneChangeSignal>(this, () => _sceneLoader.LoadAsync());
         }
 
         private void OnSceneChanged(

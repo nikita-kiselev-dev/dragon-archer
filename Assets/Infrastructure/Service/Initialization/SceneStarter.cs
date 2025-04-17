@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -49,7 +48,7 @@ namespace Infrastructure.Service.Initialization
                 foreach (var phase in phases)
                 {
                     _logger.Log($"{sceneName} - {phase.Name} phase execution.");
-                    await ExecutePhase(phase.Function);
+                    await ExecutePhase(phase);
                     phase.CompletionAction?.Invoke();
                     _logger.Log($"{sceneName} - {phase.Name} phase completed.");
                 }
@@ -69,7 +68,8 @@ namespace Infrastructure.Service.Initialization
                 new ControlEntityPhase()
                     .SetName(ControlEntityConstants.LoadPhaseName)
                     .SetFunction(entity => entity.LoadPhase())
-                    .SetCompletionAction(_signalBus.Trigger<OnLoadPhaseCompletedSignal>),
+                    .SetCompletionAction(_signalBus.Trigger<OnLoadPhaseCompletedSignal>)
+                    .SetParallelMode(true),
                 
                 new ControlEntityPhase()
                     .SetName(ControlEntityConstants.InitPhaseName)
@@ -85,11 +85,19 @@ namespace Infrastructure.Service.Initialization
             return phases;
         }
 
-        private async UniTask ExecutePhase(Func<ControlEntity, UniTask> phaseFunc)
+        private async UniTask ExecutePhase(ControlEntityPhase phase)
         {
-            foreach (var controlEntity in _orderedControlEntities)
+            if (phase.RunInParallel)
             {
-                await phaseFunc(controlEntity);
+                var tasks = _orderedControlEntities.Select(entity => phase.Function(entity));
+                await UniTask.WhenAll(tasks);
+            }
+            else
+            {
+                foreach (var controlEntity in _orderedControlEntities)
+                {
+                    await phase.Function(controlEntity);
+                }
             }
         }
 

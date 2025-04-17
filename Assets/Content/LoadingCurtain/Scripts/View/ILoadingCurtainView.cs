@@ -1,9 +1,7 @@
-using Infrastructure.Service.View;
-
 namespace Content.LoadingCurtain.Scripts.View
 {
-    public interface ILoadingCurtainView : IMonoBehaviour
+    public abstract class ILoadingCurtainView : Infrastructure.Service.View.ViewManager.View
     {
-        public void SetLoadingText(string text);
+        public abstract void SetLoadingText(string text);
     }
 }

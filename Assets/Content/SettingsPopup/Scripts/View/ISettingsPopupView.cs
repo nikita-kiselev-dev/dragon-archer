@@ -2,9 +2,9 @@
 
 namespace Content.SettingsPopup.Scripts.View
 {
-    public interface ISettingsPopupView : IView
+    public abstract class ISettingsPopupView : IView
     {
-        public void SetSoundsSliderValue(float value);
-        public void SetMusicSliderValue(float value);
+        public abstract void SetSoundsSliderValue(float value);
+        public abstract void SetMusicSliderValue(float value);
     }
 }

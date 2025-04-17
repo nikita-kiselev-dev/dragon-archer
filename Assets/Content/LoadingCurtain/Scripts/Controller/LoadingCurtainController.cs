@@ -35,7 +35,7 @@ namespace Content.LoadingCurtain.Scripts.Controller
                 return;
             }
 
-            _animator = new LoadingCurtainGradientColorAnimator(m_View);
+            _animator = new LoadingCurtainGradientColorAnimator(m_View, OnShowed);
             _signalBus = signalBus;
             ConfigureView().Forget();
 
@@ -58,21 +58,31 @@ namespace Content.LoadingCurtain.Scripts.Controller
             }
         }
 
+        private void OnShowed()
+        {
+            _signalBus.Trigger<StartSceneChangeSignal>();
+        }
+
         private async UniTaskVoid ConfigureView()
         {
             var loadingLocalizedString = await "loading".LocalizeAsync();
             m_View.SetLoadingText(loadingLocalizedString);
         }
 
+        private void Unsubscribe()
+        {
+            _signalBus.Unsubscribe<OnChangeSceneRequestSignal>(this);
+            _signalBus.Unsubscribe<OnSceneInitCompletedSignal>(this);
+        }
+
         private void OnDestroy()
         {
-            if (_signalBus is null)
+            if (_signalBus == null)
             {
                 return;
             }
-            
-            _signalBus.Unsubscribe<OnChangeSceneRequestSignal>(this);
-            _signalBus.Unsubscribe<OnSceneInitCompletedSignal>(this);
+
+            Unsubscribe();
         }
     }
 }

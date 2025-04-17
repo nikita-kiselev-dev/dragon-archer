@@ -18,23 +18,25 @@ namespace Content.Items.Scripts
 
         public bool AddItem(string itemName, int itemCount)
         {
-            if (string.IsNullOrEmpty(itemName) && !_itemManagers.ContainsKey(itemName!))
+            if (!_itemManagers.TryGetValue(itemName, out var manager))
             {
                 return false;
             }
             
-            var isSuccess = _itemManagers[itemName].AddItem(itemCount);
+            var isSuccess = manager.AddItem(itemCount);
+            
             return isSuccess;
         }
 
         public bool RemoveItem(string itemName, int itemCount)
         {
-            if (string.IsNullOrEmpty(itemName) && !_itemManagers.ContainsKey(itemName!))
+            if (!_itemManagers.TryGetValue(itemName, out var manager))
             {
                 return false;
             }
             
-            var isSuccess = _itemManagers[itemName].RemoveItem(itemCount);
+            var isSuccess = manager.RemoveItem(itemCount);
+            
             return isSuccess;
         }
     }

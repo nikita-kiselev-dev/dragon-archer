@@ -1,4 +1,5 @@
-﻿using Content.LoadingCurtain.Scripts.View;
+﻿using System;
+using Content.LoadingCurtain.Scripts.View;
 using DG.Tweening;
 using Infrastructure.Service.View.UIEffects;
 using Infrastructure.Service.View.ViewManager.ViewAnimation;
@@ -14,14 +15,17 @@ namespace Content.LoadingCurtain.Scripts
 
         private readonly Color _topColor;
         private readonly Color _bottomColor;
+
+        private readonly Action _onShowedCallback;
         
-        public LoadingCurtainGradientColorAnimator(LoadingCurtainView view)
+        public LoadingCurtainGradientColorAnimator(LoadingCurtainView view, Action onShowedCallback)
         {
             _gameObject = view.gameObject;
             _canvasGroup = view.CanvasGroup;
             _gradientColor = view.GradientColor;
             _topColor = _gradientColor.colorTop;
             _bottomColor = _gradientColor.colorBottom;
+            _onShowedCallback = onShowedCallback;
         }
         
         private Sequence _currentSequence;
@@ -72,6 +76,7 @@ namespace Content.LoadingCurtain.Scripts
                 })
                 .Append(FadeAnimation(1f, LoadingCurtainInfo.FadeInAnimationDuration))
                 .Append(GradientColorChange(LoadingCurtainInfo.ColorChangeShowAnimationDuration))
+                .AppendCallback(() => _onShowedCallback?.Invoke())
                 .Pause();
         }
 

@@ -6,27 +6,21 @@ using UnityEngine.UI;
 
 namespace Content.DailyBonus.Scripts.View
 {
-    public class DailyBonusView : MonoBehaviour, IDailyBonusView
+    public class DailyBonusView : IDailyBonusView
     {
         [SerializeField] private Button m_CloseButton;
         [SerializeField] private RewardRowsManager m_RewardRowsManager;
         
         private UnityAction _onCloseButtonClicked;
 
-        public MonoBehaviour MonoBehaviour => this;
-        public RewardRowsManager RewardRowsManager => m_RewardRowsManager;
+        public override RewardRowsManager RewardRowsManager => m_RewardRowsManager;
         
-        public void Init(IViewSignalManager viewSignalManager)
+        public override void Init(IViewSignalManager viewSignalManager)
         {
             _onCloseButtonClicked = viewSignalManager.GetCloseSignal();
             
             m_CloseButton.onClick.RemoveAllListeners();
             m_CloseButton.onClick.AddListener(OnCloseButtonClicked);
-        }
-        
-        public void SetActive(bool isActive)
-        {
-            gameObject.SetActive(isActive);
         }
         
         private void OnCloseButtonClicked()

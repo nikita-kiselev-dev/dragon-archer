@@ -7,7 +7,7 @@ namespace Infrastructure.Service.View.ViewManager
     {
         public string ViewKey { get; set; }
         public string ViewType { get; set; }
-        public IMonoBehaviour View { get; set; }
+        public View View { get; set; }
         public bool IsEnabledOnStart { get; set; }
         public Action AfterOpenAction { get; set; }
         public Action AfterCloseAction { get; set; }

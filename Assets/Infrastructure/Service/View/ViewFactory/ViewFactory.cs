@@ -16,30 +16,23 @@ namespace Infrastructure.Service.View.ViewFactory
         {
             var parentTransform = GetParentTransform(viewType);
             var operationHandler = await _assetLoader.InstantiateAsync<T>(viewKey, parentTransform);
-            if (operationHandler is not IMonoBehaviour monoBehaviour) return operationHandler; 
+            if (operationHandler is not ViewManager.View view) return operationHandler; 
             var startViewStatus = GetStartViewStatus(viewType);
-            monoBehaviour.SetActive(startViewStatus);
+            view.gameObject.SetActive(startViewStatus);
 
             return operationHandler;
         }
 
         private Transform GetParentTransform(string viewType)
         {
-            return viewType switch
-            {
-                ViewType.Window => _canvasHandler.WindowCanvas.ViewParentTransform,
-                ViewType.Popup => _canvasHandler.PopupCanvas.ViewParentTransform,
-                _ => ServiceCanvas.Instance.transform
-            };
+            if (viewType == ViewType.Window) return _canvasHandler.WindowCanvas.ViewParentTransform;
+            if (viewType == ViewType.Popup) return _canvasHandler.PopupCanvas.ViewParentTransform;
+            return ServiceCanvas.Instance.transform;
         }
 
         private bool GetStartViewStatus(string viewType)
         { 
-            return viewType switch
-            {
-                ViewType.Window => true,
-                _ => false
-            };
+            return viewType == ViewType.Window;
         }
     }
 }

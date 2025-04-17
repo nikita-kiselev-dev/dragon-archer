@@ -17,6 +17,7 @@ using Infrastructure.Service.Logger;
 using Infrastructure.Service.SignalBus;
 using Infrastructure.Service.View.ViewFactory;
 using Infrastructure.Service.View.ViewManager;
+using UnityEngine;
 using VContainer;
 
 namespace Content.DailyBonus.Scripts
@@ -49,20 +50,27 @@ namespace Content.DailyBonus.Scripts
         protected override async UniTask Load()
         {
             if (!_serverConnectionService.IsConnectedToServer) return;
-            
-            _view = await _viewFactory.CreateView<IDailyBonusView>(DailyBonusConstants.Popup, ViewType.Popup );
+
+            await _assetLoader.LoadAsync<GameObject>(DailyBonusConstants.Popup);
             _dto = await _dtoReader.Read<DailyBonusDto>(DailyBonusConstants.Config);
         }
 
         protected override async UniTask Init()
         {
+            await CreateView();
+            
             if (!IsLoadSucceed()) return;
             
             CreateModel();
             CreatePresenter();
             await _presenter.Init();
             if (!_presenter.IsActive) Unload();
-            _logger.Log($"Init completed. Status: {_presenter.IsActive} ");
+            _logger.Log($"Init completed. Status: {_presenter.IsActive}.");
+        }
+        
+        private async UniTask CreateView()
+        {
+            _view = await _viewFactory.CreateView<IDailyBonusView>(DailyBonusConstants.Popup, ViewType.Popup);
         }
 
         private bool IsLoadSucceed()
@@ -98,7 +106,7 @@ namespace Content.DailyBonus.Scripts
 
         private void Unload()
         {
-            _view.MonoBehaviour.gameObject.SetActive(false);
+            _view.gameObject.SetActive(false);
             _assetLoader.Release(DailyBonusConstants.Popup);
             _assetLoader.Release(DailyBonusConstants.PreviousDay);
             _assetLoader.Release(DailyBonusConstants.Today);

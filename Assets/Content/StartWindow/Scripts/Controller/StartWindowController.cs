@@ -1,6 +1,7 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
 using Infrastructure.Game;
+using Infrastructure.Service.Asset;
 using Infrastructure.Service.Audio;
 using Infrastructure.Service.Initialization;
 using Infrastructure.Service.Initialization.InitOrder;
@@ -11,6 +12,7 @@ using Infrastructure.Service.SceneStateMachine.SceneStates;
 using Infrastructure.Service.View.ViewFactory;
 using Infrastructure.Service.View.ViewManager;
 using Infrastructure.Service.View.ViewSignalManager;
+using UnityEngine;
 using VContainer;
 
 namespace Content.StartWindow.Scripts.Controller
@@ -20,6 +22,7 @@ namespace Content.StartWindow.Scripts.Controller
     {
         [Inject] private readonly IViewFactory _viewFactory;
         [Inject] private readonly IViewManager _viewManager;
+        [Inject] private readonly IAssetLoader _assetLoader;
         [Inject] private readonly ISceneStateMachine _sceneStateMachine;
         
         private readonly ILogManager _logger = new LogManager(nameof(StartWindowController));
@@ -31,15 +34,17 @@ namespace Content.StartWindow.Scripts.Controller
 
         protected override async UniTask Load()
         {
-            _view = await _viewFactory.CreateView<IView>(ViewInfo.StartWindow, ViewType.Window);
+            await _assetLoader.LoadAsync<GameObject>(ViewInfo.StartWindow);
         }
         
-        protected override UniTask Init()
+        protected override async UniTask Init()
         {
+            await CreateView();
+            
             if (!IsLoadSucceed())
             {
                 _logger.LogError($"{ViewInfo.StartWindow} load failed.");
-                return UniTask.CompletedTask;
+                return;
             }
             
             var isOnboardingCompleted = true;
@@ -51,8 +56,11 @@ namespace Content.StartWindow.Scripts.Controller
             RegisterAndInitView();
             AudioController.Instance.PlayMusic(MusicList.StartSceneMusic);
             IsInited = true;
+        }
 
-            return UniTask.CompletedTask;
+        private async UniTask CreateView()
+        {
+            _view = await _viewFactory.CreateView<IView>(ViewInfo.StartWindow, ViewType.Window);
         }
 
         private bool IsLoadSucceed()

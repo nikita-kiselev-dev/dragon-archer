@@ -132,7 +132,7 @@ namespace Infrastructure.Service.View.ViewManager
         private void ConfigureAfterRegistration(IViewWrapper viewWrapper)
         {
             var view = viewWrapper.View;
-            view.SetActive(viewWrapper.IsEnabledOnStart);
+            view.gameObject.SetActive(viewWrapper.IsEnabledOnStart);
         }
     }
 }

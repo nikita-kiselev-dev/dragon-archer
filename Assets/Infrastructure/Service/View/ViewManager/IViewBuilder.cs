@@ -8,7 +8,7 @@ namespace Infrastructure.Service.View.ViewManager
     {
         public IViewBuilder SetViewKey(string viewKey);
         public IViewBuilder SetViewType(string viewType);
-        public IViewBuilder SetView(IMonoBehaviour view);
+        public IViewBuilder SetView(View view);
         public IViewBuilder SetViewSignalManager(IViewSignalManager viewSignalManager);
         public IViewBuilder EnableFromStart();
         public IViewBuilder SetAfterOpenAction(Action action);
