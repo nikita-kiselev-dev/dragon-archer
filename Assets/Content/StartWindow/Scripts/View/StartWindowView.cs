@@ -1,17 +1,21 @@
-﻿using Infrastructure.Service.View.ViewManager;
-using Infrastructure.Service.View.ViewSignalManager;
+﻿using Infrastructure.Service.View.ViewSignalManager;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Content.StartWindow.Scripts.View
 {
-    public class StartWindowView : IView
+    public class StartWindowMonoView : Infrastructure.Service.View.ViewManager.MonoView
     {
         [SerializeField] private Button m_PlayButton;
         [SerializeField] private Button m_SettingsButton;
         [SerializeField] private Button m_WebSiteButton;
         
         public override void Init(IViewSignalManager viewSignalManager)
+        {
+            ConfigureButtons(viewSignalManager);
+        }
+
+        private void ConfigureButtons(IViewSignalManager viewSignalManager)
         {
             m_PlayButton.onClick.RemoveAllListeners();
             m_PlayButton.onClick.AddListener(viewSignalManager.GetSignal(StartWindowInfo.StartGameSignal));

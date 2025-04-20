@@ -40,7 +40,7 @@ namespace Content.DailyBonus.Scripts
         private readonly ILogManager _logger = new LogManager(nameof(DailyBonus));
 
         private IDailyBonusDto _dto;
-        private IDailyBonusView _view;
+        private DailyBonusView _view;
         private IDailyBonusModel _model;
         private IDailyBonusPresenter _presenter;
 
@@ -70,7 +70,7 @@ namespace Content.DailyBonus.Scripts
         
         private async UniTask CreateView()
         {
-            _view = await _viewFactory.CreateView<IDailyBonusView>(DailyBonusConstants.Popup, ViewType.Popup);
+            _view = await _viewFactory.CreateView<DailyBonusView>(DailyBonusConstants.Popup, ViewType.Popup);
         }
 
         private bool IsLoadSucceed()

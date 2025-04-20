@@ -14,6 +14,11 @@ namespace Content.DailyBonus.Scripts.View
         
         public override void Init(IViewSignalManager viewSignalManager)
         {
+            ConfigureButtons(viewSignalManager);
+        }
+
+        private void ConfigureButtons(IViewSignalManager viewSignalManager)
+        {
             m_CloseButton.onClick.RemoveAllListeners();
             m_CloseButton.onClick.AddListener(viewSignalManager.GetCloseSignal().Invoke);
         }

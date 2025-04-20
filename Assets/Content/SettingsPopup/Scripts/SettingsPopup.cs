@@ -25,7 +25,7 @@ namespace Content.SettingsPopup.Scripts
         
         private readonly ILogManager _logger = new LogManager(nameof(SettingsPopup));
         
-        private ISettingsPopupView _view;
+        private SettingsPopupView _view;
         private ISettingsPopupModel _model;
         private ISettingsPopupPresenter _presenter;
 
@@ -53,7 +53,7 @@ namespace Content.SettingsPopup.Scripts
 
         private async UniTask CreateView()
         {
-            _view = await _viewFactory.CreateView<ISettingsPopupView>(ViewInfo.SettingsPopup, ViewType.Popup);
+            _view = await _viewFactory.CreateView<SettingsPopupView>(ViewInfo.SettingsPopup, ViewType.Popup);
         }
         
         private bool IsLoadSucceed()

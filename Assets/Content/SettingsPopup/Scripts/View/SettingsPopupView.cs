@@ -13,6 +13,21 @@ namespace Content.SettingsPopup.Scripts.View
         
         public override void Init(IViewSignalManager viewSignalManager)
         {
+            ConfigureButtons(viewSignalManager);
+        }
+
+        public override void SetSoundsSliderValue(float value)
+        {
+            m_SoundsVolumeSlider.value = value;
+        }
+
+        public override void SetMusicSliderValue(float value)
+        {
+            m_MusicVolumeSlider.value = value;
+        }
+
+        private void ConfigureButtons(IViewSignalManager viewSignalManager)
+        {
             m_CloseButton.onClick.RemoveAllListeners();
             m_CloseButton.onClick.AddListener(viewSignalManager.GetCloseSignal());
             
@@ -27,16 +42,6 @@ namespace Content.SettingsPopup.Scripts.View
                 viewSignalManager.GetSignal<float>(
                     SettingsPopupSignals.MusicVolumeChangedSignal, 
                     false));
-        }
-
-        public override void SetSoundsSliderValue(float value)
-        {
-            m_SoundsVolumeSlider.value = value;
-        }
-
-        public override void SetMusicSliderValue(float value)
-        {
-            m_MusicVolumeSlider.value = value;
         }
     }
 }

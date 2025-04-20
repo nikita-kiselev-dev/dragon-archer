@@ -12,8 +12,8 @@ namespace Content.SettingsPopup.Scripts.Data
 
         public override void PrepareNewData()
         {
-            SoundsVolume = SettingsPopupInfo.DefaultSoundsVolume;
-            MusicVolume = SettingsPopupInfo.DefaultMusicVolume;
+            SoundsVolume = SettingsConstants.DefaultSoundsVolume;
+            MusicVolume = SettingsConstants.DefaultMusicVolume;
         }
 
         public void SetSoundsVolumeData(float value)

@@ -3,7 +3,7 @@ using Infrastructure.Service.View.ViewManager;
 
 namespace Content.DailyBonus.Scripts.View
 {
-    public abstract class IDailyBonusView : IView
+    public abstract class IDailyBonusView : MonoView
     {
         public abstract RewardRowsManager RewardRowsManager { get; }
     }

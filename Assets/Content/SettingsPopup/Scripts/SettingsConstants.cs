@@ -1,6 +1,6 @@
 namespace Content.SettingsPopup.Scripts
 {
-    public static class SettingsPopupInfo
+    public static class SettingsConstants
     {
         public const float DefaultSoundsVolume = 0.75f;
         public const float DefaultMusicVolume = 0.75f;

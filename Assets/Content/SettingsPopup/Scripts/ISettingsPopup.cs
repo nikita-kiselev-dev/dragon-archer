@@ -3,6 +3,5 @@
     public interface ISettingsPopup
     {
         public bool IsInited { get; }
-        //public void Init();
     }
 }

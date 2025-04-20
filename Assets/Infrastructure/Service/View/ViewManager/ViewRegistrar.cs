@@ -28,9 +28,9 @@ namespace Infrastructure.Service.View.ViewManager
             return this;
         }
 
-        public IViewBuilder SetView(View view)
+        public IViewBuilder SetView(MonoView monoView)
         {
-            _viewWrapper.View = view;
+            _viewWrapper.View = monoView;
             return this;
         }
 
@@ -77,11 +77,7 @@ namespace Infrastructure.Service.View.ViewManager
             
             SetAnimator();
             _viewManager.RegisterView(_viewWrapper);
-
-            if (_viewWrapper.View is IView view)
-            {
-                view.Init(_viewSignalManager);
-            }
+            _viewWrapper.View.Init(_viewSignalManager);
             
             return GetInteractor();
         }

@@ -27,7 +27,7 @@ namespace Content.StartWindow.Scripts.Controller
         
         private readonly ILogManager _logger = new LogManager(nameof(StartWindowController));
 
-        private IView _view;
+        private Infrastructure.Service.View.ViewManager.MonoView _monoView;
         private Action _onStartButtonClicked;
 
         public bool IsInited { get; private set; }
@@ -60,12 +60,12 @@ namespace Content.StartWindow.Scripts.Controller
 
         private async UniTask CreateView()
         {
-            _view = await _viewFactory.CreateView<IView>(ViewInfo.StartWindow, ViewType.Window);
+            _monoView = await _viewFactory.CreateView<Infrastructure.Service.View.ViewManager.MonoView>(ViewInfo.StartWindow, ViewType.Window);
         }
 
         private bool IsLoadSucceed()
         {
-            var result = _view is not null;
+            var result = _monoView is not null;
             return result;
         }
 
@@ -94,7 +94,7 @@ namespace Content.StartWindow.Scripts.Controller
             new ViewRegistrar(_viewManager)
                 .SetViewKey(ViewInfo.StartWindow)
                 .SetViewType(ViewType.Window)
-                .SetView(_view)
+                .SetView(_monoView)
                 .SetViewSignalManager(viewSignalManager)
                 .EnableFromStart()
                 .RegisterAndInit();
