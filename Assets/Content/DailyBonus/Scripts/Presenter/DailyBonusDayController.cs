@@ -24,10 +24,10 @@ namespace Content.DailyBonus.Scripts.Presenter
         private async UniTaskVoid ConfigureView()
         {
             var dayText = _config.DayType == DailyBonusConstants.TodayLastDay
-                ? await "congratulations".LocalizeAsync() + "!"
+                ? await "congratulations".Localize() + "!"
                 : _config.DayType != DailyBonusConstants.Today
-                    ? await "time/day".LocalizeAsync() + $" {_config.DayNumber}"
-                    : await "time/today".LocalizeAsync();
+                    ? await "time/day".Localize() + $" {_config.DayNumber}"
+                    : await "time/today".Localize();
 
             _view.SetDayText(dayText);
             _view.SetItemCount($"x" + $"{_config.ItemCount}");

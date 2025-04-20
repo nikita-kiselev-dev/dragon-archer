@@ -16,6 +16,5 @@ namespace Infrastructure.Service.Initialization.Scopes
             builder.RegisterEntryPoint<SceneStarter>();
             builder.Register<GameBootstrapper>(Lifetime.Scoped).AsImplementedInterfaces();
         }
-
     }
 }

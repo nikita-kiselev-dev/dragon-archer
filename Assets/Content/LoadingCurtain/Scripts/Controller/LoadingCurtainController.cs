@@ -65,7 +65,7 @@ namespace Content.LoadingCurtain.Scripts.Controller
 
         private async UniTaskVoid ConfigureView()
         {
-            var loadingLocalizedString = await "loading".LocalizeAsync();
+            var loadingLocalizedString = await "loading".Localize();
             m_View.SetLoadingText(loadingLocalizedString);
         }
 
