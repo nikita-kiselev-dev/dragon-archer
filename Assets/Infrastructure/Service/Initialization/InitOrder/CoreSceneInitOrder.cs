@@ -2,6 +2,8 @@
 {
     public enum CoreSceneInitOrder
     {
-        CanvasManager
+        First,
+        CanvasManager,
+        Last
     }
 }

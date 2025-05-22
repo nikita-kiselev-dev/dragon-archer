@@ -28,6 +28,8 @@ namespace Content.SettingsPopup.Scripts.View
 
         private void ConfigureButtons(IViewSignalManager viewSignalManager)
         {
+            return;
+            
             m_CloseButton.onClick.RemoveAllListeners();
             m_CloseButton.onClick.AddListener(viewSignalManager.GetCloseSignal());
             

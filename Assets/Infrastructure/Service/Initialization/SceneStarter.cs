@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Infrastructure.Service.Initialization.Decorators;
 using Infrastructure.Service.Initialization.Scopes;
 using Infrastructure.Service.Initialization.Signals;
 using Infrastructure.Service.Logger;
@@ -19,9 +20,10 @@ namespace Infrastructure.Service.Initialization
     {
         [Inject] private readonly ISignalBus _signalBus;
         [Inject] private readonly IReadOnlyList<ControlEntity> _controlEntities;
+        [Inject] private readonly IReadOnlyList<IControlEntityDecorator> _controlEntityDecorators;
 
         private ILogManager _logger;
-        private IReadOnlyList<ControlEntity> _orderedControlEntities;
+        private List<ControlEntity> _orderedControlEntities;
 
         public async UniTask StartAsync(CancellationToken cancellation = new())
         {
@@ -39,6 +41,8 @@ namespace Infrastructure.Service.Initialization
                 .OrderBy(x => x.Order.InitOrder)
                 .Select(x => x.Entity)
                 .ToList();
+
+            DecorateEntities();
 
             if (_orderedControlEntities.Any())
             {
@@ -59,6 +63,21 @@ namespace Infrastructure.Service.Initialization
             }
 
             _signalBus.Trigger<OnSceneInitCompletedSignal>();
+        }
+
+        private void DecorateEntities()
+        {
+            for (var index = 0; index < _orderedControlEntities.Count; index++)
+            {
+                var controlEntity = _orderedControlEntities[index];
+                
+                foreach (var decorator in _controlEntityDecorators)
+                {
+                    controlEntity = decorator.Decorate(controlEntity);
+                }
+                
+                _orderedControlEntities[index] = controlEntity;
+            }
         }
 
         private List<ControlEntityPhase> CreatePhases()

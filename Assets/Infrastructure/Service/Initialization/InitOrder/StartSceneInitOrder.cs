@@ -2,8 +2,10 @@
 {
     public enum StartSceneInitOrder
     {
+        First,
         CanvasManager,
         StartWindow,
-        SettingsPopup
+        SettingsPopup,
+        Last
     }
 }

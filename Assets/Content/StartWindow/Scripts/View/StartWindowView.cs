@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace Content.StartWindow.Scripts.View
 {
-    public class StartWindowMonoView : Infrastructure.Service.View.ViewManager.MonoView
+    public class StartWindowView : Infrastructure.Service.View.ViewManager.MonoView
     {
         [SerializeField] private Button m_PlayButton;
         [SerializeField] private Button m_SettingsButton;

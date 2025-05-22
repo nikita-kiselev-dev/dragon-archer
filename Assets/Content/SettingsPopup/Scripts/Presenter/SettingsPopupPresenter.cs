@@ -2,7 +2,6 @@
 using Content.SettingsPopup.Scripts.View;
 using Infrastructure.Service.Audio;
 using Infrastructure.Service.View.ViewManager;
-using Infrastructure.Service.View.ViewSignalManager;
 
 namespace Content.SettingsPopup.Scripts.Presenter
 {
@@ -12,7 +11,7 @@ namespace Content.SettingsPopup.Scripts.Presenter
         private readonly ISettingsPopupView _view;
         private readonly IViewManager _viewManager;
         
-        private IViewInteractor _viewInteractor;
+        //private IViewInteractor _viewInteractor;
         
         public bool IsInited { get; private set;}
 
@@ -25,24 +24,25 @@ namespace Content.SettingsPopup.Scripts.Presenter
         
         public void Init()
         {
-            RegisterAndInitView();
+            //RegisterAndInitView();
             ConfigureView();
             IsInited = true;
         }
         
         public void Open()
         {
-            _viewInteractor.Open();
+            _viewManager.Open(ViewInfo.SettingsPopup);
+            //_viewInteractor.Open();
         }
 
         public void Close()
         {
-            _viewInteractor.Close();
+            //_viewInteractor.Close();
         }
 
         private void RegisterAndInitView()
         {
-            var viewSignalManager = new ViewSignalManager()
+            /*var viewSignalManager = new ViewSignalManager()
                 .AddSignal<float>(SettingsPopupSignals.SoundsVolumeChangedSignal, SetSoundsVolume)
                 .AddSignal<float>(SettingsPopupSignals.MusicVolumeChangedSignal, SetMusicVolume)
                 .AddCloseSignal(Close);
@@ -52,7 +52,7 @@ namespace Content.SettingsPopup.Scripts.Presenter
                 .SetViewType(ViewType.Popup)
                 .SetView(_view)
                 .SetViewSignalManager(viewSignalManager)
-                .RegisterAndInit();
+                .RegisterAndInit();*/
         }
 
         private void ConfigureView()

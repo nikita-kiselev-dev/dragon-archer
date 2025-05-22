@@ -15,6 +15,7 @@ using Infrastructure.Service.Analytics.Amplitude;
 using Infrastructure.Service.Asset;
 using Infrastructure.Service.Dto;
 using Infrastructure.Service.File;
+using Infrastructure.Service.Initialization.Decorators.FastView;
 using Infrastructure.Service.LiveOps;
 using Infrastructure.Service.LiveOps.GamePush;
 using Infrastructure.Service.LiveOps.PlayFab;
@@ -47,6 +48,7 @@ namespace Infrastructure.Service.Initialization.Scopes
             }
             
             RegisterFileServices(builder);
+            RegisterControlEntityDecorators(builder);
             RegisterItemsData(builder);
             RegisterFeaturesData(builder);
             RegisterTutorialData(builder);
@@ -70,6 +72,11 @@ namespace Infrastructure.Service.Initialization.Scopes
         private void RegisterFileServices(IContainerBuilder builder)
         {
             builder.Register<IFileService, FileService>(Lifetime.Singleton);
+        }
+
+        private void RegisterControlEntityDecorators(IContainerBuilder builder)
+        {
+            builder.Register<FastViewDecorator>(Lifetime.Singleton).AsImplementedInterfaces();
         }
         
         private void RegisterItemsData(IContainerBuilder builder)

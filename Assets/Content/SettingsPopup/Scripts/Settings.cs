@@ -5,55 +5,45 @@ using Content.SettingsPopup.Scripts.View;
 using Cysharp.Threading.Tasks;
 using Infrastructure.Service.Asset;
 using Infrastructure.Service.Initialization;
+using Infrastructure.Service.Initialization.Decorators.FastView;
 using Infrastructure.Service.Initialization.InitOrder;
 using Infrastructure.Service.Initialization.Scopes;
 using Infrastructure.Service.Logger;
 using Infrastructure.Service.View.ViewFactory;
 using Infrastructure.Service.View.ViewManager;
-using UnityEngine;
 using VContainer;
 
 namespace Content.SettingsPopup.Scripts
 {
     [ControlEntityOrder(nameof(StartScope), (int)StartSceneInitOrder.SettingsPopup)]
-    public class SettingsPopup : ControlEntity, ISettingsPopup
+    [FastViewDecoratable]
+    public class Settings : ControlEntity, ISettings
     {
         [Inject] private readonly SettingsPopupData _data;
         [Inject] private readonly IViewFactory _viewFactory;
         [Inject] private readonly IViewManager _viewManager;
         [Inject] private readonly IAssetLoader _assetLoader;
         
-        private readonly ILogManager _logger = new LogManager(nameof(SettingsPopup));
+        private readonly ILogManager _logger = new LogManager(nameof(Settings));
         
-        private SettingsPopupView _view;
+        [FastView(ViewInfo.SettingsPopup, ViewType.Popup)] private SettingsPopupView _view;
         private ISettingsPopupModel _model;
         private ISettingsPopupPresenter _presenter;
 
         public bool IsInited => _presenter.IsInited;
-
-        protected override async UniTask Load()
-        {
-            await _assetLoader.LoadAsync<GameObject>(ViewInfo.SettingsPopup);
-        }
         
-        protected override async UniTask Init()
+        protected override UniTask Init()
         {
-            await CreateView();
-            
             if (!IsLoadSucceed())
             {
                 _logger.LogError($"{ViewInfo.SettingsPopup} load failed.");
-                return;
+                return UniTask.CompletedTask;
             }
             
             CreateModel();
             CreatePresenter();
             _presenter.Init();
-        }
-
-        private async UniTask CreateView()
-        {
-            _view = await _viewFactory.CreateView<SettingsPopupView>(ViewInfo.SettingsPopup, ViewType.Popup);
+            return UniTask.CompletedTask;
         }
         
         private bool IsLoadSucceed()

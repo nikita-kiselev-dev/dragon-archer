@@ -10,6 +10,7 @@ using Infrastructure.Service.Analytics;
 using Infrastructure.Service.Asset;
 using Infrastructure.Service.Dto;
 using Infrastructure.Service.Initialization;
+using Infrastructure.Service.Initialization.Decorators.FastView;
 using Infrastructure.Service.Initialization.InitOrder;
 using Infrastructure.Service.Initialization.Scopes;
 using Infrastructure.Service.LiveOps;
@@ -39,8 +40,8 @@ namespace Content.DailyBonus.Scripts
 
         private readonly ILogManager _logger = new LogManager(nameof(DailyBonus));
 
+        [FastView(DailyBonusConstants.Popup, ViewType.Popup)] private DailyBonusView _view;
         private IDailyBonusDto _dto;
-        private DailyBonusView _view;
         private IDailyBonusModel _model;
         private IDailyBonusPresenter _presenter;
 
@@ -50,7 +51,6 @@ namespace Content.DailyBonus.Scripts
         protected override async UniTask Load()
         {
             if (!_serverConnectionService.IsConnectedToServer) return;
-
             await _assetLoader.LoadAsync<GameObject>(DailyBonusConstants.Popup);
             _dto = await _dtoReader.Read<DailyBonusDto>(DailyBonusConstants.Config);
         }
@@ -58,9 +58,7 @@ namespace Content.DailyBonus.Scripts
         protected override async UniTask Init()
         {
             await CreateView();
-            
             if (!IsLoadSucceed()) return;
-            
             CreateModel();
             CreatePresenter();
             await _presenter.Init();

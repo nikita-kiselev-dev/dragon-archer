@@ -1,6 +1,6 @@
 ﻿namespace Content.SettingsPopup.Scripts
 {
-    public interface ISettingsPopup
+    public interface ISettings
     {
         public bool IsInited { get; }
     }

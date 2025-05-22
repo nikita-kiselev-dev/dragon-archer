@@ -10,7 +10,7 @@ namespace Infrastructure.Service.Initialization.Scopes
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterEntryPoint<SceneStarter>();
-            builder.Register<SettingsPopup>(Lifetime.Singleton).As<ControlEntity>().AsImplementedInterfaces();
+            builder.Register<Settings>(Lifetime.Singleton).As<ControlEntity>().AsImplementedInterfaces();
             builder.Register<StartWindowController>(Lifetime.Singleton).As<ControlEntity>().AsImplementedInterfaces();
         }
     }
