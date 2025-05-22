@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Cysharp.Threading.Tasks;
@@ -58,12 +57,9 @@ namespace Infrastructure.Service.Initialization.Decorators.FastView
 
         private async UniTask LoadViews()
         {
-            var fastViewsToLoad = new List<UniTask>();
-
-            foreach (var fastView in _fastViews)
-            {
-                fastViewsToLoad.Add(UniTask.Defer(() => LoadView(fastView)));
-            }
+            var fastViewsToLoad = Enumerable
+                .Select(_fastViews, fastView => UniTask.Defer(() => LoadView(fastView)))
+                .ToList();
 
             await UniTask.WhenAll(fastViewsToLoad);
         }
@@ -75,13 +71,10 @@ namespace Infrastructure.Service.Initialization.Decorators.FastView
         
         private async UniTask CreateViews()
         {
-            var fastViewsToCreate = new List<UniTask>();
+            var fastViewsToCreate = Enumerable
+                .Select(_fastViews, fastView => UniTask.Defer(() => CreateViewByType(fastView)))
+                .ToList();
 
-            foreach (var fastView in _fastViews)
-            {
-                fastViewsToCreate.Add(UniTask.Defer(() => CreateViewByType(fastView)));
-            }
-            
             await UniTask.WhenAll(fastViewsToCreate);
         }
         
