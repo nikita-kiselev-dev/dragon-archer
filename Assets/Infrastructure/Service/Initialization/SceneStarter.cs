@@ -42,20 +42,10 @@ namespace Infrastructure.Service.Initialization
                 .Select(x => x.Entity)
                 .ToList();
 
-            DecorateEntities();
-
             if (_orderedControlEntities.Any())
             {
-                var phases = CreatePhases();
-                _logger.Log($"{sceneName} - start executing phases.");
-            
-                foreach (var phase in phases)
-                {
-                    _logger.Log($"{sceneName} - {phase.Name} phase execution.");
-                    await ExecutePhase(phase);
-                    phase.CompletionAction?.Invoke();
-                    _logger.Log($"{sceneName} - {phase.Name} phase completed.");
-                }
+                DecorateEntities();
+                await StartExecution(sceneName);
             }
             else
             {
@@ -77,6 +67,20 @@ namespace Infrastructure.Service.Initialization
                 }
                 
                 _orderedControlEntities[index] = controlEntity;
+            }
+        }
+
+        private async UniTask StartExecution(string sceneName)
+        {
+            var phases = CreatePhases();
+            _logger.Log($"{sceneName} - start executing phases.");
+            
+            foreach (var phase in phases)
+            {
+                _logger.Log($"{sceneName} - {phase.Name} phase execution.");
+                await ExecutePhase(phase);
+                phase.CompletionAction?.Invoke();
+                _logger.Log($"{sceneName} - {phase.Name} phase completed.");
             }
         }
 
