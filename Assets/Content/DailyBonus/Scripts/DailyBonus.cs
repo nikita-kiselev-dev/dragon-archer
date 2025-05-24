@@ -8,6 +8,7 @@ using Cysharp.Threading.Tasks;
 using Infrastructure.Game.Data;
 using Infrastructure.Service.Analytics;
 using Infrastructure.Service.Asset;
+using Infrastructure.Service.Controller;
 using Infrastructure.Service.Dto;
 using Infrastructure.Service.Initialization;
 using Infrastructure.Service.Initialization.Decorators.FastView;
@@ -16,20 +17,17 @@ using Infrastructure.Service.Initialization.Scopes;
 using Infrastructure.Service.LiveOps;
 using Infrastructure.Service.Logger;
 using Infrastructure.Service.SignalBus;
-using Infrastructure.Service.View.ViewFactory;
 using Infrastructure.Service.View.ViewManager;
-using UnityEngine;
 using VContainer;
 
 namespace Content.DailyBonus.Scripts
 {
     [ControlEntityOrder(nameof(MetaScope), (int)MetaSceneInitOrder.DailyBonus)]
+    [FastViewDecoratable]
     public class DailyBonus : ControlEntity, IDailyBonus
     {
         [Inject] private readonly ISignalBus _signalBus;
         [Inject] private readonly IDtoReader _dtoReader;
-        [Inject] private readonly IViewFactory _viewFactory;
-        [Inject] private readonly IViewManager _viewManager;
         [Inject] private readonly IAssetLoader _assetLoader;
         [Inject] private readonly DailyBonusData _dailyBonusData;
         [Inject] private readonly IMainDataManager _mainDataManager;
@@ -45,19 +43,22 @@ namespace Content.DailyBonus.Scripts
         private IDailyBonusModel _model;
         private IDailyBonusPresenter _presenter;
 
-        public bool IsInited => _presenter.IsInited;
-        public bool IsActive => _presenter.IsActive;
+        bool IController.IsInited => _presenter.IsInited;
+        bool IController.IsActive => _presenter.IsActive;
 
         protected override async UniTask Load()
         {
-            if (!_serverConnectionService.IsConnectedToServer) return;
-            await _assetLoader.LoadAsync<GameObject>(DailyBonusConstants.Popup);
+            if (!_serverConnectionService.IsConnectedToServer)
+            {
+                Unload();
+                return;
+            }
+            
             _dto = await _dtoReader.Read<DailyBonusDto>(DailyBonusConstants.Config);
         }
 
         protected override async UniTask Init()
         {
-            await CreateView();
             if (!IsLoadSucceed()) return;
             CreateModel();
             CreatePresenter();
@@ -65,15 +66,10 @@ namespace Content.DailyBonus.Scripts
             if (!_presenter.IsActive) Unload();
             _logger.Log($"Init completed. Status: {_presenter.IsActive}.");
         }
-        
-        private async UniTask CreateView()
-        {
-            _view = await _viewFactory.CreateView<DailyBonusView>(DailyBonusConstants.Popup, ViewType.Popup);
-        }
 
         private bool IsLoadSucceed()
         {
-            if (_view != null && _dto != null)
+            if (_dto != null)
             {
                 return true;
             }
@@ -95,7 +91,6 @@ namespace Content.DailyBonus.Scripts
                     analytics,
                     _view,
                     _model,
-                    _viewManager,
                     _assetLoader,
                     _serverTimeService,
                     _inventoryManager,
@@ -104,7 +99,6 @@ namespace Content.DailyBonus.Scripts
 
         private void Unload()
         {
-            _view.gameObject.SetActive(false);
             _assetLoader.Release(DailyBonusConstants.Popup);
             _assetLoader.Release(DailyBonusConstants.PreviousDay);
             _assetLoader.Release(DailyBonusConstants.Today);

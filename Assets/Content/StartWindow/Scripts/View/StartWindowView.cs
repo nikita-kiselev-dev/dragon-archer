@@ -1,5 +1,5 @@
-﻿using Infrastructure.Service.View.ViewSignalManager;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace Content.StartWindow.Scripts.View
@@ -10,21 +10,30 @@ namespace Content.StartWindow.Scripts.View
         [SerializeField] private Button m_SettingsButton;
         [SerializeField] private Button m_WebSiteButton;
         
-        public override void Init(IViewSignalManager viewSignalManager)
+        public void Init(
+            UnityAction onPlayButtonClicked, 
+            UnityAction onSettingsButtonClicked, 
+            UnityAction onWebSiteButtonClicked)
         {
-            ConfigureButtons(viewSignalManager);
+            ConfigureButtons(
+                onPlayButtonClicked, 
+                onSettingsButtonClicked, 
+                onWebSiteButtonClicked);
         }
 
-        private void ConfigureButtons(IViewSignalManager viewSignalManager)
+        private void ConfigureButtons(
+            UnityAction onPlayButtonClicked, 
+            UnityAction onSettingsButtonClicked, 
+            UnityAction onWebSiteButtonClicked)
         {
             m_PlayButton.onClick.RemoveAllListeners();
-            m_PlayButton.onClick.AddListener(viewSignalManager.GetSignal(StartWindowInfo.StartGameSignal));
+            m_PlayButton.onClick.AddListener(onPlayButtonClicked);
             
             m_SettingsButton.onClick.RemoveAllListeners();
-            m_SettingsButton.onClick.AddListener(viewSignalManager.GetSignal(StartWindowInfo.OpenSettingsSignal));
+            m_SettingsButton.onClick.AddListener(onSettingsButtonClicked);
             
             m_WebSiteButton.onClick.RemoveAllListeners();
-            m_WebSiteButton.onClick.AddListener(viewSignalManager.GetSignal(StartWindowInfo.OpenWebSiteSignal));
+            m_WebSiteButton.onClick.AddListener(onWebSiteButtonClicked);
         }
     }
 }

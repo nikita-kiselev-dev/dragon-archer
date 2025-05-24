@@ -40,9 +40,9 @@ namespace Infrastructure.Service.View.ViewManager
             return this;
         }
 
-        public IViewBuilder EnableFromStart()
+        public IViewBuilder EnableFromStart(bool status)
         {
-            _viewWrapper.IsEnabledOnStart = true;
+            _viewWrapper.IsEnabledOnStart = status;
             return this;
         }
 
@@ -77,7 +77,6 @@ namespace Infrastructure.Service.View.ViewManager
             
             SetAnimator();
             _viewManager.RegisterView(_viewWrapper);
-            _viewWrapper.View.Init(_viewSignalManager);
             
             return GetInteractor();
         }
@@ -107,10 +106,18 @@ namespace Infrastructure.Service.View.ViewManager
 
         private IViewInteractor GetInteractor()
         {
-            var openAction = new Action(() => _viewManager.Open(_viewWrapper.ViewKey));
-            var closeAction = new Action(() => _viewManager.Close(_viewWrapper.ViewKey));
-            var viewInteractor = new ViewInteractor(openAction, closeAction);
+            var viewInteractor = new ViewInteractor(OpenAction, CloseAction);
             return viewInteractor;
+        }
+
+        private void OpenAction()
+        {
+            _viewManager.Open(_viewWrapper.ViewKey);
+        }
+        
+        private void CloseAction()
+        {
+            _viewManager.Close(_viewWrapper.ViewKey);
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿using Infrastructure.Service.View.ViewSignalManager;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace Content.SettingsPopup.Scripts.View
@@ -11,9 +11,11 @@ namespace Content.SettingsPopup.Scripts.View
         [SerializeField] private Slider m_SoundsVolumeSlider;
         [SerializeField] private Slider m_MusicVolumeSlider;
         
-        public override void Init(IViewSignalManager viewSignalManager)
+        public override void Init(
+            UnityAction<float> onSoundsVolumeChanged, 
+            UnityAction<float> onMusicVolumeChanged)
         {
-            ConfigureButtons(viewSignalManager);
+            ConfigureButtons(onSoundsVolumeChanged, onMusicVolumeChanged);
         }
 
         public override void SetSoundsSliderValue(float value)
@@ -26,24 +28,18 @@ namespace Content.SettingsPopup.Scripts.View
             m_MusicVolumeSlider.value = value;
         }
 
-        private void ConfigureButtons(IViewSignalManager viewSignalManager)
+        private void ConfigureButtons(
+            UnityAction<float> onSoundsVolumeChanged, 
+            UnityAction<float> onMusicVolumeChanged)
         {
-            return;
-            
             m_CloseButton.onClick.RemoveAllListeners();
-            m_CloseButton.onClick.AddListener(viewSignalManager.GetCloseSignal());
+            m_CloseButton.onClick.AddListener(ViewInteractor.Close);
             
             m_SoundsVolumeSlider.onValueChanged.RemoveAllListeners();
-            m_SoundsVolumeSlider.onValueChanged.AddListener(
-                viewSignalManager.GetSignal<float>(
-                    SettingsPopupSignals.SoundsVolumeChangedSignal, 
-                    false));
+            m_SoundsVolumeSlider.onValueChanged.AddListener(onSoundsVolumeChanged);
             
             m_MusicVolumeSlider.onValueChanged.RemoveAllListeners();
-            m_MusicVolumeSlider.onValueChanged.AddListener(
-                viewSignalManager.GetSignal<float>(
-                    SettingsPopupSignals.MusicVolumeChangedSignal, 
-                    false));
+            m_MusicVolumeSlider.onValueChanged.AddListener(onMusicVolumeChanged);
         }
     }
 }

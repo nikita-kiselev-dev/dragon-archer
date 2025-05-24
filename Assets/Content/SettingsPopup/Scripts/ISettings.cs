@@ -2,6 +2,7 @@
 {
     public interface ISettings
     {
-        public bool IsInited { get; }
+        bool IsInited { get; }
+        void OpenPopup();
     }
 }

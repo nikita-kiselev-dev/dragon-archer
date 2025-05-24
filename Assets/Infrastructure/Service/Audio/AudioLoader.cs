@@ -7,7 +7,6 @@ namespace Infrastructure.Service.Audio
 {
     public class AudioLoader : IAudioLoader
     {
-        private const string AudioFileFormat = ".wav";
         private readonly IAssetLoader _assetLoader;
         
         public AudioLoader(IAssetLoader assetLoader)
@@ -17,8 +16,7 @@ namespace Infrastructure.Service.Audio
         
         public async UniTask<AudioClip> LoadAudio(string audioClipName, string audioType)
         {
-            var audioClipAddressPath = audioType + "/" + audioClipName + AudioFileFormat;
-            var audioClip = await _assetLoader.LoadAsync<AudioClip>(audioClipAddressPath);
+            var audioClip = await _assetLoader.LoadAsync<AudioClip>(audioClipName);
 
             if (audioClip)
             {

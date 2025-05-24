@@ -3,13 +3,10 @@ using Content.SettingsPopup.Scripts.Model;
 using Content.SettingsPopup.Scripts.Presenter;
 using Content.SettingsPopup.Scripts.View;
 using Cysharp.Threading.Tasks;
-using Infrastructure.Service.Asset;
 using Infrastructure.Service.Initialization;
 using Infrastructure.Service.Initialization.Decorators.FastView;
 using Infrastructure.Service.Initialization.InitOrder;
 using Infrastructure.Service.Initialization.Scopes;
-using Infrastructure.Service.Logger;
-using Infrastructure.Service.View.ViewFactory;
 using Infrastructure.Service.View.ViewManager;
 using VContainer;
 
@@ -17,39 +14,27 @@ namespace Content.SettingsPopup.Scripts
 {
     [ControlEntityOrder(nameof(StartScope), (int)StartSceneInitOrder.SettingsPopup)]
     [FastViewDecoratable]
-    public class Settings : ControlEntity, ISettings
+    public class SettingsCore : ControlEntity, ISettings
     {
         [Inject] private readonly SettingsPopupData _data;
-        [Inject] private readonly IViewFactory _viewFactory;
-        [Inject] private readonly IViewManager _viewManager;
-        [Inject] private readonly IAssetLoader _assetLoader;
         
-        private readonly ILogManager _logger = new LogManager(nameof(Settings));
-        
-        [FastView(ViewInfo.SettingsPopup, ViewType.Popup)] private SettingsPopupView _view;
+        [FastView(SettingsConstants.PopupKey, ViewType.Popup)] private SettingsPopupView _view;
         private ISettingsPopupModel _model;
         private ISettingsPopupPresenter _presenter;
 
-        public bool IsInited => _presenter.IsInited;
+        bool ISettings.IsInited => _presenter.IsInited;
         
         protected override UniTask Init()
         {
-            if (!IsLoadSucceed())
-            {
-                _logger.LogError($"{ViewInfo.SettingsPopup} load failed.");
-                return UniTask.CompletedTask;
-            }
-            
             CreateModel();
             CreatePresenter();
             _presenter.Init();
             return UniTask.CompletedTask;
         }
         
-        private bool IsLoadSucceed()
+        void ISettings.OpenPopup()
         {
-            var result = _view is not null;
-            return result;
+            _presenter.Open();
         }
 
         private void CreateModel()
@@ -59,7 +44,7 @@ namespace Content.SettingsPopup.Scripts
 
         private void CreatePresenter()
         {
-            _presenter = new SettingsPopupPresenter(_model, _view, _viewManager);
+            _presenter = new SettingsPopupPresenter(_model, _view);
         }
     }
 }

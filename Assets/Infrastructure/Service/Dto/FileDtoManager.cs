@@ -112,10 +112,11 @@ namespace Infrastructure.Service.Dto
         
         private async UniTask<string> GetDummyDto(string configName)
         {
-            var config = await _assetLoader.LoadAsync<TextAsset>(configName);
+            var configAsset = await _assetLoader.LoadAsync<TextAsset>(configName);
+            var config = configAsset.ToString();
             _logger.Log($"Dummy config file:\n{config}.");
             _assetLoader.Release(configName);
-            return config.ToString();
+            return config;
         }
 
         private bool AreDtosEqual(Dictionary<string, string> firstDto, Dictionary<string, string> secondDto)

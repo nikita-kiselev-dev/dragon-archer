@@ -1,10 +1,14 @@
-﻿using Infrastructure.Service.View.ViewSignalManager;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Infrastructure.Service.View.ViewManager
 {
-    public abstract class MonoView : MonoBehaviour
+    public abstract class MonoView : MonoBehaviour, IViewInteractorContainer
     {
-        public abstract void Init(IViewSignalManager viewSignalManager);
+        public IViewInteractor ViewInteractor { get; private set; }
+
+        void IViewInteractorContainer.SetViewInteractor(IViewInteractor viewInteractor)
+        {
+            ViewInteractor = viewInteractor;
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Infrastructure.Service.View;
-using Infrastructure.Service.View.ViewSignalManager;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace Content.DailyBonus.Scripts.View
@@ -12,15 +12,15 @@ namespace Content.DailyBonus.Scripts.View
 
         public override RewardRowsManager RewardRowsManager => m_RewardRowsManager;
         
-        public override void Init(IViewSignalManager viewSignalManager)
+        public override void Init(UnityAction onCloseButtonClicked)
         {
-            ConfigureButtons(viewSignalManager);
+            ConfigureButtons(onCloseButtonClicked);
         }
 
-        private void ConfigureButtons(IViewSignalManager viewSignalManager)
+        private void ConfigureButtons(UnityAction onCloseButtonClicked)
         {
             m_CloseButton.onClick.RemoveAllListeners();
-            m_CloseButton.onClick.AddListener(viewSignalManager.GetCloseSignal().Invoke);
+            m_CloseButton.onClick.AddListener(onCloseButtonClicked);
         }
     }
 }

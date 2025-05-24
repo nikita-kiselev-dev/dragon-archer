@@ -34,11 +34,10 @@ namespace Infrastructure.Service.Asset
 
         public async UniTask<T> InstantiateAsync<T>(string key, Transform parent = null)
         {
-            await LoadAsync<GameObject>(key);
-            var handle = Addressables.InstantiateAsync(key, parent);
-            var instance = await handle.ToUniTask();
-            CacheInstance(key, instance);
-            return instance.GetComponent<T>();
+            var cachedAsset = await LoadAsync<GameObject>(key);
+            var instantiatedObject = UnityEngine.Object.Instantiate(cachedAsset, parent);
+            CacheInstance(key, instantiatedObject);
+            return instantiatedObject.GetComponent<T>();
         }
 
         public void Release(string key, bool removeFromCache = true)
@@ -92,6 +91,7 @@ namespace Infrastructure.Service.Asset
             }
 
             _cachedAssets.Clear();
+            Resources.UnloadUnusedAssets();
         }
     }
 }

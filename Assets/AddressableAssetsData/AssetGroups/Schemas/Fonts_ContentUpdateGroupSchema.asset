@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5834b5087d578d24c926ce20cd31e6d6, type: 3}
-  m_Name: Audio_ContentUpdateGroupSchema
+  m_Name: Fonts_ContentUpdateGroupSchema
   m_EditorClassIdentifier: 
-  m_Group: {fileID: 11400000, guid: f3e36b89c222e7a41ba4c5ddf4802062, type: 2}
+  m_Group: {fileID: 11400000, guid: 40c6a05b3de84b043b779eb110851448, type: 2}
   m_StaticContent: 0

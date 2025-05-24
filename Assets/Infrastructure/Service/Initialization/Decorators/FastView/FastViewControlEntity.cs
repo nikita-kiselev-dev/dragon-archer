@@ -102,11 +102,17 @@ namespace Infrastructure.Service.Initialization.Decorators.FastView
         
         private void RegisterAndInitView(FastView fastView, MonoView view)
         {
-            new ViewRegistrar(_viewManager)
+            var viewInteractor = new ViewRegistrar(_viewManager)
                 .SetViewKey(fastView.ViewKey)
                 .SetViewType(fastView.ViewType)
                 .SetView(view)
+                .EnableFromStart(fastView.ViewType != ViewType.Popup)
                 .RegisterAndInit();
+
+            if (view is IViewInteractorContainer viewInteractorContainer)
+            {
+                viewInteractorContainer.SetViewInteractor(viewInteractor);
+            }
         }
     }
 }

@@ -2,6 +2,6 @@
 {
     public interface IStartWindowController
     {
-        public bool IsInited { get; }
+        bool IsInited { get; }
     }
 }

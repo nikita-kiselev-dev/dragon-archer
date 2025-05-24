@@ -10,7 +10,7 @@ namespace Infrastructure.Service.View.ViewManager
         public IViewBuilder SetViewType(string viewType);
         public IViewBuilder SetView(MonoView monoView);
         public IViewBuilder SetViewSignalManager(IViewSignalManager viewSignalManager);
-        public IViewBuilder EnableFromStart();
+        public IViewBuilder EnableFromStart(bool status);
         public IViewBuilder SetAfterOpenAction(Action action);
         public IViewBuilder SetAfterCloseAction(Action action);
         public IViewBuilder SetCustomAnimator(IViewAnimator animator);
