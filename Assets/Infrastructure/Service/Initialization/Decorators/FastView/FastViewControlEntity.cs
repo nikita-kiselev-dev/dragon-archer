@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Cysharp.Threading.Tasks;
@@ -107,12 +108,30 @@ namespace Infrastructure.Service.Initialization.Decorators.FastView
                 .SetViewType(fastView.ViewType)
                 .SetView(view)
                 .EnableFromStart(fastView.ViewType != ViewType.Popup)
+                .SetAfterCloseAction(GetAfterCloseAction(fastView))
                 .RegisterAndInit();
 
             if (view is IViewInteractorContainer viewInteractorContainer)
             {
                 viewInteractorContainer.SetViewInteractor(viewInteractor);
             }
+        }
+
+        private Action GetAfterCloseAction(FastView fastView)
+        {
+            if (string.IsNullOrEmpty(fastView.AfterCloseActionName)) return null;
+            
+            var method = _baseControlEntity
+                .GetType()
+                .GetMethod(
+                    fastView.AfterCloseActionName, 
+                    BindingFlags.Instance | 
+                    BindingFlags.NonPublic | 
+                    BindingFlags.Public);
+            
+            if (method != null) return (Action)Delegate.CreateDelegate(typeof(Action), _baseControlEntity, method);
+            _logger.LogError($"{_baseControlEntity.GetType()} - can't find AfterCloseAction: {fastView.AfterCloseActionName}.");
+            return null;
         }
     }
 }

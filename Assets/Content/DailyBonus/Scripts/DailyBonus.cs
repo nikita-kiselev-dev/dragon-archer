@@ -38,7 +38,8 @@ namespace Content.DailyBonus.Scripts
 
         private readonly ILogManager _logger = new LogManager(nameof(DailyBonus));
 
-        [FastView(DailyBonusConstants.Popup, ViewType.Popup)] private DailyBonusView _view;
+        [FastView(DailyBonusConstants.Popup, ViewType.Popup, nameof(Unload))] 
+        private DailyBonusView _view;
         private IDailyBonusDto _dto;
         private IDailyBonusModel _model;
         private IDailyBonusPresenter _presenter;
@@ -93,8 +94,7 @@ namespace Content.DailyBonus.Scripts
                     _model,
                     _assetLoader,
                     _serverTimeService,
-                    _inventoryManager,
-                    Unload);
+                    _inventoryManager);
         }
 
         private void Unload()

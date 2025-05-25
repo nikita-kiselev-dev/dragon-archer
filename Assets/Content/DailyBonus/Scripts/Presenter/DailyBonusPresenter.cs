@@ -17,7 +17,6 @@ namespace Content.DailyBonus.Scripts.Presenter
         private readonly IAssetLoader _assetLoader;
         private readonly IServerTimeService _serverTimeService;
         private readonly IInventoryManager _inventoryManager;
-        private readonly Action _onCloseAction;
         
         private IDailyBonusCore _core;
         
@@ -30,8 +29,7 @@ namespace Content.DailyBonus.Scripts.Presenter
             IDailyBonusModel model,
             IAssetLoader assetLoader,
             IServerTimeService serverTimeService,
-            IInventoryManager inventoryManager,
-            Action onCloseAction)
+            IInventoryManager inventoryManager)
         {
             _analytics = analytics;
             _view = view;
@@ -39,7 +37,6 @@ namespace Content.DailyBonus.Scripts.Presenter
             _assetLoader = assetLoader;
             _serverTimeService = serverTimeService;
             _inventoryManager = inventoryManager;
-            _onCloseAction = onCloseAction;
         }
 
         public async UniTask Init()
@@ -83,7 +80,6 @@ namespace Content.DailyBonus.Scripts.Presenter
         {
             _view.ViewInteractor.Close();
             IsActive = false;
-            _onCloseAction?.Invoke();
         }
         
         private async UniTask CreateDays()
