@@ -30,19 +30,8 @@ namespace Content.DailyBonus.Scripts.Core
         {
             var serverTime = await _serverTimeService.GetServerTime();
             var streakIsLoosed = StreakIsLoosed(serverTime);
-            
-            if (!streakIsLoosed && !_model.TodayRewardWasReceived)
-            {
-                _model.AddStreakDay();
-            }
-            
-            var isFirstLaunch = await _model.IsFirstServerLaunch();
-            
-            if (streakIsLoosed && !isFirstLaunch)
-            {
-                _analytics.LogStreakLose(_model.StreakDay);
-            }
-            
+            if (!streakIsLoosed && !_model.TodayRewardWasReceived) _model.AddStreakDay();
+            if (streakIsLoosed) _analytics.LogStreakLose(_model.StreakDay);
             var areAllRewardsReceived = _model.HasCollectedAllRewards();
             
             if (streakIsLoosed || areAllRewardsReceived)
@@ -53,20 +42,21 @@ namespace Content.DailyBonus.Scripts.Core
 
             var todayIsRewardDay = _model.TodayIsRewardDay();
             var needToShowPopup = todayIsRewardDay && !_model.TodayRewardWasReceived;
-            
             return needToShowPopup;
         }
 
-        public void GiveReward()
+        public async UniTask GiveReward()
         {
             var currentDayConfig = _model.GetDayConfig();
             var rewardResult = _inventoryManager.AddItem(currentDayConfig.ItemName, currentDayConfig.ItemCount);
             _model.SetTodayRewardStatus(rewardResult);
+            var serverTime = await _serverTimeService.GetServerTime();
+            _model.SetLastRewardDate(serverTime);
         }
         
         private bool StreakIsLoosed(DateTime serverTime)
         {
-            var timeSinceLastServerSession = serverTime - _model.LastSessionServerTime;
+            var timeSinceLastServerSession = serverTime - _model.LastRewardDate;
             var daysSinceLastServerSession = timeSinceLastServerSession.Days;
 
             if (daysSinceLastServerSession == 1)

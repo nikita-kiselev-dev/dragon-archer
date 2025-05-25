@@ -1,4 +1,5 @@
 ﻿using System;
+using GamePush;
 
 namespace Infrastructure.Service.LiveOps.GamePush
 {
@@ -6,8 +7,7 @@ namespace Infrastructure.Service.LiveOps.GamePush
     {
         public DateTime GetServerTime()
         {
-            //var serverTime = GamePushService.Time().ToUniversalTime();
-            return DateTime.Today;
+            return GP_Server.Time();
         }
     }
 }

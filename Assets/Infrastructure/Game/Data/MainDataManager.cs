@@ -23,11 +23,9 @@ namespace Infrastructure.Game.Data
             signalBus.Subscribe<GetServerTimeCompletedSignal, DateTime>(this, SetServerTime);
         }
 
-        public async UniTask<bool> IsFirstServerLaunch()
+        public bool IsFirstServerLaunch()
         {
-            var serverTime = await _serverTimeService.GetServerTime();
-            var isFirstLaunch = serverTime.Date == _mainData.FirstSessionServerTime.Date;
-            return isFirstLaunch;
+            return _mainData.IsFirstServerLaunch;
         }
 
         public void SetLocalTime(DateTime time)

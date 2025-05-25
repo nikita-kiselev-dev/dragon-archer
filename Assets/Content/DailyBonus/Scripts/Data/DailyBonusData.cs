@@ -1,3 +1,4 @@
+using System;
 using Infrastructure.Service.SaveLoad;
 using MemoryPack;
 
@@ -8,6 +9,7 @@ namespace Content.DailyBonus.Scripts.Data
     {
         [DataProperty] public int StreakDay { get; private set; }
         [DataProperty] public bool TodayRewardWasReceived { get; private set; }
+        [DataProperty] public DateTime LastRewardDate { get; private set; }
         
         public override void PrepareNewData()
         {
@@ -29,6 +31,11 @@ namespace Content.DailyBonus.Scripts.Data
         public void SetTodayRewardStatus(bool isReceived)
         {
             TodayRewardWasReceived = isReceived;
+        }
+
+        public void SetLastRewardDate(DateTime date)
+        {
+            LastRewardDate = date;
         }
     }
 }

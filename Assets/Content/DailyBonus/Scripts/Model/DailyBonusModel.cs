@@ -17,7 +17,7 @@ namespace Content.DailyBonus.Scripts.Model
         public IReadOnlyList<DailyBonusDayDto> DayConfigs => _dto.GetDays();
         public int StreakDay => _dailyBonusData.StreakDay;
         public bool TodayRewardWasReceived => _dailyBonusData.TodayRewardWasReceived;
-        public DateTime LastSessionServerTime => _mainDataManager.LastSessionServerTime;
+        public DateTime LastRewardDate => _dailyBonusData.LastRewardDate;
         
         public DailyBonusModel(IDailyBonusDto dto, DailyBonusData dailyBonusData, IMainDataManager mainDataManager)
         {
@@ -30,8 +30,9 @@ namespace Content.DailyBonus.Scripts.Model
         public void AddStreakDay() => _dailyBonusData.AddStreakDayData();
         public bool TodayIsRewardDay() => _dto.GetDay(StreakDay) != null;
         public void SetTodayRewardStatus(bool isReceived) => _dailyBonusData.SetTodayRewardStatus(isReceived);
+        public void SetLastRewardDate(DateTime rewardDate) => _dailyBonusData.SetLastRewardDate(rewardDate);
         public void ResetData() => _dailyBonusData.ResetStreak();
-        public async UniTask<bool> IsFirstServerLaunch() => await _mainDataManager.IsFirstServerLaunch();
+        public bool IsFirstServerLaunch() => _mainDataManager.IsFirstServerLaunch();
         
         public bool HasCollectedAllRewards()
         {

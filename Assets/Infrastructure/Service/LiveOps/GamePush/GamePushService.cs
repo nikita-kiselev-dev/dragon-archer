@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using GamePush;
 using Infrastructure.Service.LiveOps.Signals;
-using Infrastructure.Service.Logger;
 using Infrastructure.Service.SignalBus;
 using VContainer;
 
@@ -12,26 +12,15 @@ namespace Infrastructure.Service.LiveOps.GamePush
     {
         [Inject] private ISignalBus _signalBus;
 
-        private readonly GamePushServerTimeService _timeService = new();
-        private readonly ILogManager _logger = new LogManager(nameof(GamePushService));
-
         public Dictionary<string, string> GetDto() => null;
 
-        public bool IsConnectedToServer
-        {
-            get
-            {
-                _logger.LogError("No method for server connection check! Return false by default.");
-                return false;
-            }
-        }
+        public bool IsConnectedToServer => true;
 
-        public async UniTask<DateTime> GetServerTime()
+        public UniTask<DateTime> GetServerTime()
         {
-            await UniTask.WaitUntil(() => true);
-            var serverTime = _timeService.GetServerTime();
+            var serverTime = GP_Server.Time();
             _signalBus.Trigger<GetServerTimeCompletedSignal, DateTime>(serverTime);
-            return serverTime;
+            return new UniTask<DateTime>(serverTime);
         }
     }
 }
