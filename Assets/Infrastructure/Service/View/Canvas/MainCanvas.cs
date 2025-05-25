@@ -28,7 +28,7 @@ namespace Infrastructure.Service.View.Canvas
             SetCamera(GameInfo.MainCameraKey);
             SetViewParents();
             
-            m_PopupBackgroundButton.onClick.RemoveAllListeners();
+            m_PopupBackgroundButton.onClick.RemoveListener(CloseLastView);
             m_PopupBackgroundButton.onClick.AddListener(CloseLastView);
         }
         

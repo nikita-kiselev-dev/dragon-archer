@@ -18,6 +18,7 @@ using Infrastructure.Service.LiveOps;
 using Infrastructure.Service.Logger;
 using Infrastructure.Service.SignalBus;
 using Infrastructure.Service.View.ViewManager;
+using UnityEngine;
 using VContainer;
 
 namespace Content.DailyBonus.Scripts
@@ -99,6 +100,8 @@ namespace Content.DailyBonus.Scripts
 
         private void Unload()
         {
+            _view.gameObject.SetActive(false);
+            Object.Destroy(_view.gameObject);
             _assetLoader.Release(DailyBonusConstants.Popup);
             _assetLoader.Release(DailyBonusConstants.PreviousDay);
             _assetLoader.Release(DailyBonusConstants.Today);

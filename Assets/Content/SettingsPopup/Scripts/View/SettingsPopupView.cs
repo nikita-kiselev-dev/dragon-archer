@@ -32,13 +32,13 @@ namespace Content.SettingsPopup.Scripts.View
             UnityAction<float> onSoundsVolumeChanged, 
             UnityAction<float> onMusicVolumeChanged)
         {
-            m_CloseButton.onClick.RemoveAllListeners();
+            m_CloseButton.onClick.RemoveListener(ViewInteractor.Close);
             m_CloseButton.onClick.AddListener(ViewInteractor.Close);
             
-            m_SoundsVolumeSlider.onValueChanged.RemoveAllListeners();
+            m_SoundsVolumeSlider.onValueChanged.RemoveListener(onSoundsVolumeChanged);
             m_SoundsVolumeSlider.onValueChanged.AddListener(onSoundsVolumeChanged);
             
-            m_MusicVolumeSlider.onValueChanged.RemoveAllListeners();
+            m_MusicVolumeSlider.onValueChanged.RemoveListener(onMusicVolumeChanged);
             m_MusicVolumeSlider.onValueChanged.AddListener(onMusicVolumeChanged);
         }
     }

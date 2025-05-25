@@ -1,4 +1,5 @@
 ﻿using Content.DailyBonus.Scripts;
+using Infrastructure.Service.Audio;
 using VContainer;
 using VContainer.Unity;
 
@@ -10,6 +11,7 @@ namespace Infrastructure.Service.Initialization.Scopes
         {
             builder.RegisterEntryPoint<SceneStarter>();
             builder.Register<DailyBonus>(Lifetime.Scoped).As<ControlEntity>().AsImplementedInterfaces();
+            builder.Register<ButtonAudioManager>(Lifetime.Scoped).As<ControlEntity>().AsSelf();
         }
     }
 }

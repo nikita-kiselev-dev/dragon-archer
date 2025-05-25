@@ -26,13 +26,13 @@ namespace Content.StartWindow.Scripts.View
             UnityAction onSettingsButtonClicked, 
             UnityAction onWebSiteButtonClicked)
         {
-            m_PlayButton.onClick.RemoveAllListeners();
+            m_PlayButton.onClick.RemoveListener(onPlayButtonClicked);
             m_PlayButton.onClick.AddListener(onPlayButtonClicked);
             
-            m_SettingsButton.onClick.RemoveAllListeners();
+            m_SettingsButton.onClick.RemoveListener(onSettingsButtonClicked);
             m_SettingsButton.onClick.AddListener(onSettingsButtonClicked);
             
-            m_WebSiteButton.onClick.RemoveAllListeners();
+            m_WebSiteButton.onClick.RemoveListener(onWebSiteButtonClicked);
             m_WebSiteButton.onClick.AddListener(onWebSiteButtonClicked);
         }
     }

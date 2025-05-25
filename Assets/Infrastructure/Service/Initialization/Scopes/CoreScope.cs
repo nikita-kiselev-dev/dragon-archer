@@ -1,4 +1,5 @@
-﻿using VContainer;
+﻿using Infrastructure.Service.Audio;
+using VContainer;
 using VContainer.Unity;
 
 namespace Infrastructure.Service.Initialization.Scopes
@@ -7,6 +8,7 @@ namespace Infrastructure.Service.Initialization.Scopes
     {
         protected override void Configure(IContainerBuilder builder)
         {
+            builder.Register<ButtonAudioManager>(Lifetime.Scoped).As<ControlEntity>().AsSelf();
         }
     }
 }

@@ -2,6 +2,8 @@
 {
     public enum BootstrapSceneInitOrder
     {
-        SaveLoadService
+        First,
+        SaveLoadService,
+        Last
     }
 }

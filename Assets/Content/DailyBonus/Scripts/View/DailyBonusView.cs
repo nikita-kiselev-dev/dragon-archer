@@ -19,7 +19,7 @@ namespace Content.DailyBonus.Scripts.View
 
         private void ConfigureButtons(UnityAction onCloseButtonClicked)
         {
-            m_CloseButton.onClick.RemoveAllListeners();
+            m_CloseButton.onClick.RemoveListener(onCloseButtonClicked);
             m_CloseButton.onClick.AddListener(onCloseButtonClicked);
         }
     }
