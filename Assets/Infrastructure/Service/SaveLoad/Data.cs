@@ -1,11 +1,11 @@
 using Content.DailyBonus.Scripts.Data;
-using Content.Items.Gems.Data;
-using Content.Items.Gold.Data;
-using Content.Items.Scripts.Data;
+using Content.Items.Gems.Scripts.Data;
+using Content.Items.Gold.Scripts.Data;
 using Content.SettingsPopup.Scripts.Data;
 using Infrastructure.Game.Data;
 using Infrastructure.Game.Tutorials.Data;
 using MemoryPack;
+using ItemData = Content.Items.Common.Scripts.Data.ItemData;
 
 namespace Infrastructure.Service.SaveLoad
 {

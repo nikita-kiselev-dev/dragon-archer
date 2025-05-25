@@ -13,17 +13,20 @@ MonoBehaviour:
   m_Name: Icons
   m_EditorClassIdentifier: 
   m_GroupName: Icons
-  m_Data:
-    m_SerializedData: []
   m_GUID: 8156a702908d1f6418298f2d22356bb9
   m_SerializeEntries:
-  - m_GUID: 6d127ddd23121e042941b358caf77232
-    m_Address: icon_ticket
+  - m_GUID: 79e7cb850facbe54d8778d4301780267
+    m_Address: atlas_icons_gems
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 44a74cd999f3b7c4eaab822a93ab99f7
-    m_Address: icon_health
+  - m_GUID: cc603d4c666742941b9e670b2b0994b4
+    m_Address: atlas_icons_gold
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f6b0f0f9f5933f4478b42fc4644249bb
+    m_Address: atlas_icons_common
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

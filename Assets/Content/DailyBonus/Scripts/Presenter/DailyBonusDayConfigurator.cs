@@ -5,6 +5,7 @@ using Content.DailyBonus.Scripts.Factory;
 using Content.DailyBonus.Scripts.Model;
 using Cysharp.Threading.Tasks;
 using Infrastructure.Service.Asset;
+using Infrastructure.Service.Asset.IconController;
 using Infrastructure.Service.View;
 using UnityEngine;
 
@@ -15,15 +16,18 @@ namespace Content.DailyBonus.Scripts.Presenter
         private readonly IDailyBonusModel _model;
         private readonly IRewardRowsManager _rewardRowsManager;
         private readonly IAssetLoader _assetLoader;
+        private readonly IIconController _iconController;
 
         public DailyBonusDayConfigurator(
             IDailyBonusModel model, 
             IRewardRowsManager rewardRowsManager, 
-            IAssetLoader assetLoader)
+            IAssetLoader assetLoader,
+            IIconController iconController)
         {
             _model = model;
             _rewardRowsManager = rewardRowsManager;
             _assetLoader = assetLoader;
+            _iconController = iconController;
         }
 
         public async UniTask<List<IDailyBonusDayController>> GetConfiguredDayControllers()
@@ -70,7 +74,7 @@ namespace Content.DailyBonus.Scripts.Presenter
                 _rewardRowsManager.GetRewardParent(index, configCount - 1);
             
             var dayType = GetDayType(dayDto.StreakDay, currentStreakDay, isLastDay);
-            var itemSprite = await _assetLoader.LoadAsync<Sprite>(dayDto.ItemSprite);
+            var itemSprite = await _iconController.GetIcon(dayDto.ItemSprite, dayDto.ItemName);
                 
             var dayConfig = new DailyBonusDayConfig(
                 dayType,

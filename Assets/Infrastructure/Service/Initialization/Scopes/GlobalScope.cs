@@ -1,11 +1,11 @@
 ﻿using System;
 using Content.DailyBonus.Scripts.Data;
-using Content.Items.Gems;
-using Content.Items.Gems.Data;
-using Content.Items.Gold;
-using Content.Items.Gold.Data;
-using Content.Items.Scripts;
-using Content.Items.Scripts.Data;
+using Content.Items.Common.Scripts;
+using Content.Items.Common.Scripts.Data;
+using Content.Items.Gems.Scripts;
+using Content.Items.Gems.Scripts.Data;
+using Content.Items.Gold.Scripts;
+using Content.Items.Gold.Scripts.Data;
 using Content.SettingsPopup.Scripts.Data;
 using Infrastructure.Game.Data;
 using Infrastructure.Game.Tutorials;
@@ -13,6 +13,7 @@ using Infrastructure.Game.Tutorials.Data;
 using Infrastructure.Service.Analytics;
 using Infrastructure.Service.Analytics.Amplitude;
 using Infrastructure.Service.Asset;
+using Infrastructure.Service.Asset.IconController;
 using Infrastructure.Service.Dto;
 using Infrastructure.Service.File;
 using Infrastructure.Service.Initialization.Decorators.FastView;
@@ -67,6 +68,7 @@ namespace Infrastructure.Service.Initialization.Scopes
             
             builder.Register<EventSignalBus>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<ProgressSaver>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<IconController>(Lifetime.Singleton).AsImplementedInterfaces();
         }
         
         private void RegisterFileServices(IContainerBuilder builder)

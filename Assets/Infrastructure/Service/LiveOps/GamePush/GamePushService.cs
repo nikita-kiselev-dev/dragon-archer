@@ -22,7 +22,7 @@ namespace Infrastructure.Service.LiveOps.GamePush
             get
             {
                 _logger.LogError("No method for server connection check! Return false by default.");
-                return true;
+                return false;
             }
         }
 

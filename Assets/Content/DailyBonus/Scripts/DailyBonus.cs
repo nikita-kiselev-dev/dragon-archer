@@ -3,11 +3,12 @@ using Content.DailyBonus.Scripts.Dto;
 using Content.DailyBonus.Scripts.Model;
 using Content.DailyBonus.Scripts.Presenter;
 using Content.DailyBonus.Scripts.View;
-using Content.Items.Scripts;
+using Content.Items.Common.Scripts;
 using Cysharp.Threading.Tasks;
 using Infrastructure.Game.Data;
 using Infrastructure.Service.Analytics;
 using Infrastructure.Service.Asset;
+using Infrastructure.Service.Asset.IconController;
 using Infrastructure.Service.Controller;
 using Infrastructure.Service.Dto;
 using Infrastructure.Service.Initialization;
@@ -31,6 +32,7 @@ namespace Content.DailyBonus.Scripts
         [Inject] private readonly IDtoReader _dtoReader;
         [Inject] private readonly IAssetLoader _assetLoader;
         [Inject] private readonly DailyBonusData _dailyBonusData;
+        [Inject] private readonly IIconController _iconController;
         [Inject] private readonly IMainDataManager _mainDataManager;
         [Inject] private readonly IInventoryManager _inventoryManager;
         [Inject] private readonly IAnalyticsManager _analyticsManager;
@@ -94,14 +96,19 @@ namespace Content.DailyBonus.Scripts
                     _view,
                     _model,
                     _assetLoader,
+                    _iconController,
                     _serverTimeService,
                     _inventoryManager);
         }
 
         private void Unload()
         {
-            _view.gameObject.SetActive(false);
-            Object.Destroy(_view.gameObject);
+            if (_view)
+            {
+                _view.gameObject.SetActive(false);
+                Object.Destroy(_view.gameObject);
+            }
+            
             _assetLoader.Release(DailyBonusConstants.Popup);
             _assetLoader.Release(DailyBonusConstants.PreviousDay);
             _assetLoader.Release(DailyBonusConstants.Today);

@@ -1,10 +1,10 @@
-﻿using System;
-using Content.DailyBonus.Scripts.Core;
+﻿using Content.DailyBonus.Scripts.Core;
 using Content.DailyBonus.Scripts.Model;
 using Content.DailyBonus.Scripts.View;
-using Content.Items.Scripts;
+using Content.Items.Common.Scripts;
 using Cysharp.Threading.Tasks;
 using Infrastructure.Service.Asset;
+using Infrastructure.Service.Asset.IconController;
 using Infrastructure.Service.LiveOps;
 
 namespace Content.DailyBonus.Scripts.Presenter
@@ -15,6 +15,7 @@ namespace Content.DailyBonus.Scripts.Presenter
         private readonly IDailyBonusView _view;
         private readonly IDailyBonusModel _model;
         private readonly IAssetLoader _assetLoader;
+        private readonly IIconController _iconController;
         private readonly IServerTimeService _serverTimeService;
         private readonly IInventoryManager _inventoryManager;
         
@@ -28,6 +29,7 @@ namespace Content.DailyBonus.Scripts.Presenter
             IDailyBonusView view,
             IDailyBonusModel model,
             IAssetLoader assetLoader,
+            IIconController iconController,
             IServerTimeService serverTimeService,
             IInventoryManager inventoryManager)
         {
@@ -35,6 +37,7 @@ namespace Content.DailyBonus.Scripts.Presenter
             _view = view;
             _model = model;
             _assetLoader = assetLoader;
+            _iconController = iconController;
             _serverTimeService = serverTimeService;
             _inventoryManager = inventoryManager;
         }
@@ -84,7 +87,12 @@ namespace Content.DailyBonus.Scripts.Presenter
         
         private async UniTask CreateDays()
         {
-            var dayConfigurator = new DailyBonusDayConfigurator(_model, _view.RewardRowsManager, _assetLoader);
+            var dayConfigurator = new DailyBonusDayConfigurator(
+                _model, 
+                _view.RewardRowsManager, 
+                _assetLoader, 
+                _iconController);
+            
             var dayControllers = await dayConfigurator.GetConfiguredDayControllers();
 
             foreach (var dayController in dayControllers)

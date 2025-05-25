@@ -1,7 +1,7 @@
 ﻿using System;
 using Content.DailyBonus.Scripts.Model;
 using Content.DailyBonus.Scripts.Presenter;
-using Content.Items.Scripts;
+using Content.Items.Common.Scripts;
 using Cysharp.Threading.Tasks;
 using Infrastructure.Service.LiveOps;
 
