@@ -557,7 +557,11 @@ PlayerSettings:
   openGLRequireES31AEP: 0
   openGLRequireES32: 0
   m_TemplateCustomTags:
+    GAMEREADY_AUTOCALL: True
     PRODUCT_DESCRIPTION: 
+    PROJECT_ID: 16514
+    SHOW_PRELOADER_AD: False
+    TOKEN: pgVxnxE35i1xpKamttLkfe3Le5kMSPDV
   mobileMTRendering:
     Android: 1
     iPhone: 1

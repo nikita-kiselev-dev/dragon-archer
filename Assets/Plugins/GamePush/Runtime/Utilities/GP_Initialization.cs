@@ -1,27 +1,32 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using GamePush;
+using GamePush.Data;
 using GamePush.ConsoleController;
 using System.Threading.Tasks;
 using System;
 using System.Runtime.InteropServices;
+using System.Collections;
 
 namespace GamePush.Initialization
 {
     
     public class GP_Initialization
     {
-        public static string VERSION = GP_Data.SDK_VERSION;
+        public static string VERSION = PluginData.SDK_VERSION;
 
+#if UNITY_WEBGL
         [DllImport("__Internal")]
         private static extern void GP_UnityReady();
+#endif
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Execute()
         {
+
 #if !UNITY_EDITOR && UNITY_WEBGL
              GP_UnityReady();
 #endif
-
             GameObject SDK = new GameObject();
             SDK.name = "GamePushSDK";
             UnityEngine.Object.DontDestroyOnLoad(SDK);
@@ -33,7 +38,7 @@ namespace GamePush.Initialization
 
             SDK.AddComponent<GP_Init>();
             SetUpInitAwaiter();
-            
+
             SDK.AddComponent<GP_Achievements>();
             SDK.AddComponent<GP_Ads>();
             SDK.AddComponent<GP_Analytics>();
@@ -67,13 +72,25 @@ namespace GamePush.Initialization
             SDK.AddComponent<GP_Custom>();
             SDK.AddComponent<GP_Uniques>();
             SDK.AddComponent<GP_Storage>();
+            SDK.AddComponent<GP_Windows>();
+
+            if (ProjectData.AUTO_PAUSE_ON_ADS)
+            {
+                SDK.AddComponent<GP_PauseLogic>();
+            }
 
             EndInit();
         }
 
         private static async void EndInit()
         {
+            await EndInitTask();
+        }
+
+        private static async Task EndInitTask()
+        {
             await GP_Init.Ready;
+
             GP_Logger.Info($"Plugin {VERSION}", "Initialize");
         }
 
@@ -92,5 +109,9 @@ namespace GamePush.Initialization
                     _tcs.SetResult(false);
             };
         }
+
+        
     }
+
+   
 }
