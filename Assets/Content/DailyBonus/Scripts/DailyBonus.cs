@@ -73,18 +73,14 @@ namespace Content.DailyBonus.Scripts
 
         private bool IsLoadSucceed()
         {
-            if (_dto != null)
-            {
-                return true;
-            }
-            
+            if (_dto != null) return true;
             _logger.Log("Init failed - no internet connection.");
             return false;
         }
 
         private void CreateModel()
         {
-            _model = new DailyBonusModel(_dto, _dailyBonusData, _mainDataManager);
+            _model = new DailyBonusModel(_dto, _dailyBonusData);
         }
         
         private void CreatePresenter()

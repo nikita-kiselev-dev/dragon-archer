@@ -21,7 +21,7 @@ namespace Content.DailyBonus.Scripts.Dto
         public DailyBonusDayDto GetDay(int streakDay)
         {
             GetDays();
-            var dayDto = _sortedDays.FirstOrDefault(day => day.StreakDay == streakDay);
+            var dayDto = _sortedDays.Find(day => day.StreakDay == streakDay);
             return dayDto;
         }
 

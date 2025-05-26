@@ -29,43 +29,48 @@ namespace Content.DailyBonus.Scripts.Core
         public async UniTask<bool> NeedToShowPopup()
         {
             var serverTime = await _serverTimeService.GetServerTime();
-            var streakIsLoosed = StreakIsLoosed(serverTime);
-            if (!streakIsLoosed && !_model.TodayRewardWasReceived) _model.AddStreakDay();
-            if (streakIsLoosed) _analytics.LogStreakLose(_model.StreakDay);
-            var areAllRewardsReceived = _model.HasCollectedAllRewards();
-            
-            if (streakIsLoosed || areAllRewardsReceived)
+            return ProcessStreakUpdate(serverTime) || ShouldShowPopup(serverTime);
+        }
+
+        private bool ProcessStreakUpdate(DateTime serverTime)
+        {
+            var daysPassed = (serverTime.Date - _model.LastRewardDate.Date).Days;
+
+            if (daysPassed > 1)
             {
-                _model.ResetData();
+                _analytics.LogStreakLose(_model.StreakDay);
+                _model.ResetStreak();
                 return true;
             }
 
-            var todayIsRewardDay = _model.TodayIsRewardDay();
-            var needToShowPopup = todayIsRewardDay && !_model.TodayRewardWasReceived;
-            return needToShowPopup;
+            if (daysPassed == 1)
+            {
+                _model.AddStreakDay();
+                _model.SetLastRewardDate(serverTime);
+            }
+
+            if (_model.HasCollectedAllRewards())
+            {
+                _model.ResetStreak();
+                return true; 
+            }
+
+            return false;
+        }
+
+
+        private bool ShouldShowPopup(DateTime serverTime)
+        {
+            return _model.TryGetCurrentDayConfig(out var config) && !_model.IsTodayRewardReceived(serverTime);
         }
 
         public async UniTask GiveReward()
         {
-            var currentDayConfig = _model.GetDayConfig();
-            var rewardResult = _inventoryManager.AddItem(currentDayConfig.ItemName, currentDayConfig.ItemCount);
-            _model.SetTodayRewardStatus(rewardResult);
+            if (!_model.TryGetCurrentDayConfig(out var config)) return;
+            var rewardResult = _inventoryManager.AddItem(config.ItemName, config.ItemCount);
+            if (!rewardResult) return;
             var serverTime = await _serverTimeService.GetServerTime();
             _model.SetLastRewardDate(serverTime);
-        }
-        
-        private bool StreakIsLoosed(DateTime serverTime)
-        {
-            var timeSinceLastServerSession = serverTime - _model.LastRewardDate;
-            var daysSinceLastServerSession = timeSinceLastServerSession.Days;
-
-            if (daysSinceLastServerSession == 1)
-            {
-                _model.SetTodayRewardStatus(false);
-            }
-            
-            var streakIsLoosed = daysSinceLastServerSession > 1;
-            return streakIsLoosed;
         }
     }
 }

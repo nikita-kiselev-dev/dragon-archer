@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using Content.DailyBonus.Scripts.Data;
 using Content.DailyBonus.Scripts.Dto;
-using Cysharp.Threading.Tasks;
-using Infrastructure.Game.Data;
-using UnityEngine;
+using Infrastructure.Service.Logger;
 
 namespace Content.DailyBonus.Scripts.Model
 {
@@ -12,35 +10,51 @@ namespace Content.DailyBonus.Scripts.Model
     {
         private readonly DailyBonusData _dailyBonusData;
         private readonly IDailyBonusDto _dto;
-        private readonly IMainDataManager _mainDataManager;
+        private readonly ILogManager _logger = new LogManager(nameof(DailyBonusModel));
         
         public IReadOnlyList<DailyBonusDayDto> DayConfigs => _dto.GetDays();
         public int StreakDay => _dailyBonusData.StreakDay;
-        public bool TodayRewardWasReceived => _dailyBonusData.TodayRewardWasReceived;
         public DateTime LastRewardDate => _dailyBonusData.LastRewardDate;
         
-        public DailyBonusModel(IDailyBonusDto dto, DailyBonusData dailyBonusData, IMainDataManager mainDataManager)
+        public DailyBonusModel(IDailyBonusDto dto, DailyBonusData dailyBonusData)
         {
             _dto = dto;
             _dailyBonusData = dailyBonusData;
-            _mainDataManager = mainDataManager;
         }
         
-        public DailyBonusDayDto GetDayConfig() => _dto.GetDay(StreakDay);
-        public void AddStreakDay() => _dailyBonusData.AddStreakDayData();
-        public bool TodayIsRewardDay() => _dto.GetDay(StreakDay) != null;
-        public void SetTodayRewardStatus(bool isReceived) => _dailyBonusData.SetTodayRewardStatus(isReceived);
-        public void SetLastRewardDate(DateTime rewardDate) => _dailyBonusData.SetLastRewardDate(rewardDate);
-        public void ResetData() => _dailyBonusData.ResetStreak();
-        public bool IsFirstServerLaunch() => _mainDataManager.IsFirstServerLaunch();
-        
+        public bool TryGetCurrentDayConfig(out DailyBonusDayDto config)
+        {
+            config = _dto.GetDay(StreakDay);
+            return config != null;
+        }
+
+        public bool IsTodayRewardReceived(DateTime serverTime) 
+        {
+            return serverTime.Date == _dailyBonusData.LastRewardDate.Date;
+        }
+
+        public void AddStreakDay()
+        {
+            _dailyBonusData.AddStreakDayData();
+        }
+
+        public void SetLastRewardDate(DateTime rewardDate)
+        {
+            _dailyBonusData.SetLastRewardDate(rewardDate);
+        }
+
+        public void ResetStreak()
+        {
+            _dailyBonusData.ResetStreak();
+        }
+
         public bool HasCollectedAllRewards()
         {
             var lastDayConfig = _dto.GetLastDay();
             
             if (lastDayConfig == null)
             {
-                Debug.LogError($"{GetType().Name}: last day dto config does not exists!");
+                _logger.LogError("Last day dto config does not exists!");
                 return true;
             }
             
