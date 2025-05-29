@@ -38,7 +38,7 @@ namespace Infrastructure.Service.Initialization.Scopes
     {
         [SerializeField] private ServiceConfig m_ServiceConfig;
         
-        private readonly ILogManager _logger = new LogManager(nameof(BootstrapScope));
+        private readonly ILogManager _logger = new LogManager(nameof(GlobalScope));
         
         protected override void Configure(IContainerBuilder builder)
         {
@@ -49,7 +49,6 @@ namespace Infrastructure.Service.Initialization.Scopes
             }
             
             RegisterFileServices(builder);
-            RegisterControlEntityDecorators(builder);
             RegisterItemsData(builder);
             RegisterFeaturesData(builder);
             RegisterTutorialData(builder);
@@ -57,7 +56,6 @@ namespace Infrastructure.Service.Initialization.Scopes
             RegisterAnalytics(builder);
             RegisterLiveOps(builder);
             
-            builder.Register<ViewManager>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<ViewFactory>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<CanvasManager>(Lifetime.Singleton).As<ControlEntity>().AsImplementedInterfaces();
             
@@ -74,11 +72,6 @@ namespace Infrastructure.Service.Initialization.Scopes
         private void RegisterFileServices(IContainerBuilder builder)
         {
             builder.Register<IFileService, FileService>(Lifetime.Singleton);
-        }
-
-        private void RegisterControlEntityDecorators(IContainerBuilder builder)
-        {
-            builder.Register<FastViewDecorator>(Lifetime.Singleton).AsImplementedInterfaces();
         }
         
         private void RegisterItemsData(IContainerBuilder builder)

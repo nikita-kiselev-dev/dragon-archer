@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Content.LoadingCurtain.Scripts;
+using Infrastructure.Service.Initialization;
+using Infrastructure.Service.Initialization.InitOrder;
+using Infrastructure.Service.Initialization.Scopes;
 using Infrastructure.Service.Logger;
 using Infrastructure.Service.SignalBus;
 using Infrastructure.Service.View.Canvas;
@@ -11,24 +15,22 @@ namespace Infrastructure.Service.View.ViewManager
 {
     public class ViewManager : IViewManager, IDisposable
     {
+        private readonly ISignalBus _signalBus;
         private readonly Dictionary<string, IViewWrapper> _viewWrappers = new();
         private readonly Dictionary<string, IViewTypeManager> _viewTypeManagers;
         private readonly Queue<IViewWrapper> _viewQueue = new();
         private readonly BackgroundAnimator _backgroundAnimator = new();
         private readonly ILogManager _logger = new LogManager(nameof(ViewManager));
-        private readonly bool _isInited;
         
+        private HashSet<string> _delayedViewKeys = new();
+        private bool _isActive;
         private bool _viewIsOpen;
 
         [Inject]
         private ViewManager(ISignalBus signalBus, ICanvasHandler canvasHandler)
         {
+            _signalBus = signalBus;
             _backgroundAnimator.SetCanvasManager(canvasHandler);
-            
-            signalBus.Unsubscribe<OnPopupBackgroundClickSignal>(this);
-            signalBus.Subscribe<OnPopupBackgroundClickSignal>(this, CloseLast);
-            
-            if (_isInited) return;
             
             _viewTypeManagers = new Dictionary<string, IViewTypeManager>
             {
@@ -36,28 +38,29 @@ namespace Infrastructure.Service.View.ViewManager
                 { ViewType.Window, new WindowViewTypeManager() },
                 { ViewType.Service, new ServiceViewTypeManager() }
             };
-
-            _isInited = true;
+            
+            Subscribe();
         }
 
         public void Open(string viewKey)
         {
             var viewWrapper = GetViewWrapper(viewKey);
+            
+            if (!_isActive && viewWrapper.ViewType == ViewType.Popup)
+            {
+                _delayedViewKeys.Add(viewKey);
+                return;
+            }
 
-            if (viewWrapper?.View == null)
+            if (!viewWrapper?.View)
             {
                 _logger.LogError($"{viewKey} - view wrapper or view is null.");
                 return;
             }
             
-            var viewIsOpen = _viewTypeManagers[viewWrapper.ViewType].Open(viewWrapper, _viewIsOpen);
-
-            if (viewWrapper.ViewType == ViewType.Service)
-            {
-                return;
-            }
-            
-            _viewIsOpen = viewIsOpen;
+            var isSucceed = _viewTypeManagers[viewWrapper.ViewType].Open(viewWrapper, _viewIsOpen);
+            if (viewWrapper.ViewType == ViewType.Service) return;
+            _viewIsOpen = isSucceed;
         }
 
         public void Close(string viewKey)
@@ -70,15 +73,10 @@ namespace Infrastructure.Service.View.ViewManager
                 return;
             }
 
-            var viewIsOpen = _viewTypeManagers[viewWrapper.ViewType].Close(viewWrapper);
-
-            if (viewWrapper.ViewType == ViewType.Service)
-            {
-                return;
-            }
-            
+            var isSucceed = _viewTypeManagers[viewWrapper.ViewType].Close(viewWrapper);
+            if (viewWrapper.ViewType == ViewType.Service) return;
             OpenNext();
-            _viewIsOpen = viewIsOpen;
+            _viewIsOpen = isSucceed;
         }
 
         public void CloseAll()
@@ -93,11 +91,7 @@ namespace Infrastructure.Service.View.ViewManager
         {
             var lastView = _viewQueue.LastOrDefault();
             var lastViewExists = _viewQueue.LastOrDefault() != null;
-
-            if (lastViewExists)
-            {
-                Close(lastView?.ViewKey);
-            }
+            if (lastViewExists) Close(lastView?.ViewKey);
         }
 
         public void RegisterView(IViewWrapper viewWrapper)
@@ -108,8 +102,22 @@ namespace Infrastructure.Service.View.ViewManager
         
         void IDisposable.Dispose()
         {
+            _isActive = false;
             _viewWrappers.Clear();
             _viewQueue.Clear();
+            Unsubscribe();
+        }
+        
+        private void ExecuteDelayedViews()
+        {
+            _isActive = true;
+            
+            foreach (var viewKey in _delayedViewKeys)
+            {
+                Open(viewKey);
+            }
+
+            _delayedViewKeys = null;
         }
 
         private void OpenNext()
@@ -133,6 +141,18 @@ namespace Infrastructure.Service.View.ViewManager
         {
             var view = viewWrapper.View;
             view.gameObject.SetActive(viewWrapper.IsEnabledOnStart);
+        }
+
+        private void Subscribe()
+        {
+            _signalBus.Subscribe<OnPopupBackgroundClickSignal>(this, CloseLast);
+            _signalBus.Subscribe<LoadingCurtainHiddenSignal>(this, ExecuteDelayedViews);
+        }
+
+        private void Unsubscribe()
+        {
+            _signalBus.Unsubscribe<OnPopupBackgroundClickSignal>(this);
+            _signalBus.Unsubscribe<LoadingCurtainHiddenSignal>(this);
         }
     }
 }

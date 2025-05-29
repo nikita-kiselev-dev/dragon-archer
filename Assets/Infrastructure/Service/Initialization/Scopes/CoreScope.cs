@@ -1,4 +1,6 @@
 ﻿using Infrastructure.Service.Audio;
+using Infrastructure.Service.Initialization.Decorators.FastView;
+using Infrastructure.Service.View.ViewManager;
 using VContainer;
 using VContainer.Unity;
 
@@ -9,6 +11,8 @@ namespace Infrastructure.Service.Initialization.Scopes
         protected override void Configure(IContainerBuilder builder)
         {
             builder.Register<ButtonAudioManager>(Lifetime.Scoped).As<ControlEntity>().AsSelf();
+            builder.Register<ViewManager>(Lifetime.Scoped).AsImplementedInterfaces();
+            builder.Register<FastViewDecorator>(Lifetime.Scoped).AsImplementedInterfaces();
         }
     }
 }

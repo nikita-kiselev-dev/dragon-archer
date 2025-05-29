@@ -4,7 +4,6 @@ using Infrastructure.Service.SceneStateMachine;
 using Infrastructure.Service.SceneStateMachine.SceneStates;
 using Infrastructure.Service.SignalBus;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using VContainer;
 
 namespace Infrastructure.Game
@@ -20,12 +19,12 @@ namespace Infrastructure.Game
             _sceneStateMachine = sceneStateMachine;
             _signalBus = signalBus;
             
-            _signalBus.Subscribe<OnSceneInitCompletedSignal>(this, EnterGame);
+            _signalBus.Subscribe<OnSceneInitCompletedSignal, string>(this, EnterGame);
         }
 
-        private void EnterGame()
+        private void EnterGame(string sceneName)
         {
-            if (SceneManager.GetActiveScene().name == SceneConstants.BootstrapScene)
+            if (sceneName == SceneConstants.BootstrapScene)
             {
                 _sceneStateMachine.EnterState<StartSceneState>();
             }

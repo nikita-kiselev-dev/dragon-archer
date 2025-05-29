@@ -16,16 +16,21 @@ namespace Content.LoadingCurtain.Scripts
         private readonly Color _topColor;
         private readonly Color _bottomColor;
 
-        private readonly Action _onShowedCallback;
+        private readonly Action _afterShowCallback;
+        private readonly Action _afterHideCallback;
         
-        public LoadingCurtainGradientColorAnimator(LoadingCurtainView view, Action onShowedCallback)
+        public LoadingCurtainGradientColorAnimator(
+            LoadingCurtainView view, 
+            Action afterShowCallback,
+            Action afterHideCallback)
         {
             _gameObject = view.gameObject;
             _canvasGroup = view.CanvasGroup;
             _gradientColor = view.GradientColor;
             _topColor = _gradientColor.colorTop;
             _bottomColor = _gradientColor.colorBottom;
-            _onShowedCallback = onShowedCallback;
+            _afterShowCallback = afterShowCallback;
+            _afterHideCallback = afterHideCallback;
         }
         
         private Sequence _currentSequence;
@@ -76,7 +81,7 @@ namespace Content.LoadingCurtain.Scripts
                 })
                 .Append(FadeAnimation(1f, LoadingCurtainInfo.FadeInAnimationDuration))
                 .Append(GradientColorChange(LoadingCurtainInfo.ColorChangeShowAnimationDuration))
-                .AppendCallback(() => _onShowedCallback?.Invoke())
+                .AppendCallback(() => _afterShowCallback?.Invoke())
                 .Pause();
         }
 
@@ -90,10 +95,9 @@ namespace Content.LoadingCurtain.Scripts
                 })
                 .Append(GradientColorChange(LoadingCurtainInfo.ColorChangeHideAnimationDuration, true))
                 .Append(FadeAnimation(0f, LoadingCurtainInfo.FadeOutAnimationDuration))
-                .AppendCallback(() =>
-                {
-                    _gameObject.SetActive(false);
-                });
+                .AppendCallback(() => _gameObject.SetActive(false))
+                .AppendCallback(() => _afterHideCallback?.Invoke())
+                .Pause();
         }
         
         private void PlayNowOrNext(Sequence sequence)

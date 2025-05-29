@@ -40,7 +40,7 @@ namespace Infrastructure.Service.View.ViewManager
             }
             
             _viewQueue.Dequeue();
-            return false;
+            return true;
         }
     }
 }

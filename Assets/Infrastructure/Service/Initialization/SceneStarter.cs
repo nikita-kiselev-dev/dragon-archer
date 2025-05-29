@@ -52,7 +52,7 @@ namespace Infrastructure.Service.Initialization
                 _logger.Log($"{sceneName} - no control entities on scene, skip execution.");
             }
 
-            _signalBus.Trigger<OnSceneInitCompletedSignal>();
+            _signalBus.Trigger<OnSceneInitCompletedSignal, string>(sceneName);
         }
 
         private void DecorateEntities()

@@ -2,6 +2,7 @@
 using Cysharp.Threading.Tasks;
 using Infrastructure.Service.Initialization.Signals;
 using Infrastructure.Service.Localization;
+using Infrastructure.Service.Scene;
 using Infrastructure.Service.Scene.Signals;
 using Infrastructure.Service.SignalBus;
 using Infrastructure.Service.View.ViewManager.ViewAnimation;
@@ -28,14 +29,14 @@ namespace Content.LoadingCurtain.Scripts.Controller
             _signalBus.Subscribe<OnChangeSceneRequestSignal>(this, Show);
             
             _signalBus.Unsubscribe<OnSceneInitCompletedSignal>(this);
-            _signalBus.Subscribe<OnSceneInitCompletedSignal>(this, Hide);
+            _signalBus.Subscribe<OnSceneInitCompletedSignal, string>(this, Hide);
 
             if (_isInited)
             {
                 return;
             }
 
-            _animator = new LoadingCurtainGradientColorAnimator(m_View, OnShowed);
+            _animator = new LoadingCurtainGradientColorAnimator(m_View, AfterShow, AfterHide);
             _signalBus = signalBus;
             ConfigureView().Forget();
 
@@ -50,17 +51,22 @@ namespace Content.LoadingCurtain.Scripts.Controller
             }
         }
 
-        private void Hide()
+        private void Hide(string sceneName)
         {
-            if (m_View.gameObject.activeSelf)
+            if (m_View.gameObject.activeSelf && sceneName != SceneConstants.BootstrapScene)
             {
                 _animator.Hide();
             }
         }
 
-        private void OnShowed()
+        private void AfterShow()
         {
             _signalBus.Trigger<StartSceneChangeSignal>();
+        }
+
+        private void AfterHide()
+        {
+            _signalBus.Trigger<LoadingCurtainHiddenSignal>();
         }
 
         private async UniTaskVoid ConfigureView()
