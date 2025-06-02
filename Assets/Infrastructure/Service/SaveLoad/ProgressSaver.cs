@@ -17,7 +17,6 @@ namespace Infrastructure.Service.SaveLoad
 
         [Inject] private readonly ISignalBus _signalBus;
         [Inject] private readonly IDataSaver _dataSaver;
-        //[Inject] private readonly IMainDataManager _mainDataManager;
 
         private bool _isReadyForSave = true;
         
@@ -105,7 +104,6 @@ namespace Infrastructure.Service.SaveLoad
 
         private void Save()
         {
-            //_mainDataManager.SetLocalTime(DateTime.Now.ToUniversalTime());
             _dataSaver.SaveData();
         }
     }

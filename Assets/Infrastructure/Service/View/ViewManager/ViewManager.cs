@@ -73,10 +73,10 @@ namespace Infrastructure.Service.View.ViewManager
                 return;
             }
 
-            var isSucceed = _viewTypeManagers[viewWrapper.ViewType].Close(viewWrapper);
+            _viewTypeManagers[viewWrapper.ViewType].Close(viewWrapper);
             if (viewWrapper.ViewType == ViewType.Service) return;
+            _viewIsOpen = false;
             OpenNext();
-            _viewIsOpen = isSucceed;
         }
 
         public void CloseAll()

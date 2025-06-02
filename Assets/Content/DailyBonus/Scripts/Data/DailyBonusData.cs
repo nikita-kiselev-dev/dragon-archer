@@ -8,29 +8,22 @@ namespace Content.DailyBonus.Scripts.Data
     public partial class DailyBonusData : Infrastructure.Service.SaveLoad.Data
     {
         [DataProperty] public int StreakDay { get; private set; }
-        [DataProperty] public bool TodayRewardWasReceived { get; private set; }
         [DataProperty] public DateTime LastRewardDate { get; private set; }
         
         public override void PrepareNewData()
         {
-            StreakDay = 0;
-            TodayRewardWasReceived = false;
+            StreakDay = 1;
+            LastRewardDate = DateTime.Today - TimeSpan.FromDays(1);
         }
 
         public void ResetStreak()
         {
             StreakDay = 1;
-            TodayRewardWasReceived = false;
         }
 
         public void AddStreakDayData()
         {
             StreakDay++;
-        }
-
-        public void SetTodayRewardStatus(bool isReceived)
-        {
-            TodayRewardWasReceived = isReceived;
         }
 
         public void SetLastRewardDate(DateTime date)

@@ -29,7 +29,7 @@ namespace Content.DailyBonus.Scripts.Core
         public async UniTask<bool> NeedToShowPopup()
         {
             var serverTime = await _serverTimeService.GetServerTime();
-            return ProcessStreakUpdate(serverTime) || ShouldShowPopup(serverTime);
+            return ShouldShowPopup(serverTime) || ProcessStreakUpdate(serverTime);
         }
 
         private bool ProcessStreakUpdate(DateTime serverTime)
@@ -47,6 +47,7 @@ namespace Content.DailyBonus.Scripts.Core
             {
                 _model.AddStreakDay();
                 _model.SetLastRewardDate(serverTime);
+                return true;
             }
 
             if (_model.HasCollectedAllRewards())

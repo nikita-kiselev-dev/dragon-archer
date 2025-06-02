@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Service.Logger
 {
-    public class LogManager<T> : ILogManager
+    public class LogManager : ILogManager
     {
         private readonly string _entityName;
 

@@ -8,15 +8,12 @@ using Content.Items.Gold.Scripts;
 using Content.Items.Gold.Scripts.Data;
 using Content.SettingsPopup.Scripts.Data;
 using Infrastructure.Game.Data;
-using Infrastructure.Game.Tutorials;
 using Infrastructure.Game.Tutorials.Data;
 using Infrastructure.Service.Analytics;
 using Infrastructure.Service.Analytics.Amplitude;
 using Infrastructure.Service.Asset;
-using Infrastructure.Service.Asset.IconController;
 using Infrastructure.Service.Dto;
 using Infrastructure.Service.File;
-using Infrastructure.Service.Initialization.Decorators.FastView;
 using Infrastructure.Service.LiveOps;
 using Infrastructure.Service.LiveOps.GamePush;
 using Infrastructure.Service.LiveOps.PlayFab;
@@ -27,7 +24,6 @@ using Infrastructure.Service.ScriptableObjects;
 using Infrastructure.Service.SignalBus;
 using Infrastructure.Service.View.Canvas;
 using Infrastructure.Service.View.ViewFactory;
-using Infrastructure.Service.View.ViewManager;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -60,13 +56,12 @@ namespace Infrastructure.Service.Initialization.Scopes
             builder.Register<CanvasManager>(Lifetime.Singleton).As<ControlEntity>().AsImplementedInterfaces();
             
             builder.Register<MainAddressableAssetLoader>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<TutorialService>(Lifetime.Singleton).AsImplementedInterfaces();
+            //builder.Register<TutorialService>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<SceneService>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<SceneStateMachine.SceneStateMachine>(Lifetime.Singleton).AsImplementedInterfaces();
             
             builder.Register<EventSignalBus>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<ProgressSaver>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<IconController>(Lifetime.Singleton).AsImplementedInterfaces();
         }
         
         private void RegisterFileServices(IContainerBuilder builder)

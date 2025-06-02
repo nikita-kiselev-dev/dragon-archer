@@ -7,7 +7,7 @@ using VContainer;
 
 namespace Infrastructure.Service.Asset.IconController
 {
-    public class IconController : IIconController
+    public class IconController : IIconController, IDisposable
     {
         [Inject] private readonly IAssetLoader _assetLoader;
         
@@ -39,6 +39,7 @@ namespace Infrastructure.Service.Asset.IconController
                 _assetLoader.Release(icon.Key);
             }
 
+            _icons.Clear();
             _icons = null;
         }
     }

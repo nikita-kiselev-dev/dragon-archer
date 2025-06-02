@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using Cysharp.Threading.Tasks;
+﻿using System.Collections;
 using Infrastructure.Service.View.UIEffects;
 using TMPro;
 using UnityEngine;
@@ -12,8 +11,10 @@ namespace Content.LoadingCurtain.Scripts.View
         [SerializeField] private TextMeshProUGUI m_LoadingText;
         [SerializeField] private GradientColor m_GradientColor;
 
+        private readonly string[] _states = { "", ".", "..", "..." };
         private string _loadingLocalizedString;
-        private CancellationTokenSource _cancellationTokenSource;
+        private int _dotCount;
+        private Coroutine _textAnimationCoroutine;
         
         public CanvasGroup CanvasGroup => m_CanvasGroup;
         public GradientColor GradientColor => m_GradientColor;
@@ -25,37 +26,27 @@ namespace Content.LoadingCurtain.Scripts.View
 
         private void OnEnable()
         {
-            _cancellationTokenSource = new CancellationTokenSource();
-            TextAnimation(_cancellationTokenSource.Token).Forget();
+            if (!string.IsNullOrEmpty(_loadingLocalizedString))
+            {
+                _textAnimationCoroutine = StartCoroutine(TextAnimation());
+            }
         }
 
         private void OnDisable()
         {
-            _cancellationTokenSource?.Cancel(); 
-        }
-        
-        private async UniTask TextAnimation(CancellationToken cancellationToken)
-        {
-            var loadingLocalizedTextReady = !string.IsNullOrEmpty(_loadingLocalizedString);
-            
-            await UniTask.WaitUntil(
-                () => loadingLocalizedTextReady, 
-                cancellationToken: cancellationToken);
-            
-            while (!cancellationToken.IsCancellationRequested)
+            if (_textAnimationCoroutine != null)
             {
-                m_LoadingText.text = _loadingLocalizedString;
-                var dotsToAdd = LoadingCurtainInfo.DotsToAddInAnimation;
+                StopCoroutine(_textAnimationCoroutine);
+            }
+        }
 
-                while (dotsToAdd >= 0)
-                {
-                    await UniTask.WaitForSeconds(
-                        LoadingCurtainInfo.AddDotAnimationDelay, 
-                        cancellationToken: cancellationToken);
-                    
-                    m_LoadingText.text += ".";
-                    dotsToAdd--;
-                }
+        private IEnumerator TextAnimation()
+        {
+            while (true)
+            {
+                m_LoadingText.text = _loadingLocalizedString + _states[_dotCount];
+                _dotCount = (_dotCount + 1) % 4;
+                yield return new WaitForSeconds(LoadingCurtainConstants.AddDotAnimationDelay);
             }
         }
     }

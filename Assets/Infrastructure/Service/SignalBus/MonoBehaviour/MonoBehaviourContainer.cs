@@ -1,17 +1,27 @@
 ﻿using Infrastructure.Service.Logger;
+using Infrastructure.Service.Scene.Signals;
 using VContainer;
 
 namespace Infrastructure.Service.SignalBus.MonoBehaviour
 {
-    public class MonoBehaviourStatusHandler : UnityEngine.MonoBehaviour
+    public class MonoBehaviourContainer : UnityEngine.MonoBehaviour
     {
         [Inject] private readonly ISignalBus _signalBus;
 
-        private readonly ILogManager _logger = new LogManager(nameof(MonoBehaviourStatusHandler));
+        private readonly ILogManager _logger = new LogManager(nameof(MonoBehaviourContainer));
+        
+        public static MonoBehaviourContainer Instance { get; private set; }
+
+        private void StopAllMonoCoroutines()
+        {
+            StopAllCoroutines();
+        }
 
         private void Awake()
         {
             DontDestroyOnLoad(gameObject);
+            Instance = this;
+            Subscribe();
             _signalBus.Trigger<OnAwakeSignal>();
             _logger.Log("Awake.");
         }
@@ -38,6 +48,21 @@ namespace Infrastructure.Service.SignalBus.MonoBehaviour
         {
             _signalBus.Trigger<OnApplicationPauseSignal, bool>(pauseStatus);
             _logger.Log($"ApplicationPause ({pauseStatus}).");
+        }
+
+        private void OnDestroy()
+        {
+            Unsubscribe();
+        }
+
+        private void Subscribe()
+        {
+            _signalBus.Subscribe<StartSceneChangeSignal>(this, StopAllMonoCoroutines);
+        }
+
+        private void Unsubscribe()
+        {
+            _signalBus?.Unsubscribe<StartSceneChangeSignal>(this);
         }
     }
 }

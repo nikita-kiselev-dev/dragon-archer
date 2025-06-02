@@ -1,4 +1,5 @@
 ﻿using Content.DailyBonus.Scripts;
+using Infrastructure.Service.Asset.IconController;
 using Infrastructure.Service.Audio;
 using Infrastructure.Service.Initialization.Decorators.FastView;
 using Infrastructure.Service.View.ViewManager;
@@ -16,6 +17,7 @@ namespace Infrastructure.Service.Initialization.Scopes
             builder.Register<ButtonAudioManager>(Lifetime.Scoped).As<ControlEntity>().AsSelf();
             builder.Register<ViewManager>(Lifetime.Scoped).AsImplementedInterfaces();
             builder.Register<FastViewDecorator>(Lifetime.Scoped).AsImplementedInterfaces();
+            builder.Register<IconController>(Lifetime.Scoped).AsImplementedInterfaces();
         }
     }
 }

@@ -1,6 +1,6 @@
 namespace Content.LoadingCurtain.Scripts
 {
-    public static class LoadingCurtainInfo
+    public static class LoadingCurtainConstants
     {
         public const float FadeInAnimationDuration = 0.4f;
         public const float ColorChangeShowAnimationDuration = 0.9f;

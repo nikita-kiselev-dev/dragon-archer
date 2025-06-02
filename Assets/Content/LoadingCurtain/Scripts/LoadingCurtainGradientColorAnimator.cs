@@ -79,8 +79,8 @@ namespace Content.LoadingCurtain.Scripts
                     _canvasGroup.alpha = 0f;
                     _gameObject.SetActive(true);
                 })
-                .Append(FadeAnimation(1f, LoadingCurtainInfo.FadeInAnimationDuration))
-                .Append(GradientColorChange(LoadingCurtainInfo.ColorChangeShowAnimationDuration))
+                .Append(FadeAnimation(1f, LoadingCurtainConstants.FadeInAnimationDuration))
+                .Append(GradientColorChange(LoadingCurtainConstants.ColorChangeShowAnimationDuration))
                 .AppendCallback(() => _afterShowCallback?.Invoke())
                 .Pause();
         }
@@ -93,8 +93,8 @@ namespace Content.LoadingCurtain.Scripts
                 {
                     _canvasGroup.alpha = 1f;
                 })
-                .Append(GradientColorChange(LoadingCurtainInfo.ColorChangeHideAnimationDuration, true))
-                .Append(FadeAnimation(0f, LoadingCurtainInfo.FadeOutAnimationDuration))
+                .Append(GradientColorChange(LoadingCurtainConstants.ColorChangeHideAnimationDuration, true))
+                .Append(FadeAnimation(0f, LoadingCurtainConstants.FadeOutAnimationDuration))
                 .AppendCallback(() => _gameObject.SetActive(false))
                 .AppendCallback(() => _afterHideCallback?.Invoke())
                 .Pause();

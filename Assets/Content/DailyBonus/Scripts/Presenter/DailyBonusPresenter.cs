@@ -64,7 +64,7 @@ namespace Content.DailyBonus.Scripts.Presenter
             IsInited = true;
             IsActive = true;
             Open();
-            _core.GiveReward();
+            _core.GiveReward().Forget();
         }
 
         private void ConfigureView()

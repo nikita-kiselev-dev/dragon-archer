@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Infrastructure.Service.Scene.Signals;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace Infrastructure.Service.SignalBus
 {
-    public class EventSignalBus : ISignalBus, IDisposable
+    public class EventSignalBus : ISignalBus
     {
         private Dictionary<Type, Dictionary<object, IActionWrapper>> _events;
 
@@ -109,10 +110,10 @@ namespace Infrastructure.Service.SignalBus
             
             return false;
         }
-
-        void IDisposable.Dispose()
+        
+        private void Dispose()
         {
-            _events = null;
+            _events.Clear();
         }
     }
 }
