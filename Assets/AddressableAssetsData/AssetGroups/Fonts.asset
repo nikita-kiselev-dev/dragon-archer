@@ -15,8 +15,8 @@ MonoBehaviour:
   m_GroupName: Fonts
   m_GUID: d2a6bf9519ed78d418d01780f0968ba9
   m_SerializeEntries:
-  - m_GUID: 9e115dab14b7c9a46a4012fcfcbf6dd8
-    m_Address: TMP
+  - m_GUID: 5b460a048a8fc984ab2354757c46deab
+    m_Address: Fonts
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
