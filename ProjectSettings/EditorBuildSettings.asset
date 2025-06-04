@@ -6,17 +6,18 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Content/Scenes/BootstrapperScene.unity
+    path: Assets/Core/Scenes/BootstrapperScene.unity
     guid: 32a622b710573954fa20c2e7dd309671
   - enabled: 1
-    path: Assets/Content/Scenes/StartScene.unity
+    path: Assets/Core/Scenes/StartScene.unity
     guid: 7169dcf3d512d0f43acad72bb4dd87b5
   - enabled: 1
-    path: Assets/Content/Scenes/CoreScene.unity
+    path: Assets/Core/Scenes/CoreScene.unity
     guid: 5b45a687ff83b1b478708b1fbd901fd3
   - enabled: 1
-    path: Assets/Content/Scenes/MetaScene.unity
+    path: Assets/Core/Scenes/MetaScene.unity
     guid: 216753a82be09144c88c034d96926ce2
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: cac0a7a7ef689284699b4e70878d3162, type: 2}
     com.unity.localization.settings: {fileID: 11400000, guid: 857965b1b0f8207469d1b1fbba311a20, type: 2}
+  m_UseUCBPForAssetBundles: 0
