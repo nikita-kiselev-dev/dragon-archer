@@ -15,18 +15,9 @@ namespace Core.Asset.IconController
         
         public async UniTask<Sprite> GetIcon(string iconName, string iconTypeName = null)
         {
-            if (string.IsNullOrEmpty(iconTypeName))
-            {
-                iconTypeName = IconControllerConstants.DefaultIconType;
-            }
-
+            if (string.IsNullOrEmpty(iconTypeName)) iconTypeName = IconControllerConstants.DefaultIconType;
             var atlasName = string.Format(IconControllerConstants.AtlasNameFormat, iconTypeName);
-            
-            if (_icons.TryGetValue(atlasName, out var iconAtlas))
-            {
-                return iconAtlas.GetSprite(iconName);
-            }
-
+            if (_icons.TryGetValue(atlasName, out var iconAtlas)) return iconAtlas.GetSprite(iconName);
             iconAtlas = await _assetLoader.LoadAsync<SpriteAtlas>(atlasName);
             _icons.Add(atlasName, iconAtlas);
             return iconAtlas.GetSprite(iconName);
