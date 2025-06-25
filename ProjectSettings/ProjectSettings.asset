@@ -557,8 +557,13 @@ PlayerSettings:
   openGLRequireES31AEP: 0
   openGLRequireES32: 0
   m_TemplateCustomTags:
+    BACKGROUND_IMAGE_FILE: 
     GAMEREADY_AUTOCALL: True
+    OVERLAY_BACKGROUND_COLOR: 
     PRODUCT_DESCRIPTION: 
+    PROGRESS_BAR_BACKGROUND_COLOR: 
+    PROGRESS_BAR_BORDER_COLOR: 
+    PROGRESS_BAR_FILL_COLOR: 
     PROJECT_ID: 16514
     SHOW_PRELOADER_AD: False
     TOKEN: pgVxnxE35i1xpKamttLkfe3Le5kMSPDV
@@ -847,7 +852,7 @@ PlayerSettings:
   webGLDebugSymbols: 0
   webGLEmscriptenArgs: 
   webGLModulesDirectory: 
-  webGLTemplate: APPLICATION:Minimal
+  webGLTemplate: PROJECT:GamePush
   webGLAnalyzeBuildSize: 0
   webGLUseEmbeddedResources: 0
   webGLCompressionFormat: 1
