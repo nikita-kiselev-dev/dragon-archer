@@ -29,6 +29,12 @@ namespace Core.DailyBonus.Scripts.Core
         public async UniTask<bool> NeedToShowPopup()
         {
             var serverTime = await _serverTimeService.GetServerTime();
+
+            if (_model.LastRewardDate == default)
+            {
+                _model.SetLastRewardDate(serverTime - TimeSpan.FromDays(1));
+            }
+            
             return ShouldShowPopup(serverTime) || ProcessStreakUpdate(serverTime);
         }
 

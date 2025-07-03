@@ -8,8 +8,6 @@ using Core.File;
 using Core.Items.Scripts;
 using Core.Items.Scripts.Data;
 using Core.LiveOps;
-using Core.LiveOps.GamePush;
-using Core.LiveOps.PlayFab;
 using Core.Logger;
 using Core.SaveLoad;
 using Core.Scene;
@@ -26,6 +24,14 @@ using Project.Items.Gold.Scripts.Data;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+
+#if GAMEPUSH_ENABLED
+using Core.LiveOps.GamePush;
+#endif
+
+#if PLAYFAB_ENABLED
+using Core.LiveOps.PlayFab;
+#endif
 
 namespace Core.Initialization.Scripts.Scopes
 {
@@ -94,7 +100,7 @@ namespace Core.Initialization.Scripts.Scopes
 
         private void RegisterDataManager(IContainerBuilder builder)
         {
-            var currentConfig = m_ServiceConfig.m_SaveLoadService;
+            var currentConfig = m_ServiceConfig.SaveLoadService;
             
             if (currentConfig == SaveLoadServices.PlayerPrefs)
             {
@@ -121,21 +127,15 @@ namespace Core.Initialization.Scripts.Scopes
 
         private void RegisterLiveOps(IContainerBuilder builder)
         {
-            var currentConfig = m_ServiceConfig.m_LiveOpsService;
-            
-            if (currentConfig == LiveOpsServices.PlayFab)
-            {
-                builder.Register<PlayFabService>(Lifetime.Singleton)
-                    .As<ILiveOpsController>()
-                    .As<IDtoService>()
-                    .As<IServerConnectionService>()
-                    .As<IServerTimeService>();
-            }
-            else if (currentConfig == LiveOpsServices.GamePush)
-            {
-                builder.Register<GamePushService>(Lifetime.Singleton)
-                    .AsImplementedInterfaces();
-            }
+#if PLAYFAB_ENABLED
+            builder.Register<PlayFabService>(Lifetime.Singleton)
+                .As<IDtoService>()
+                .As<IServerConnectionService>()
+                .As<IServerTimeService>();
+#elif GAMEPUSH_ENABLED
+            builder.Register<GamePushService>(Lifetime.Singleton)
+                .AsImplementedInterfaces();
+#endif
         }
     }
 }

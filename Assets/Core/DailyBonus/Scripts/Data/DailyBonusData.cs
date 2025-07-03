@@ -12,8 +12,7 @@ namespace Core.DailyBonus.Scripts.Data
         
         public override void PrepareNewData()
         {
-            StreakDay = 1;
-            LastRewardDate = DateTime.Today - TimeSpan.FromDays(1);
+            ResetStreak();
         }
 
         public void ResetStreak()

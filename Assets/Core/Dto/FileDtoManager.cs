@@ -12,10 +12,11 @@ using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using UnityEngine;
 using VContainer;
+using VContainer.Unity;
 
 namespace Core.Dto
 {
-    public class FileDtoManager : IDtoManager, IDtoReader
+    public class FileDtoManager : IDtoManager, IDtoReader, IStartable
     {
         [Inject] private readonly IAssetLoader _assetLoader;
         [Inject] private readonly ISignalBus _signalBus;
@@ -28,14 +29,6 @@ namespace Core.Dto
         private Dictionary<string, string> _dataDto;
 
         private bool _isInited;
-        
-        public void Init()
-        {
-            TryCreateDirectory();
-            TryGetDataDto();
-            _signalBus.Subscribe<GetLiveOpsDataCompletedSignal>(this, SetServerDto);
-            _isInited = true;
-        }
         
         public async UniTask<T> Read<T>(string configName)
         {
@@ -68,6 +61,14 @@ namespace Core.Dto
             Debug.Log($"{GetType().Name} - loaded config file:\n{result}");
             
             return result;
+        }
+        
+        private void Init()
+        {
+            TryCreateDirectory();
+            TryGetDataDto();
+            _signalBus.Subscribe<GetLiveOpsDataCompletedSignal>(this, SetServerDto);
+            _isInited = true;
         }
         
         private void Save()
@@ -158,6 +159,11 @@ namespace Core.Dto
             var resultString = stringBuilder.ToString();
             stringBuilder.Clear();
             return resultString;
+        }
+        
+        void IStartable.Start()
+        {
+            Init();
         }
     }
 }

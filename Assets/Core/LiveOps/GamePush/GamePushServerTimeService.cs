@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if GAMEPUSH_ENABLED
+using System;
 using GamePush;
 
 namespace Core.LiveOps.GamePush
@@ -11,3 +12,4 @@ namespace Core.LiveOps.GamePush
         }
     }
 }
+#endif

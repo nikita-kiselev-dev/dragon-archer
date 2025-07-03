@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if GAMEPUSH_ENABLED
+using System;
 using System.Collections.Generic;
 using Core.LiveOps.Signals;
 using Core.SignalBus;
@@ -24,3 +25,4 @@ namespace Core.LiveOps.GamePush
         }
     }
 }
+#endif
